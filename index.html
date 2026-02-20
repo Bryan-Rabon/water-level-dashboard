@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCOR Water Level Dashboard</title>
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
-        h2 { color: #2c3e50; }
-        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
         .container { max-width: 1200px; margin: 0 auto; }
+        #map { height: 400px; width: 100%; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
         .chart-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        #site-display { color: #3498db; }
+        #site-display { color: #3498db; font-weight: bold; }
         .loading-text { font-style: italic; color: #7f8c8d; display: none; }
     </style>
 </head>
@@ -20,8 +18,8 @@
 
 <div class="container">
     <h2>SCOR Water Level Monitor</h2>
-    <p>Active Site: <span id="site-display">Click a map marker to load data</span></p>
-    <p id="loading" class="loading-text">Fetching sensor data from iRiver Cloud...</p>
+    <p>Current Site: <span id="site-display">Select a marker on the map</span></p>
+    <p id="loading" class="loading-text">Fetching data from iRiver Cloud...</p>
 
     <div id="map"></div>
 
@@ -36,85 +34,69 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
-    // 1. Initialize Map
-    const map = L.map('map').setView([33.8361, -81.1637], 7); // Centered on SC
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+    const map = L.map('map').setView([33.8361, -81.1637], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let waterChart;
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    // 2. Load ESRI Features
     fetch(esriUrl)
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
                 onEachFeature: (feature, layer) => {
                     const fullSiteName = feature.properties.SITENAME.trim();
-                    // Display first 8 chars in popup, use full name for API
-                    const shortName = fullSiteName.substring(0, 8);
-                    
                     layer.bindPopup(`
-                        <strong>Site ID:</strong> ${shortName}<br>
-                        <strong>Full Name:</strong> ${fullSiteName}<br><br>
-                        <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer; padding: 5px 10px;">Load Last 7 Days</button>
+                        <strong>Site:</strong> ${fullSiteName}<br><br>
+                        <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer;">View Last 7 Days</button>
                     `);
                 }
             }).addTo(map);
         });
 
-    // 3. Fetch Sensor Data & Update Chart
     function updateDashboard(siteID) {
         const loadingLabel = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
         loadingLabel.style.display = 'block';
 
-        // Set time window: Last 7 days
+        // Time window
         const now = luxon.DateTime.now();
         const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
         const start = now.minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
 
-        // Construct API URL with CORS Proxy
         const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
         const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
         fetch(proxyUrl)
-    .then(res => res.json())
-    .then(apiData => {
-        console.log("Raw API Response:", apiData); // THIS IS KEY
+            .then(res => res.json())
+            .then(apiResponse => {
+                loadingLabel.style.display = 'none';
+                
+                // DATA MAPPING FIX: 
+                // apiResponse is the object, apiResponse.data is the array
+                // We use item.t for time and item.water_elevation_feet for value
+                if (!apiResponse.data || apiResponse.data.length === 0) {
+                    alert("No data found for this site in the selected time range.");
+                    return;
+                }
 
-        // If apiData is not an array, we need to find where the array is
-        const actualData = Array.isArray(apiData) ? apiData : apiData.data;
+                const formattedData = apiResponse.data.map(item => ({
+                    x: item.t, 
+                    y: item.water_elevation_feet
+                }));
 
-        if (!actualData) {
-            console.error("Data format unknown", apiData);
-            return;
-        }
-
-        const formattedData = actualData
-            .map(item => ({
-                x: item.timestamp, 
-                y: item.water_elevation_feet
-            }))
-            .filter(item => item.y !== null);
-
-        renderChart(formattedData);
-    })
+                renderChart(formattedData);
+            })
             .catch(err => {
                 loadingLabel.style.display = 'none';
-                console.error(err);
-                alert("Failed to fetch data. This is likely a CORS issue or the station is offline.");
+                console.error("Fetch Error:", err);
+                alert("Failed to reach the sensor API.");
             });
     }
 
-    // 4. Chart.js Rendering Function
     function renderChart(dataPoints) {
         const ctx = document.getElementById('waterChart').getContext('2d');
-
-        if (waterChart) {
-            waterChart.destroy();
-        }
+        if (waterChart) { waterChart.destroy(); }
 
         waterChart = new Chart(ctx, {
             type: 'line',
@@ -124,11 +106,9 @@
                     data: dataPoints,
                     borderColor: '#3498db',
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 0, // Cleaner look for high-frequency data
-                    pointHoverRadius: 5,
                     fill: true,
-                    tension: 0.2
+                    tension: 0.1,
+                    pointRadius: 2
                 }]
             },
             options: {
@@ -137,25 +117,16 @@
                 scales: {
                     x: {
                         type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: { day: 'MMM d' }
-                        },
-                        title: { display: true, text: 'Date (Last 7 Days)' }
+                        time: { unit: 'day' },
+                        title: { display: true, text: 'Time' }
                     },
                     y: {
-                        title: { display: true, text: 'Elevation (ft)' },
-                        beginAtZero: false
+                        title: { display: true, text: 'Elevation (ft)' }
                     }
-                },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: { mode: 'index', intersect: false }
                 }
             }
         });
     }
 </script>
-
 </body>
 </html>
