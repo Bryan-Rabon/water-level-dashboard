@@ -1,103 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Water Level Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOR Water Level Dashboard</title>
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        #map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 20px; }
-        .chart-container { width: 100%; height: 300px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
+        h2 { color: #2c3e50; }
+        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        #site-display { color: #3498db; }
+        .loading-text { font-style: italic; color: #7f8c8d; display: none; }
     </style>
 </head>
 <body>
-    <h2>Sensor Dashboard: <span id="site-display">Select a Site</span></h2>
+
+<div class="container">
+    <h2>SCOR Water Level Monitor</h2>
+    <p>Active Site: <span id="site-display">Click a map marker to load data</span></p>
+    <p id="loading" class="loading-text">Fetching sensor data from iRiver Cloud...</p>
+
     <div id="map"></div>
-    <div class="chart-container">
-        <canvas id="waterChart"></canvas>
+
+    <div class="chart-card">
+        <canvas id="waterChart" style="width:100%; height:350px;"></canvas>
     </div>
+</div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
-    <script>
-        const map = L.map('map').setView([33.8, -80.9], 7);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+<script>
+    // 1. Initialize Map
+    const map = L.map('map').setView([33.8361, -81.1637], 7); // Centered on SC
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-        let waterChart; // Global variable to store the chart instance
+    let waterChart;
+    const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-        // 1. Map Data Setup
-        const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
-
-        fetch(esriUrl).then(res => res.json()).then(data => {
+    // 2. Load ESRI Features
+    fetch(esriUrl)
+        .then(res => res.json())
+        .then(data => {
             L.geoJSON(data, {
                 onEachFeature: (feature, layer) => {
-                    const siteName = feature.properties.SITENAME;
-                    layer.bindPopup(`<b>${siteName}</b><br><button onclick="updateChart('${siteName}')">View Last 7 Days</button>`);
+                    const fullSiteName = feature.properties.SITENAME.trim();
+                    // Display first 8 chars in popup, use full name for API
+                    const shortName = fullSiteName.substring(0, 8);
+                    
+                    layer.bindPopup(`
+                        <strong>Site ID:</strong> ${shortName}<br>
+                        <strong>Full Name:</strong> ${fullSiteName}<br><br>
+                        <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer; padding: 5px 10px;">Load Last 7 Days</button>
+                    `);
                 }
             }).addTo(map);
         });
 
-        // 2. Chart Update Logic
-        function updateChart(fullSiteName) {
-            document.getElementById('site-display').innerText = fullSiteName;
-            
-            // Calculate Dates using Luxon
-            const end = luxon.DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
-            const start = luxon.DateTime.now().minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
-            
-            const apiUrl = `https://metadata.iriver.cloud/api/v1/scor/${fullSiteName}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    // 3. Fetch Sensor Data & Update Chart
+    function updateDashboard(siteID) {
+        const loadingLabel = document.getElementById('loading');
+        document.getElementById('site-display').innerText = siteID;
+        loadingLabel.style.display = 'block';
 
-            fetch(apiUrl)
-                .then(res => res.json())
-                .then(apiData => {
-                    // Extract timestamps and water_elevation_feet
-                    const chartData = apiData.map(entry => ({
-                        x: entry.timestamp,
-                        y: entry.water_elevation_feet
+        // Set time window: Last 7 days
+        const now = luxon.DateTime.now();
+        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
+        const start = now.minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
+
+        // Construct API URL with CORS Proxy
+        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+
+        fetch(proxyUrl)
+            .then(res => {
+                if (!res.ok) throw new Error("CORS Proxy or API error");
+                return res.json();
+            })
+            .then(apiData => {
+                loadingLabel.style.display = 'none';
+                
+                // Format data for Chart.js
+                const formattedData = apiData
+                    .filter(item => item.water_elevation_feet !== null)
+                    .map(item => ({
+                        x: item.timestamp, 
+                        y: item.water_elevation_feet
                     }));
 
-                    renderChart(chartData);
-                })
-                .catch(err => alert("Error fetching sensor data: " + err));
-        }
-
-        function renderChart(dataPoints) {
-            const ctx = document.getElementById('waterChart').getContext('2d');
-            
-            // If chart exists, destroy it before creating a new one
-            if (waterChart) { waterChart.destroy(); }
-
-            waterChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Water Elevation (Feet)',
-                        data: dataPoints,
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: { unit: 'day' },
-                            title: { display: true, text: 'Date' }
-                        },
-                        y: {
-                            title: { display: true, text: 'Feet' }
-                        }
-                    }
+                if (formattedData.length === 0) {
+                    alert("No water elevation data found for this site in the last 7 days.");
+                    return;
                 }
+
+                renderChart(formattedData);
+            })
+            .catch(err => {
+                loadingLabel.style.display = 'none';
+                console.error(err);
+                alert("Failed to fetch data. This is likely a CORS issue or the station is offline.");
             });
+    }
+
+    // 4. Chart.js Rendering Function
+    function renderChart(dataPoints) {
+        const ctx = document.getElementById('waterChart').getContext('2d');
+
+        if (waterChart) {
+            waterChart.destroy();
         }
-    </script>
+
+        waterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Water Elevation (Feet)',
+                    data: dataPoints,
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    borderWidth: 2,
+                    pointRadius: 0, // Cleaner look for high-frequency data
+                    pointHoverRadius: 5,
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: { day: 'MMM d' }
+                        },
+                        title: { display: true, text: 'Date (Last 7 Days)' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Elevation (ft)' },
+                        beginAtZero: false
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                }
+            }
+        });
+    }
+</script>
+
 </body>
 </html>
-
