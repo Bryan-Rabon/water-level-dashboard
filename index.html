@@ -4,47 +4,98 @@
     <title>Water Level Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 600px; width: 100%; border-radius: 8px; }
-        .info-panel { padding: 10px; background: white; border: 1px solid #ccc; }
+        body { font-family: sans-serif; margin: 20px; }
+        #map { height: 400px; width: 100%; border-radius: 8px; margin-bottom: 20px; }
+        .chart-container { width: 100%; height: 300px; }
     </style>
 </head>
 <body>
-    <h2>Sensor Location Dashboard</h2>
+    <h2>Sensor Dashboard: <span id="site-display">Select a Site</span></h2>
     <div id="map"></div>
+    <div class="chart-container">
+        <canvas id="waterChart"></canvas>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // Initialize the map
-        const map = L.map('map').setView([33.8, -80.9], 7); // Adjust to your area
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
+    <script>
+        const map = L.map('map').setView([33.8, -80.9], 7);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // Fetch your ESRI Feature Layer
+        let waterChart; // Global variable to store the chart instance
+
+        // 1. Map Data Setup
         const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-        fetch(esriUrl)
-            .then(res => res.json())
-            .then(data => {
-                L.geoJSON(data, {
-                    onEachFeature: (feature, layer) => {
-                        // Extract the first 8 characters of SITENAME
-                        const fullSiteName = feature.properties.SITENAME || "Unknown";
-                        const siteID = fullSiteName.substring(0, 8);
+        fetch(esriUrl).then(res => res.json()).then(data => {
+            L.geoJSON(data, {
+                onEachFeature: (feature, layer) => {
+                    const siteName = feature.properties.SITENAME;
+                    layer.bindPopup(`<b>${siteName}</b><br><button onclick="updateChart('${siteName}')">View Last 7 Days</button>`);
+                }
+            }).addTo(map);
+        });
 
-                        // Create a popup
-                        layer.bindPopup(`
-                            <strong>Site ID:</strong> ${siteID}<br>
-                            <strong>Full Name:</strong> ${fullSiteName}<br>
-                            <button onclick="fetchSensorData('${siteID}')">View Water Levels</button>
-                        `);
+        // 2. Chart Update Logic
+        function updateChart(fullSiteName) {
+            document.getElementById('site-display').innerText = fullSiteName;
+            
+            // Calculate Dates using Luxon
+            const end = luxon.DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+            const start = luxon.DateTime.now().minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
+            
+            const apiUrl = `https://metadata.iriver.cloud/api/v1/scor/${fullSiteName}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+
+            fetch(apiUrl)
+                .then(res => res.json())
+                .then(apiData => {
+                    // Extract timestamps and water_elevation_feet
+                    const chartData = apiData.map(entry => ({
+                        x: entry.timestamp,
+                        y: entry.water_elevation_feet
+                    }));
+
+                    renderChart(chartData);
+                })
+                .catch(err => alert("Error fetching sensor data: " + err));
+        }
+
+        function renderChart(dataPoints) {
+            const ctx = document.getElementById('waterChart').getContext('2d');
+            
+            // If chart exists, destroy it before creating a new one
+            if (waterChart) { waterChart.destroy(); }
+
+            waterChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Water Elevation (Feet)',
+                        data: dataPoints,
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: { unit: 'day' },
+                            title: { display: true, text: 'Date' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Feet' }
+                        }
                     }
-                }).addTo(map);
+                }
             });
-
-        function fetchSensorData(id) {
-            console.log("Fetching data for site:", id);
-            // This is where we will hook up your second API in the next step
-            alert("Ready to pull data for: " + id);
         }
     </script>
 </body>
