@@ -1,164 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCOR Water Level Dashboard</title>
-    
+    <title>Water Level Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h2 { color: #2c3e50; margin-bottom: 5px; }
-        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
-        .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        #site-display { color: #3498db; font-weight: bold; }
-        .loading-text { font-style: italic; color: #7f8c8d; display: none; margin-bottom: 10px; }
-        .instructions { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+        #map { height: 600px; width: 100%; border-radius: 8px; }
+        .info-panel { padding: 10px; background: white; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <h2>SCOR Water Level Monitor</h2>
-    <p class="instructions">Click any marker on the map to load the last 7 days of water elevation data.</p>
-    
-    <p>Current Site: <span id="site-display">None Selected</span></p>
-    <div id="loading" class="loading-text">Connecting to iRiver Cloud via Proxy...</div>
-
+    <h2>Sensor Location Dashboard</h2>
     <div id="map"></div>
 
-    <div class="chart-card">
-        <canvas id="waterChart" style="width:100%; height:350px;"></canvas>
-    </div>
-</div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([33.8, -80.9], 7); // Adjust to your area
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-<script>
-    // 1. Setup the Map
-    const map = L.map('map').setView([33.8361, -81.1637], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+        // Fetch your ESRI Feature Layer
+        const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    let waterChart;
-    const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
+        fetch(esriUrl)
+            .then(res => res.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    onEachFeature: (feature, layer) => {
+                        // Extract the first 8 characters of SITENAME
+                        const fullSiteName = feature.properties.SITENAME || "Unknown";
+                        const siteID = fullSiteName.substring(0, 8);
 
-    // 2. Load the ESRI Site Points
-    fetch(esriUrl)
-        .then(res => res.json())
-        .then(data => {
-            L.geoJSON(data, {
-                onEachFeature: (feature, layer) => {
-                    const fullSiteName = feature.properties.SITENAME ? feature.properties.SITENAME.trim() : "Unknown";
-                    layer.bindPopup(`
-                        <strong>Site:</strong> ${fullSiteName}<br><br>
-                        <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer; padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
-                    `);
-                }
-            }).addTo(map);
-        });
-
-    // 3. Fetch Data and Update the Dashboard
-    function updateDashboard(siteID) {
-        const loadingLabel = document.getElementById('loading');
-        document.getElementById('site-display').innerText = siteID;
-        loadingLabel.style.display = 'block';
-
-        // Set time window: Last 7 days
-        const now = luxon.DateTime.now();
-        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
-        const start = now.minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
-
-        // Build URL
-        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-        
-        // Using api.allorigins.win as a more stable CORS proxy
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-
-        fetch(proxyUrl)
-            .then(res => {
-                if (!res.ok) throw new Error("Proxy response failed");
-                return res.json();
-            })
-            .then(wrapper => {
-                // AllOrigins returns data in a 'contents' string, so we parse it again
-                const apiResponse = JSON.parse(wrapper.contents);
-                loadingLabel.style.display = 'none';
-                
-                if (!apiResponse.data || apiResponse.data.length === 0) {
-                    alert("No data found for this site in the last 7 days.");
-                    return;
-                }
-
-                // Map 't' to 'x' and 'water_elevation_feet' to 'y'
-                const formattedData = apiResponse.data.map(item => ({
-                    x: item.t, 
-                    y: item.water_elevation_feet
-                }));
-
-                renderChart(formattedData);
-            })
-            .catch(err => {
-                loadingLabel.style.display = 'none';
-                console.error("Fetch Error:", err);
-                alert("Failed to load sensor data. The station might be offline or the proxy is busy.");
+                        // Create a popup
+                        layer.bindPopup(`
+                            <strong>Site ID:</strong> ${siteID}<br>
+                            <strong>Full Name:</strong> ${fullSiteName}<br>
+                            <button onclick="fetchSensorData('${siteID}')">View Water Levels</button>
+                        `);
+                    }
+                }).addTo(map);
             });
-    }
 
-    // 4. Create the Chart.js Graph
-    function renderChart(dataPoints) {
-        const ctx = document.getElementById('waterChart').getContext('2d');
-        
-        if (waterChart) {
-            waterChart.destroy();
+        function fetchSensorData(id) {
+            console.log("Fetching data for site:", id);
+            // This is where we will hook up your second API in the next step
+            alert("Ready to pull data for: " + id);
         }
-
-        waterChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'Water Elevation (Feet)',
-                    data: dataPoints,
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 2,
-                    fill: true,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: { day: 'MMM d' }
-                        },
-                        title: { display: true, text: 'Time (Local)' }
-                    },
-                    y: {
-                        title: { display: true, text: 'Elevation (ft)' },
-                        beginAtZero: false
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
-                    }
-                }
-            }
-        });
-    }
-</script>
-
+    </script>
 </body>
 </html>
