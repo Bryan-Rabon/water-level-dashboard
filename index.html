@@ -19,7 +19,7 @@
         /* Legend Styles */
         .info.legend {
             padding: 12px;
-            font: 12px/18px 'Segoe UI', Arial, sans-serif;
+            font: 12px/18px Arial, sans-serif;
             background: white;
             background: rgba(255,255,255,0.95);
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -28,21 +28,15 @@
             border: 1px solid #ccc;
         }
         .info.legend i {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             float: left;
             margin-right: 10px;
             opacity: 0.9;
             border-radius: 50%;
             border: 1px solid #fff;
         }
-        .legend-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: block;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 3px;
-        }
+        .legend-title { font-weight: bold; margin-bottom: 8px; display: block; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -52,7 +46,7 @@
     <p class="instructions">Click any marker on the map to load the last 7 days of water elevation data.</p>
     
     <p>Current Site: <span id="site-display">None Selected</span></p>
-    <div id="loading" class="loading-text">Connecting to iRiver Cloud via Proxy...</div>
+    <div id="loading" class="loading-text">Connecting to iRiver Cloud...</div>
 
     <div id="map"></div>
 
@@ -67,7 +61,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
-    // 1. Setup the Map
     const map = L.map('map').setView([33.8361, -81.1637], 7);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
@@ -76,40 +69,42 @@
     let waterChart;
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    // 2. Load the ESRI Site Points
+    // helper function to check if height is a valid number > 0
+    function isValidHeight(val) {
+        if (val === null || val === undefined || val === '') return false;
+        const num = parseFloat(val);
+        return !isNaN(num) && isFinite(num) && num > 0;
+    }
+
     fetch(esriUrl)
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
                 pointToLayer: (feature, latlng) => {
                     const h = feature.properties.ORTHO_HIEGHT;
+                    const hasData = isValidHeight(h);
                     
-                    // Strict Numerical Check: Must be a number and greater than 0
-                    const hasMeasurement = (typeof h === 'number' && h > 0);
-                    
-                    const markerStyle = {
+                    return L.circleMarker(latlng, {
                         radius: 8,
-                        fillColor: hasMeasurement ? "#2ecc71" : "#e74c3c", // Green if valid, Red if not
+                        fillColor: hasData ? "#2ecc71" : "#e74c3c", // Green if > 0, Red otherwise
                         color: "#fff",
                         weight: 1.5,
                         opacity: 1,
                         fillOpacity: 0.85
-                    };
-                    
-                    return L.circleMarker(latlng, markerStyle);
+                    });
                 },
                 onEachFeature: (feature, layer) => {
                     const fullSiteName = feature.properties.SITENAME ? feature.properties.SITENAME.trim() : "Unknown";
-                    const hValue = feature.properties.ORTHO_HIEGHT;
-                    const displayHeight = (typeof hValue === 'number' && hValue > 0) ? hValue : "No valid measurement";
+                    const h = feature.properties.ORTHO_HIEGHT;
+                    const displayHeight = isValidHeight(h) ? h : "No valid height data";
 
                     layer.bindPopup(`
-                        <div style="min-width: 150px;">
-                            <strong style="font-size: 1.1em;">${fullSiteName}</strong><br>
-                            <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
-                            <strong>Ortho Height:</strong> ${displayHeight}<br><br>
+                        <div style="min-width: 160px;">
+                            <strong>${fullSiteName}</strong><br>
+                            <hr style="margin:5px 0;">
+                            <b>Height:</b> ${displayHeight}<br><br>
                             <button onclick="updateDashboard('${fullSiteName}')" 
-                                style="cursor:pointer; width: 100%; padding: 8px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold;">
+                                style="width:100%; cursor:pointer; padding: 8px; background: #3498db; color: white; border: none; border-radius: 4px;">
                                 Load Sensor Data
                             </button>
                         </div>
@@ -120,22 +115,18 @@
             addLegend();
         });
 
-    // 3. Legend Logic
     function addLegend() {
         const legend = L.control({position: 'bottomright'});
-
-        legend.onAdd = function (map) {
+        legend.onAdd = function () {
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML += '<span class="legend-title">Measurement Status</span>';
-            div.innerHTML += '<div><i style="background: #2ecc71"></i> Valid Height (> 0)</div>';
-            div.innerHTML += '<div><i style="background: #e74c3c"></i> No Measurement (0 / Null)</div>';
+            div.innerHTML += '<span class="legend-title">Station Status</span>';
+            div.innerHTML += '<div><i style="background: #2ecc71"></i> Measured Height (> 0)</div>';
+            div.innerHTML += '<div><i style="background: #e74c3c"></i> No Height (0 or Null)</div>';
             return div;
         };
-
         legend.addTo(map);
     }
 
-    // 4. Fetch Data and Update the Dashboard
     function updateDashboard(siteID) {
         const loadingLabel = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
@@ -149,16 +140,13 @@
         const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
         fetch(proxyUrl)
-            .then(res => {
-                if (!res.ok) throw new Error("Proxy response failed");
-                return res.json();
-            })
+            .then(res => res.json())
             .then(wrapper => {
                 const apiResponse = JSON.parse(wrapper.contents);
                 loadingLabel.style.display = 'none';
                 
                 if (!apiResponse.data || apiResponse.data.length === 0) {
-                    alert("No historical data found for this site in the last 7 days.");
+                    alert("No data found for this site in the last 7 days.");
                     return;
                 }
 
@@ -171,12 +159,11 @@
             })
             .catch(err => {
                 loadingLabel.style.display = 'none';
-                console.error("Fetch Error:", err);
-                alert("Failed to load sensor data. Check console for details.");
+                console.error(err);
+                alert("Error connecting to sensor API.");
             });
     }
 
-    // 5. Create the Chart.js Graph
     function renderChart(dataPoints) {
         const ctx = document.getElementById('waterChart').getContext('2d');
         if (waterChart) { waterChart.destroy(); }
@@ -185,34 +172,26 @@
             type: 'line',
             data: {
                 datasets: [{
-                    label: 'Water Elevation (Feet)',
+                    label: 'Water Elevation (ft)',
                     data: dataPoints,
                     borderColor: '#3498db',
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
                     borderWidth: 2,
                     pointRadius: 1,
-                    fill: true,
-                    tension: 0.1
+                    fill: true
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: {
-                        type: 'time',
-                        time: { unit: 'day', displayFormats: { day: 'MMM d' } },
-                        title: { display: true, text: 'Date' }
-                    },
-                    y: {
-                        title: { display: true, text: 'Elevation (ft)' },
-                        beginAtZero: false
-                    }
+                    x: { type: 'time', time: { unit: 'day' } },
+                    y: { beginAtZero: false }
                 }
             }
         });
     }
 </script>
-
 </body>
 </html>
+
