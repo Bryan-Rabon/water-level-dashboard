@@ -15,6 +15,31 @@
         #site-display { color: #3498db; font-weight: bold; }
         .loading-text { font-style: italic; color: #7f8c8d; display: none; margin-bottom: 10px; }
         .instructions { font-size: 0.9em; color: #666; margin-bottom: 20px; }
+
+        /* Legend Styles */
+        .info.legend {
+            padding: 10px;
+            font: 12px/18px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            color: #555;
+        }
+        .info.legend i {
+            width: 14px;
+            height: 14px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.8;
+            border-radius: 50%;
+            border: 1px solid #fff;
+        }
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -53,31 +78,63 @@
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
+                // Change default markers to colored circles
+                pointToLayer: (feature, latlng) => {
+                    const height = feature.properties.ORTHO_HIEGHT;
+                    // Logic: If 0 or null, use Orange. Otherwise, use Green.
+                    const fillColor = (height === 0 || height === null) ? "#e67e22" : "#2ecc71";
+                    
+                    return L.circleMarker(latlng, {
+                        radius: 8,
+                        fillColor: fillColor,
+                        color: "#fff",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    });
+                },
                 onEachFeature: (feature, layer) => {
                     const fullSiteName = feature.properties.SITENAME ? feature.properties.SITENAME.trim() : "Unknown";
+                    const currentHeight = feature.properties.ORTHO_HIEGHT ?? "N/A";
+
                     layer.bindPopup(`
-                        <strong>Site:</strong> ${fullSiteName}<br><br>
+                        <strong>Site:</strong> ${fullSiteName}<br>
+                        <strong>Ortho Height:</strong> ${currentHeight}<br><br>
                         <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer; padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
                     `);
                 }
             }).addTo(map);
+
+            // Add the legend to the map after data is loaded
+            addLegend();
         });
 
-    // 3. Fetch Data and Update the Dashboard
+    // 3. Legend Logic
+    function addLegend() {
+        const legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function (map) {
+            const div = L.DomUtil.create('div', 'info legend');
+            div.innerHTML += '<span class="legend-title">Ortho Height Status</span>';
+            div.innerHTML += '<i style="background: #2ecc71"></i> Height Recorded (> 0)<br>';
+            div.innerHTML += '<i style="background: #e67e22"></i> No Height (0/Null)';
+            return div;
+        };
+
+        legend.addTo(map);
+    }
+
+    // 4. Fetch Data and Update the Dashboard
     function updateDashboard(siteID) {
         const loadingLabel = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
         loadingLabel.style.display = 'block';
 
-        // Set time window: Last 7 days
         const now = luxon.DateTime.now();
         const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
         const start = now.minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
 
-        // Build URL
         const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-        
-        // Using api.allorigins.win as a more stable CORS proxy
         const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
         fetch(proxyUrl)
@@ -86,7 +143,6 @@
                 return res.json();
             })
             .then(wrapper => {
-                // AllOrigins returns data in a 'contents' string, so we parse it again
                 const apiResponse = JSON.parse(wrapper.contents);
                 loadingLabel.style.display = 'none';
                 
@@ -95,7 +151,6 @@
                     return;
                 }
 
-                // Map 't' to 'x' and 'water_elevation_feet' to 'y'
                 const formattedData = apiResponse.data.map(item => ({
                     x: item.t, 
                     y: item.water_elevation_feet
@@ -106,17 +161,14 @@
             .catch(err => {
                 loadingLabel.style.display = 'none';
                 console.error("Fetch Error:", err);
-                alert("Failed to load sensor data. The station might be offline or the proxy is busy.");
+                alert("Failed to load sensor data.");
             });
     }
 
-    // 4. Create the Chart.js Graph
+    // 5. Create the Chart.js Graph
     function renderChart(dataPoints) {
         const ctx = document.getElementById('waterChart').getContext('2d');
-        
-        if (waterChart) {
-            waterChart.destroy();
-        }
+        if (waterChart) { waterChart.destroy(); }
 
         waterChart = new Chart(ctx, {
             type: 'line',
@@ -138,21 +190,12 @@
                 scales: {
                     x: {
                         type: 'time',
-                        time: {
-                            unit: 'day',
-                            displayFormats: { day: 'MMM d' }
-                        },
+                        time: { unit: 'day', displayFormats: { day: 'MMM d' } },
                         title: { display: true, text: 'Time (Local)' }
                     },
                     y: {
                         title: { display: true, text: 'Elevation (ft)' },
                         beginAtZero: false
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false
                     }
                 }
             }
