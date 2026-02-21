@@ -60,7 +60,7 @@
                 },
                 onEachFeature: (feature, layer) => {
                     const name = feature.properties.SITENAME || "Unknown";
-                    const h = feature.properties.ORTHO_HIEGHT;
+                    const h = feature.properties.ORTHO_HEIGHT;
                     layer.bindPopup(`
                         <strong>${name}</strong><br>Height: ${h || '0'}<br><br>
                         <button onclick="updateDashboard('${name}')">Load Data</button>
