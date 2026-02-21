@@ -18,27 +18,30 @@
 
         /* Legend Styles */
         .info.legend {
-            padding: 10px;
-            font: 12px/18px Arial, Helvetica, sans-serif;
+            padding: 12px;
+            font: 12px/18px 'Segoe UI', Arial, sans-serif;
             background: white;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 5px;
-            color: #555;
+            border-radius: 8px;
+            color: #333;
+            border: 1px solid #ccc;
         }
         .info.legend i {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             float: left;
-            margin-right: 8px;
-            opacity: 0.8;
+            margin-right: 10px;
+            opacity: 0.9;
             border-radius: 50%;
             border: 1px solid #fff;
         }
         .legend-title {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
         }
     </style>
 </head>
@@ -78,34 +81,42 @@
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
-                // Change default markers to colored circles
                 pointToLayer: (feature, latlng) => {
-                    const height = feature.properties.ORTHO_HIEGHT;
-                    // Logic: If 0 or null, use Orange. Otherwise, use Green.
-                    const fillColor = (height === 0 || height === null) ? "#e67e22" : "#2ecc71";
+                    const h = feature.properties.ORTHO_HIEGHT;
                     
-                    return L.circleMarker(latlng, {
+                    // Strict Numerical Check: Must be a number and greater than 0
+                    const hasMeasurement = (typeof h === 'number' && h > 0);
+                    
+                    const markerStyle = {
                         radius: 8,
-                        fillColor: fillColor,
+                        fillColor: hasMeasurement ? "#2ecc71" : "#e74c3c", // Green if valid, Red if not
                         color: "#fff",
-                        weight: 1,
+                        weight: 1.5,
                         opacity: 1,
-                        fillOpacity: 0.8
-                    });
+                        fillOpacity: 0.85
+                    };
+                    
+                    return L.circleMarker(latlng, markerStyle);
                 },
                 onEachFeature: (feature, layer) => {
                     const fullSiteName = feature.properties.SITENAME ? feature.properties.SITENAME.trim() : "Unknown";
-                    const currentHeight = feature.properties.ORTHO_HIEGHT ?? "N/A";
+                    const hValue = feature.properties.ORTHO_HIEGHT;
+                    const displayHeight = (typeof hValue === 'number' && hValue > 0) ? hValue : "No valid measurement";
 
                     layer.bindPopup(`
-                        <strong>Site:</strong> ${fullSiteName}<br>
-                        <strong>Ortho Height:</strong> ${currentHeight}<br><br>
-                        <button onclick="updateDashboard('${fullSiteName}')" style="cursor:pointer; padding: 6px 12px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
+                        <div style="min-width: 150px;">
+                            <strong style="font-size: 1.1em;">${fullSiteName}</strong><br>
+                            <hr style="margin: 8px 0; border: 0; border-top: 1px solid #eee;">
+                            <strong>Ortho Height:</strong> ${displayHeight}<br><br>
+                            <button onclick="updateDashboard('${fullSiteName}')" 
+                                style="cursor:pointer; width: 100%; padding: 8px; background: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold;">
+                                Load Sensor Data
+                            </button>
+                        </div>
                     `);
                 }
             }).addTo(map);
 
-            // Add the legend to the map after data is loaded
             addLegend();
         });
 
@@ -115,9 +126,9 @@
 
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML += '<span class="legend-title">Ortho Height Status</span>';
-            div.innerHTML += '<i style="background: #2ecc71"></i> Height Recorded (> 0)<br>';
-            div.innerHTML += '<i style="background: #e67e22"></i> No Height (0/Null)';
+            div.innerHTML += '<span class="legend-title">Measurement Status</span>';
+            div.innerHTML += '<div><i style="background: #2ecc71"></i> Valid Height (> 0)</div>';
+            div.innerHTML += '<div><i style="background: #e74c3c"></i> No Measurement (0 / Null)</div>';
             return div;
         };
 
@@ -147,7 +158,7 @@
                 loadingLabel.style.display = 'none';
                 
                 if (!apiResponse.data || apiResponse.data.length === 0) {
-                    alert("No data found for this site in the last 7 days.");
+                    alert("No historical data found for this site in the last 7 days.");
                     return;
                 }
 
@@ -161,7 +172,7 @@
             .catch(err => {
                 loadingLabel.style.display = 'none';
                 console.error("Fetch Error:", err);
-                alert("Failed to load sensor data.");
+                alert("Failed to load sensor data. Check console for details.");
             });
     }
 
@@ -179,7 +190,7 @@
                     borderColor: '#3498db',
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
                     borderWidth: 2,
-                    pointRadius: 2,
+                    pointRadius: 1,
                     fill: true,
                     tension: 0.1
                 }]
@@ -191,7 +202,7 @@
                     x: {
                         type: 'time',
                         time: { unit: 'day', displayFormats: { day: 'MMM d' } },
-                        title: { display: true, text: 'Time (Local)' }
+                        title: { display: true, text: 'Date' }
                     },
                     y: {
                         title: { display: true, text: 'Elevation (ft)' },
