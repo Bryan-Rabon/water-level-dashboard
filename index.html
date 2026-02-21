@@ -9,50 +9,24 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
-        h2 { color: #2c3e50; margin-bottom: 5px; }
-        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
+        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
         .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        #site-display { color: #3498db; font-weight: bold; }
-        .loading-text { font-style: italic; color: #7f8c8d; display: none; margin-bottom: 10px; }
-        .instructions { font-size: 0.9em; color: #666; margin-bottom: 20px; }
-
-        /* Legend Styles */
+        
+        /* Legend */
         .info.legend {
-            padding: 12px;
-            font: 12px/18px Arial, sans-serif;
-            background: white;
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            border-radius: 8px;
-            color: #333;
-            border: 1px solid #ccc;
+            padding: 10px; background: white; background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; line-height: 20px;
         }
-        .info.legend i {
-            width: 14px;
-            height: 14px;
-            float: left;
-            margin-right: 10px;
-            opacity: 0.9;
-            border-radius: 50%;
-            border: 1px solid #fff;
-        }
-        .legend-title { font-weight: bold; margin-bottom: 8px; display: block; border-bottom: 1px solid #eee; }
+        .info.legend i { width: 14px; height: 14px; float: left; margin-right: 8px; border-radius: 50%; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>SCOR Water Level Monitor</h2>
-    <p class="instructions">Click any marker on the map to load the last 7 days of water elevation data.</p>
-    
-    <p>Current Site: <span id="site-display">None Selected</span></p>
-    <div id="loading" class="loading-text">Connecting to iRiver Cloud...</div>
-
+    <p>Current Site: <span id="site-display" style="color:#3498db; font-weight:bold;">None Selected</span></p>
     <div id="map"></div>
-
-    <div class="chart-card">
-        <canvas id="waterChart" style="width:100%; height:350px;"></canvas>
-    </div>
+    <div class="chart-card"><canvas id="waterChart" style="width:100%; height:350px;"></canvas></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -62,19 +36,10 @@
 
 <script>
     const map = L.map('map').setView([33.8361, -81.1637], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let waterChart;
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
-
-    // helper function to check if height is a valid number > 0
-    function isValidHeight(val) {
-        if (val === null || val === undefined || val === '') return false;
-        const num = parseFloat(val);
-        return !isNaN(num) && isFinite(num) && num > 0;
-    }
 
     fetch(esriUrl)
         .then(res => res.json())
@@ -82,116 +47,62 @@
             L.geoJSON(data, {
                 pointToLayer: (feature, latlng) => {
                     const h = feature.properties.ORTHO_HIEGHT;
-                    const hasData = isValidHeight(h);
+                    
+                    // SIMPLEST FIX: Use '+' to convert to number. 
+                    // If it's null, 0, or "0", (+h > 0) will be false.
+                    const hasData = (+h > 0); 
                     
                     return L.circleMarker(latlng, {
                         radius: 8,
-                        fillColor: hasData ? "#2ecc71" : "#e74c3c", // Green if > 0, Red otherwise
-                        color: "#fff",
-                        weight: 1.5,
-                        opacity: 1,
-                        fillOpacity: 0.85
+                        fillColor: hasData ? "#2ecc71" : "#e74c3c", // Green vs Red
+                        color: "#fff", weight: 1.5, fillOpacity: 0.85
                     });
                 },
                 onEachFeature: (feature, layer) => {
-                    const fullSiteName = feature.properties.SITENAME ? feature.properties.SITENAME.trim() : "Unknown";
+                    const name = feature.properties.SITENAME || "Unknown";
                     const h = feature.properties.ORTHO_HIEGHT;
-                    const displayHeight = isValidHeight(h) ? h : "No valid height data";
-
                     layer.bindPopup(`
-                        <div style="min-width: 160px;">
-                            <strong>${fullSiteName}</strong><br>
-                            <hr style="margin:5px 0;">
-                            <b>Height:</b> ${displayHeight}<br><br>
-                            <button onclick="updateDashboard('${fullSiteName}')" 
-                                style="width:100%; cursor:pointer; padding: 8px; background: #3498db; color: white; border: none; border-radius: 4px;">
-                                Load Sensor Data
-                            </button>
-                        </div>
+                        <strong>${name}</strong><br>Height: ${h || '0'}<br><br>
+                        <button onclick="updateDashboard('${name}')">Load Data</button>
                     `);
                 }
             }).addTo(map);
-
             addLegend();
         });
 
     function addLegend() {
         const legend = L.control({position: 'bottomright'});
-        legend.onAdd = function () {
+        legend.onAdd = () => {
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML += '<span class="legend-title">Station Status</span>';
-            div.innerHTML += '<div><i style="background: #2ecc71"></i> Measured Height (> 0)</div>';
-            div.innerHTML += '<div><i style="background: #e74c3c"></i> No Height (0 or Null)</div>';
+            div.innerHTML = '<b>Status</b><br>' +
+                            '<i style="background: #2ecc71"></i> Height > 0<br>' +
+                            '<i style="background: #e74c3c"></i> 0 / Null';
             return div;
         };
         legend.addTo(map);
     }
 
+    // Standard Dashboard Update Logic
     function updateDashboard(siteID) {
-        const loadingLabel = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
-        loadingLabel.style.display = 'block';
-
-        const now = luxon.DateTime.now();
-        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
-        const start = now.minus({ days: 7 }).toFormat('yyyy-MM-dd HH:mm:ss');
-
-        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-
-        fetch(proxyUrl)
+        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(luxon.DateTime.now().minus({days:7}).toFormat('yyyy-MM-dd HH:mm:ss'))}&end=${encodeURIComponent(luxon.DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'))}`;
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`)
             .then(res => res.json())
             .then(wrapper => {
                 const apiResponse = JSON.parse(wrapper.contents);
-                loadingLabel.style.display = 'none';
-                
-                if (!apiResponse.data || apiResponse.data.length === 0) {
-                    alert("No data found for this site in the last 7 days.");
-                    return;
-                }
-
-                const formattedData = apiResponse.data.map(item => ({
-                    x: item.t, 
-                    y: item.water_elevation_feet
-                }));
-
-                renderChart(formattedData);
-            })
-            .catch(err => {
-                loadingLabel.style.display = 'none';
-                console.error(err);
-                alert("Error connecting to sensor API.");
+                if (apiResponse.data) renderChart(apiResponse.data.map(i => ({x: i.t, y: i.water_elevation_feet})));
             });
     }
 
     function renderChart(dataPoints) {
         const ctx = document.getElementById('waterChart').getContext('2d');
-        if (waterChart) { waterChart.destroy(); }
-
+        if (waterChart) waterChart.destroy();
         waterChart = new Chart(ctx, {
             type: 'line',
-            data: {
-                datasets: [{
-                    label: 'Water Elevation (ft)',
-                    data: dataPoints,
-                    borderColor: '#3498db',
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 1,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { type: 'time', time: { unit: 'day' } },
-                    y: { beginAtZero: false }
-                }
-            }
+            data: { datasets: [{ label: 'Elevation (ft)', data: dataPoints, borderColor: '#3498db', fill: true }] },
+            options: { scales: { x: { type: 'time' } } }
         });
     }
 </script>
 </body>
 </html>
-
