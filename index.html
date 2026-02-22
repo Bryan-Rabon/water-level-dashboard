@@ -46,7 +46,7 @@
         .then(data => {
             L.geoJSON(data, {
                 pointToLayer: (feature, latlng) => {
-                    const h = feature.properties.ORTHO_HIEGHT;
+                    const h = feature.properties.ORTHO_HEIGHT;
                     
                     // SIMPLEST FIX: Use '+' to convert to number. 
                     // If it's null, 0, or "0", (+h > 0) will be false.
