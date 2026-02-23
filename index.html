@@ -13,7 +13,7 @@
         #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
         .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        /* Loading Banner Styles */
+        /* Loading Banner */
         #loading { 
             display: none; 
             background: #fff3cd; 
@@ -26,12 +26,14 @@
             text-align: center;
         }
 
-        /* Legend Styles */
+        /* Updated Legend */
         .info.legend {
-            padding: 10px; background: white; background: rgba(255,255,255,0.9);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; line-height: 20px;
+            padding: 12px; background: white; background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 8px; line-height: 24px;
+            border: 1px solid #ccc;
         }
-        .info.legend i { width: 14px; height: 14px; float: left; margin-right: 8px; border-radius: 50%; }
+        .info.legend i { width: 16px; height: 16px; float: left; margin-right: 10px; border-radius: 50%; border: 1px solid #fff; margin-top: 4px; }
+        .legend-title { font-weight: bold; display: block; margin-bottom: 5px; border-bottom: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -57,27 +59,33 @@
     let waterChart;
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    // 1. Load the Map Layer
     fetch(esriUrl)
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
                 pointToLayer: (feature, latlng) => {
                     const h = feature.properties.ORTHO_HEIGHT;
-                    const hasData = (+h > 0); 
+                    // Logic: Numeric check for values > 0
+                    const isSurveyed = (+h > 0); 
                     
                     return L.circleMarker(latlng, {
                         radius: 8,
-                        fillColor: hasData ? "#2ecc71" : "#e74c3c", 
+                        fillColor: isSurveyed ? "#2ecc71" : "#e74c3c", 
                         color: "#fff", weight: 1.5, fillOpacity: 0.85
                     });
                 },
                 onEachFeature: (feature, layer) => {
                     const name = feature.properties.SITENAME || "Unknown";
                     const h = feature.properties.ORTHO_HEIGHT;
+                    const statusText = (+h > 0) ? "Surveyed" : "Not Surveyed";
+
                     layer.bindPopup(`
-                        <strong>${name}</strong><br>Height: ${h || '0'}<br><br>
-                        <button onclick="updateDashboard('${name}')" style="cursor:pointer; padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
+                        <div style="min-width: 140px;">
+                            <strong>${name}</strong><br>
+                            Status: <b>${statusText}</b><br>
+                            Height: ${h || '0'}<br><br>
+                            <button onclick="updateDashboard('${name.trim()}')" style="cursor:pointer; width:100%; padding: 6px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
+                        </div>
                     `);
                 }
             }).addTo(map);
@@ -88,20 +96,17 @@
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = () => {
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML = '<b>Status</b><br>' +
-                            '<i style="background: #2ecc71"></i> Height > 0<br>' +
-                            '<i style="background: #e74c3c"></i> 0 / Null';
+            div.innerHTML = '<span class="legend-title">Station Status</span>' +
+                            '<i style="background: #2ecc71"></i> Surveyed<br>' +
+                            '<i style="background: #e74c3c"></i> Not Surveyed';
             return div;
         };
         legend.addTo(map);
     }
 
-    // 2. Fetch Data with Loading Banner and Error Handling
     function updateDashboard(siteID) {
         const loadingBanner = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
-        
-        // Show Loading Banner
         loadingBanner.style.display = 'block';
 
         const now = luxon.DateTime.now();
@@ -114,25 +119,20 @@
             .then(res => res.json())
             .then(wrapper => {
                 const apiResponse = JSON.parse(wrapper.contents);
-                loadingBanner.style.display = 'none'; // Hide Banner
+                loadingBanner.style.display = 'none';
 
                 if (!apiResponse.data || apiResponse.data.length === 0) {
                     alert("No water level data returned for " + siteID + " in the last 7 days.");
-                    if (waterChart) waterChart.destroy(); // Clear old chart if data is missing
+                    if (waterChart) waterChart.destroy();
                     return;
                 }
 
-                const formattedData = apiResponse.data.map(i => ({
-                    x: i.t, 
-                    y: i.water_elevation_feet
-                }));
-                
+                const formattedData = apiResponse.data.map(i => ({ x: i.t, y: i.water_elevation_feet }));
                 renderChart(formattedData);
             })
             .catch(err => {
                 loadingBanner.style.display = 'none';
-                console.error("Fetch Error:", err);
-                alert("Failed to connect to the sensor API. The site may be offline.");
+                alert("Failed to connect to the sensor API.");
             });
     }
 
@@ -147,15 +147,14 @@
                     data: dataPoints, 
                     borderColor: '#3498db', 
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    fill: true,
-                    tension: 0.1
+                    fill: true
                 }] 
             },
             options: { 
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: { 
-                    x: { type: 'time', title: { display: true, text: 'Date/Time' } },
+                    x: { type: 'time' },
                     y: { title: { display: true, text: 'Feet' } }
                 } 
             }
