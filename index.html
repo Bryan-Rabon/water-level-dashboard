@@ -9,10 +9,24 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
+        h2 { color: #2c3e50; margin-bottom: 5px; }
         #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
         .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        /* Legend */
+        /* Loading Banner Styles */
+        #loading { 
+            display: none; 
+            background: #fff3cd; 
+            color: #856404; 
+            padding: 10px; 
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ffeeba;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Legend Styles */
         .info.legend {
             padding: 10px; background: white; background: rgba(255,255,255,0.9);
             box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; line-height: 20px;
@@ -24,7 +38,9 @@
 
 <div class="container">
     <h2>SCOR Water Level Monitor</h2>
+    <div id="loading">Connecting to iRiver Cloud via Proxy... Please wait.</div>
     <p>Current Site: <span id="site-display" style="color:#3498db; font-weight:bold;">None Selected</span></p>
+    
     <div id="map"></div>
     <div class="chart-card"><canvas id="waterChart" style="width:100%; height:350px;"></canvas></div>
 </div>
@@ -41,20 +57,18 @@
     let waterChart;
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
+    // 1. Load the Map Layer
     fetch(esriUrl)
         .then(res => res.json())
         .then(data => {
             L.geoJSON(data, {
                 pointToLayer: (feature, latlng) => {
                     const h = feature.properties.ORTHO_HEIGHT;
-                    
-                    // SIMPLEST FIX: Use '+' to convert to number. 
-                    // If it's null, 0, or "0", (+h > 0) will be false.
                     const hasData = (+h > 0); 
                     
                     return L.circleMarker(latlng, {
                         radius: 8,
-                        fillColor: hasData ? "#2ecc71" : "#e74c3c", // Green vs Red
+                        fillColor: hasData ? "#2ecc71" : "#e74c3c", 
                         color: "#fff", weight: 1.5, fillOpacity: 0.85
                     });
                 },
@@ -63,7 +77,7 @@
                     const h = feature.properties.ORTHO_HEIGHT;
                     layer.bindPopup(`
                         <strong>${name}</strong><br>Height: ${h || '0'}<br><br>
-                        <button onclick="updateDashboard('${name}')">Load Data</button>
+                        <button onclick="updateDashboard('${name}')" style="cursor:pointer; padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
                     `);
                 }
             }).addTo(map);
@@ -82,15 +96,43 @@
         legend.addTo(map);
     }
 
-    // Standard Dashboard Update Logic
+    // 2. Fetch Data with Loading Banner and Error Handling
     function updateDashboard(siteID) {
+        const loadingBanner = document.getElementById('loading');
         document.getElementById('site-display').innerText = siteID;
-        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(luxon.DateTime.now().minus({days:7}).toFormat('yyyy-MM-dd HH:mm:ss'))}&end=${encodeURIComponent(luxon.DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'))}`;
+        
+        // Show Loading Banner
+        loadingBanner.style.display = 'block';
+
+        const now = luxon.DateTime.now();
+        const start = now.minus({days:7}).toFormat('yyyy-MM-dd HH:mm:ss');
+        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
+
+        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+        
         fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`)
             .then(res => res.json())
             .then(wrapper => {
                 const apiResponse = JSON.parse(wrapper.contents);
-                if (apiResponse.data) renderChart(apiResponse.data.map(i => ({x: i.t, y: i.water_elevation_feet})));
+                loadingBanner.style.display = 'none'; // Hide Banner
+
+                if (!apiResponse.data || apiResponse.data.length === 0) {
+                    alert("No water level data returned for " + siteID + " in the last 7 days.");
+                    if (waterChart) waterChart.destroy(); // Clear old chart if data is missing
+                    return;
+                }
+
+                const formattedData = apiResponse.data.map(i => ({
+                    x: i.t, 
+                    y: i.water_elevation_feet
+                }));
+                
+                renderChart(formattedData);
+            })
+            .catch(err => {
+                loadingBanner.style.display = 'none';
+                console.error("Fetch Error:", err);
+                alert("Failed to connect to the sensor API. The site may be offline.");
             });
     }
 
@@ -99,8 +141,24 @@
         if (waterChart) waterChart.destroy();
         waterChart = new Chart(ctx, {
             type: 'line',
-            data: { datasets: [{ label: 'Elevation (ft)', data: dataPoints, borderColor: '#3498db', fill: true }] },
-            options: { scales: { x: { type: 'time' } } }
+            data: { 
+                datasets: [{ 
+                    label: 'Elevation (ft)', 
+                    data: dataPoints, 
+                    borderColor: '#3498db', 
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    fill: true,
+                    tension: 0.1
+                }] 
+            },
+            options: { 
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { 
+                    x: { type: 'time', title: { display: true, text: 'Date/Time' } },
+                    y: { title: { display: true, text: 'Feet' } }
+                } 
+            }
         });
     }
 </script>
