@@ -3,48 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCOR Water Level Dashboard</title>
+    <title>SCOR Multi-Station Dashboard</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; }
         h2 { color: #2c3e50; margin-bottom: 5px; }
-        #map { height: 450px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; }
+        #map { height: 400px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
         .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
-        /* Loading Banner */
-        #loading { 
-            display: none; 
-            background: #fff3cd; 
-            color: #856404; 
-            padding: 10px; 
-            border-radius: 8px; 
-            margin-bottom: 15px; 
-            border: 1px solid #ffeeba;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* Updated Legend */
-        .info.legend {
-            padding: 12px; background: white; background: rgba(255,255,255,0.9);
-            box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 8px; line-height: 24px;
-            border: 1px solid #ccc;
-        }
-        .info.legend i { width: 16px; height: 16px; float: left; margin-right: 10px; border-radius: 50%; border: 1px solid #fff; margin-top: 4px; }
-        .legend-title { font-weight: bold; display: block; margin-bottom: 5px; border-bottom: 1px solid #ddd; }
+        /* Control Bar */
+        .controls { display: flex; align-items: center; gap: 20px; background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+        
+        #loading { display: none; background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffeeba; text-align: center; font-weight: bold; }
+        .instructions { font-size: 0.85em; color: #555; margin-bottom: 10px; background: #eef; padding: 8px; border-radius: 4px; border-left: 4px solid #3498db; }
+        
+        .info.legend { padding: 10px; background: white; background: rgba(255,255,255,0.9); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 8px; line-height: 20px; font-size: 12px; }
+        .info.legend i { width: 14px; height: 14px; float: left; margin-right: 8px; border-radius: 50%; margin-top: 3px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>SCOR Water Level Monitor</h2>
-    <div id="loading">Connecting to iRiver Cloud via Proxy... Please wait.</div>
-    <p>Current Site: <span id="site-display" style="color:#3498db; font-weight:bold;">None Selected</span></p>
+    <div class="instructions">
+        <strong>Multi-Select:</strong> Hold <strong>Shift</strong> and <strong>Click-Drag</strong> to select stations in a box.
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label><strong>Data Mode:</strong></label>
+            <select id="data-mode" onchange="refreshCurrentSelection()">
+                <option value="auto">Auto (Elevation if Surveyed)</option>
+                <option value="depth">Force Depth (All Stations)</option>
+                <option value="elevation">Force Elevation (Surveyed Only)</option>
+            </select>
+        </div>
+        <div class="control-group">
+            <label><strong>Sites Selected:</strong></label>
+            <span id="site-display" style="color:#3498db; font-weight:bold;">None</span>
+        </div>
+    </div>
+
+    <div id="loading">Fetching data...</div>
     
     <div id="map"></div>
-    <div class="chart-card"><canvas id="waterChart" style="width:100%; height:350px;"></canvas></div>
+    <div class="chart-card">
+        <canvas id="waterChart" style="width:100%; height:400px;"></canvas>
+    </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -53,112 +62,142 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
-    const map = L.map('map').setView([33.8361, -81.1637], 7);
+    const map = L.map('map', { boxZoom: true }).setView([33.8361, -81.1637], 7);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let waterChart;
+    let allLayers = [];
+    let currentSelection = []; // Stores the last selected sites for refreshing
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    fetch(esriUrl)
-        .then(res => res.json())
-        .then(data => {
-            L.geoJSON(data, {
-                pointToLayer: (feature, latlng) => {
-                    const h = feature.properties.ORTHO_HEIGHT;
-                    // Logic: Numeric check for values > 0
-                    const isSurveyed = (+h > 0); 
-                    
-                    return L.circleMarker(latlng, {
-                        radius: 8,
-                        fillColor: isSurveyed ? "#2ecc71" : "#e74c3c", 
-                        color: "#fff", weight: 1.5, fillOpacity: 0.85
-                    });
-                },
-                onEachFeature: (feature, layer) => {
-                    const name = feature.properties.SITENAME || "Unknown";
-                    const h = feature.properties.ORTHO_HEIGHT;
-                    const statusText = (+h > 0) ? "Surveyed" : "Not Surveyed";
+    fetch(esriUrl).then(res => res.json()).then(data => {
+        L.geoJSON(data, {
+            pointToLayer: (feature, latlng) => {
+                const isSurveyed = (+feature.properties.ORTHO_HEIGHT > 0);
+                return L.circleMarker(latlng, {
+                    radius: 8,
+                    fillColor: isSurveyed ? "#2ecc71" : "#e74c3c",
+                    color: "#fff", weight: 1.5, fillOpacity: 0.8
+                });
+            },
+            onEachFeature: (feature, layer) => {
+                allLayers.push(layer);
+                const rawName = (feature.properties.SITENAME || "Unknown").trim();
+                const h = feature.properties.ORTHO_HEIGHT || 0;
+                layer.bindPopup(`<strong>${rawName.substring(0,8)}</strong><br><button onclick="updateMultiDashboard([{name:'${rawName}', height:${h}}])">Chart Site</button>`);
+            }
+        }).addTo(map);
+        addLegend();
+    });
 
-                    layer.bindPopup(`
-                        <div style="min-width: 140px;">
-                            <strong>${name}</strong><br>
-                            Status: <b>${statusText}</b><br>
-                            Height: ${h || '0'}<br><br>
-                            <button onclick="updateDashboard('${name.trim()}')" style="cursor:pointer; width:100%; padding: 6px; background: #3498db; color: white; border: none; border-radius: 4px;">Load Data</button>
-                        </div>
-                    `);
-                }
-            }).addTo(map);
-            addLegend();
+    map.on('boxzoomend', function(e) {
+        const bounds = e.boxZoomBounds;
+        const selectedSites = [];
+        allLayers.forEach(layer => {
+            if (bounds.contains(layer.getLatLng())) {
+                selectedSites.push({
+                    name: layer.feature.properties.SITENAME.trim(),
+                    height: +layer.feature.properties.ORTHO_HEIGHT || 0
+                });
+            }
         });
+        if (selectedSites.length > 0) updateMultiDashboard(selectedSites);
+    });
+
+    // Helper to refresh when toggle is changed
+    function refreshCurrentSelection() {
+        if (currentSelection.length > 0) updateMultiDashboard(currentSelection);
+    }
+
+    async function updateMultiDashboard(sites) {
+        currentSelection = sites; // Save selection
+        const loadingBanner = document.getElementById('loading');
+        const siteDisplay = document.getElementById('site-display');
+        const mode = document.getElementById('data-mode').value;
+        
+        loadingBanner.style.display = 'block';
+        siteDisplay.innerText = sites.map(s => s.name.substring(0, 8)).join(", ");
+
+        // LOGIC: Determine which field to use
+        let useDepth = false;
+        if (mode === 'depth') {
+            useDepth = true;
+        } else if (mode === 'auto') {
+            useDepth = sites.some(s => s.height === 0);
+        } else { // mode is elevation
+            useDepth = false;
+        }
+
+        const dataField = useDepth ? 'depth_feet' : 'water_elevation_feet';
+        const labelSuffix = useDepth ? "(Depth)" : "(Elev)";
+        const now = luxon.DateTime.now();
+        const start = now.minus({days: 7}).toFormat('yyyy-MM-dd HH:mm:ss');
+        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
+        const colors = ['#3498db', '#e67e22', '#2ecc71', '#9b59b6', '#f1c40f', '#1abc9c', '#e74c3c'];
+
+        const requests = sites.map(async (site, index) => {
+            const cleanName = site.name.trim();
+            const uid = Math.floor(Math.random() * 100000);
+            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&v=${uid}`;
+            
+            try {
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
+                const wrapper = await response.json();
+                const apiData = JSON.parse(wrapper.contents);
+
+                if (apiData?.data?.length > 0) {
+                    return {
+                        label: `${cleanName.substring(0, 8)} ${labelSuffix}`,
+                        data: apiData.data.map(d => ({ x: d.t, y: d[dataField] })),
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: 'transparent',
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        tension: 0.1
+                    };
+                }
+            } catch (err) { console.error(err); }
+            return null;
+        });
+
+        const finalResults = await Promise.all(requests);
+        const datasetsToPlot = finalResults.filter(ds => ds !== null);
+        loadingBanner.style.display = 'none';
+
+        if (datasetsToPlot.length === 0) {
+            alert("No data found for selected sites/mode.");
+            if (waterChart) waterChart.destroy();
+        } else {
+            renderMultiChart(datasetsToPlot, useDepth ? "Feet (Depth)" : "Feet (Elevation)");
+        }
+    }
+
+    function renderMultiChart(datasets, yAxisTitle) {
+        const ctx = document.getElementById('waterChart').getContext('2d');
+        if (waterChart) waterChart.destroy();
+        waterChart = new Chart(ctx, {
+            type: 'line',
+            data: { datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Time' } },
+                    y: { title: { display: true, text: yAxisTitle } }
+                }
+            }
+        });
+    }
 
     function addLegend() {
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = () => {
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML = '<span class="legend-title">Station Status</span>' +
-                            '<i style="background: #2ecc71"></i> Surveyed<br>' +
-                            '<i style="background: #e74c3c"></i> Not Surveyed';
+            div.innerHTML = '<b>Status</b><br><i style="background: #2ecc71"></i> Surveyed<br><i style="background: #e74c3c"></i> Not Surveyed';
             return div;
         };
         legend.addTo(map);
-    }
-
-    function updateDashboard(siteID) {
-        const loadingBanner = document.getElementById('loading');
-        document.getElementById('site-display').innerText = siteID;
-        loadingBanner.style.display = 'block';
-
-        const now = luxon.DateTime.now();
-        const start = now.minus({days:7}).toFormat('yyyy-MM-dd HH:mm:ss');
-        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
-
-        const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${siteID}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-        
-        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`)
-            .then(res => res.json())
-            .then(wrapper => {
-                const apiResponse = JSON.parse(wrapper.contents);
-                loadingBanner.style.display = 'none';
-
-                if (!apiResponse.data || apiResponse.data.length === 0) {
-                    alert("No water level data returned for " + siteID + " in the last 7 days.");
-                    if (waterChart) waterChart.destroy();
-                    return;
-                }
-
-                const formattedData = apiResponse.data.map(i => ({ x: i.t, y: i.water_elevation_feet }));
-                renderChart(formattedData);
-            })
-            .catch(err => {
-                loadingBanner.style.display = 'none';
-                alert("Failed to connect to the sensor API.");
-            });
-    }
-
-    function renderChart(dataPoints) {
-        const ctx = document.getElementById('waterChart').getContext('2d');
-        if (waterChart) waterChart.destroy();
-        waterChart = new Chart(ctx, {
-            type: 'line',
-            data: { 
-                datasets: [{ 
-                    label: 'Elevation (ft)', 
-                    data: dataPoints, 
-                    borderColor: '#3498db', 
-                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                    fill: true
-                }] 
-            },
-            options: { 
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { 
-                    x: { type: 'time' },
-                    y: { title: { display: true, text: 'Feet' } }
-                } 
-            }
-        });
     }
 </script>
 </body>
