@@ -11,13 +11,22 @@
         .container { max-width: 1200px; margin: 0 auto; }
         h2 { color: #2c3e50; margin-bottom: 5px; }
         #map { height: 400px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
-        .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
         
         /* Control Bar */
-        .controls { display: flex; align-items: center; gap: 20px; background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px; background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         .control-group { display: flex; flex-direction: column; gap: 5px; }
-        select { padding: 8px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+        label { font-size: 0.85em; font-weight: bold; color: #555; }
+        select, input[type="date"] { padding: 8px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-family: inherit; }
         
+        /* Stats Table */
+        .stats-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #2c3e50; font-size: 0.9em; }
+        .val-up { color: #e74c3c; font-weight: bold; }
+        .val-down { color: #2ecc71; font-weight: bold; }
+
         #loading { display: none; background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffeeba; text-align: center; font-weight: bold; }
         .instructions { font-size: 0.85em; color: #555; margin-bottom: 10px; background: #eef; padding: 8px; border-radius: 4px; border-left: 4px solid #3498db; }
         
@@ -30,29 +39,56 @@
 <div class="container">
     <h2>SCOR Water Level Monitor</h2>
     <div class="instructions">
-        <strong>Multi-Select:</strong> Hold <strong>Shift</strong> and <strong>Click-Drag</strong> to select stations in a box.
+        <strong>Multi-Select:</strong> Hold <strong>Shift</strong> and <strong>Click-Drag</strong> to select stations.
     </div>
 
     <div class="controls">
         <div class="control-group">
-            <label><strong>Data Mode:</strong></label>
+            <label>Start Date</label>
+            <input type="date" id="start-date" onchange="refreshCurrentSelection()">
+        </div>
+        <div class="control-group">
+            <label>End Date</label>
+            <input type="date" id="end-date" onchange="refreshCurrentSelection()">
+        </div>
+        <div class="control-group">
+            <label>Data Mode</label>
             <select id="data-mode" onchange="refreshCurrentSelection()">
                 <option value="auto">Auto (Elevation if Surveyed)</option>
                 <option value="depth">Force Depth (All Stations)</option>
                 <option value="elevation">Force Elevation (Surveyed Only)</option>
             </select>
         </div>
-        <div class="control-group">
-            <label><strong>Sites Selected:</strong></label>
-            <span id="site-display" style="color:#3498db; font-weight:bold;">None</span>
+        <div class="control-group" style="margin-left: auto;">
+            <label>Selected:</label>
+            <span id="site-display" style="color:#3498db; font-weight:bold; font-size: 0.9em;">None</span>
         </div>
     </div>
 
-    <div id="loading">Fetching data...</div>
+    <div id="loading">Updating Data & Statistics...</div>
     
     <div id="map"></div>
+
     <div class="chart-card">
         <canvas id="waterChart" style="width:100%; height:400px;"></canvas>
+    </div>
+
+    <div class="stats-container">
+        <h3>Summary Statistics</h3>
+        <table id="stats-table">
+            <thead>
+                <tr>
+                    <th>Station</th>
+                    <th>Max Level (ft)</th>
+                    <th>Min Level (ft)</th>
+                    <th>Net Change</th>
+                    <th>Latest Reading</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5" style="text-align:center; color:#999;">Select stations on the map to see statistics.</td></tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -62,12 +98,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
+    window.onload = function() {
+        const today = luxon.DateTime.now();
+        const weekAgo = today.minus({days: 7});
+        document.getElementById('end-date').value = today.toISODate();
+        document.getElementById('start-date').value = weekAgo.toISODate();
+    };
+
     const map = L.map('map', { boxZoom: true }).setView([33.8361, -81.1637], 7);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
     let waterChart;
     let allLayers = [];
-    let currentSelection = []; // Stores the last selected sites for refreshing
+    let currentSelection = [];
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
     fetch(esriUrl).then(res => res.json()).then(data => {
@@ -104,41 +147,33 @@
         if (selectedSites.length > 0) updateMultiDashboard(selectedSites);
     });
 
-    // Helper to refresh when toggle is changed
     function refreshCurrentSelection() {
         if (currentSelection.length > 0) updateMultiDashboard(currentSelection);
     }
 
     async function updateMultiDashboard(sites) {
-        currentSelection = sites; // Save selection
+        currentSelection = sites;
         const loadingBanner = document.getElementById('loading');
         const siteDisplay = document.getElementById('site-display');
         const mode = document.getElementById('data-mode').value;
-        
+        const startDateVal = document.getElementById('start-date').value;
+        const endDateVal = document.getElementById('end-date').value;
+
+        const startFormatted = luxon.DateTime.fromISO(startDateVal).startOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
+        const endFormatted = luxon.DateTime.fromISO(endDateVal).endOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
+
         loadingBanner.style.display = 'block';
         siteDisplay.innerText = sites.map(s => s.name.substring(0, 8)).join(", ");
 
-        // LOGIC: Determine which field to use
-        let useDepth = false;
-        if (mode === 'depth') {
-            useDepth = true;
-        } else if (mode === 'auto') {
-            useDepth = sites.some(s => s.height === 0);
-        } else { // mode is elevation
-            useDepth = false;
-        }
-
+        let useDepth = (mode === 'depth') || (mode === 'auto' && sites.some(s => s.height === 0));
         const dataField = useDepth ? 'depth_feet' : 'water_elevation_feet';
         const labelSuffix = useDepth ? "(Depth)" : "(Elev)";
-        const now = luxon.DateTime.now();
-        const start = now.minus({days: 7}).toFormat('yyyy-MM-dd HH:mm:ss');
-        const end = now.toFormat('yyyy-MM-dd HH:mm:ss');
         const colors = ['#3498db', '#e67e22', '#2ecc71', '#9b59b6', '#f1c40f', '#1abc9c', '#e74c3c'];
 
         const requests = sites.map(async (site, index) => {
             const cleanName = site.name.trim();
             const uid = Math.floor(Math.random() * 100000);
-            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&v=${uid}`;
+            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}&v=${uid}`;
             
             try {
                 const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`);
@@ -146,6 +181,7 @@
                 const apiData = JSON.parse(wrapper.contents);
 
                 if (apiData?.data?.length > 0) {
+                    const values = apiData.data.map(d => d[dataField]).filter(v => v !== null);
                     return {
                         label: `${cleanName.substring(0, 8)} ${labelSuffix}`,
                         data: apiData.data.map(d => ({ x: d.t, y: d[dataField] })),
@@ -153,7 +189,15 @@
                         backgroundColor: 'transparent',
                         borderWidth: 2.5,
                         pointRadius: 0,
-                        tension: 0.1
+                        tension: 0.1,
+                        // Custom property for stats calculation
+                        stats: {
+                            name: cleanName.substring(0, 8),
+                            max: Math.max(...values),
+                            min: Math.min(...values),
+                            latest: values[values.length - 1],
+                            net: values[values.length - 1] - values[0]
+                        }
                     };
                 }
             } catch (err) { console.error(err); }
@@ -165,16 +209,38 @@
         loadingBanner.style.display = 'none';
 
         if (datasetsToPlot.length === 0) {
-            alert("No data found for selected sites/mode.");
+            alert("No data found.");
             if (waterChart) waterChart.destroy();
         } else {
             renderMultiChart(datasetsToPlot, useDepth ? "Feet (Depth)" : "Feet (Elevation)");
+            updateStatsTable(datasetsToPlot);
         }
+    }
+
+    function updateStatsTable(datasets) {
+        const tbody = document.querySelector('#stats-table tbody');
+        tbody.innerHTML = '';
+
+        datasets.forEach(ds => {
+            const s = ds.stats;
+            const netClass = s.net > 0 ? 'val-up' : 'val-down';
+            const netSign = s.net > 0 ? '+' : '';
+            
+            const row = `<tr>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.max.toFixed(2)}</td>
+                <td>${s.min.toFixed(2)}</td>
+                <td class="${netClass}">${netSign}${s.net.toFixed(2)} ft</td>
+                <td>${s.latest.toFixed(2)} ft</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
     }
 
     function renderMultiChart(datasets, yAxisTitle) {
         const ctx = document.getElementById('waterChart').getContext('2d');
         if (waterChart) waterChart.destroy();
+        
         waterChart = new Chart(ctx, {
             type: 'line',
             data: { datasets: datasets },
@@ -183,8 +249,18 @@
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 scales: {
-                    x: { type: 'time', time: { unit: 'day' }, title: { display: true, text: 'Time' } },
-                    y: { title: { display: true, text: yAxisTitle } }
+                    x: { 
+                        type: 'time', 
+                        time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } },
+                        title: { display: true, text: 'Date & Time' }
+                    },
+                    y: { 
+                        title: { display: true, text: yAxisTitle },
+                        ticks: { precision: 2 }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom' }
                 }
             }
         });
