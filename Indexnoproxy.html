@@ -176,8 +176,8 @@
             const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}&v=${uid}`;
             
             try {
-                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`); 
-                <!-- const response = await fetch(targetUrl); -->
+                <!-- const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`); -->
+                const response = await fetch(targetUrl);
                 const wrapper = await response.json();
                 const apiData = JSON.parse(wrapper.contents);
 
