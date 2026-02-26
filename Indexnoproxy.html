@@ -98,6 +98,21 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
+    /** * ENVIRONMENT & PROXY CONFIG 
+     */
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    
+    // Using corsproxy.io for reliability. If you use your own Cloudflare Worker, put that URL here.
+    const PROXY_BASE = "https://corsproxy.io/?url=";
+
+    // Helper to decide if we need a proxy (Local always needs one, GitHub might not)
+    function getFinalUrl(target) {
+        return isLocal ? (PROXY_BASE + encodeURIComponent(target)) : target;
+    }
+
+    /**
+     * APP INITIALIZATION
+     */
     window.onload = function() {
         const today = luxon.DateTime.now();
         const weekAgo = today.minus({days: 7});
@@ -111,6 +126,8 @@
     let waterChart;
     let allLayers = [];
     let currentSelection = [];
+    
+    // Initial fetch of site markers
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
     fetch(esriUrl).then(res => res.json()).then(data => {
@@ -127,12 +144,15 @@
                 allLayers.push(layer);
                 const rawName = (feature.properties.SITENAME || "Unknown").trim();
                 const h = feature.properties.ORTHO_HEIGHT || 0;
-                layer.bindPopup(`<strong>${rawName.substring(0,8)}</strong><br><button onclick="updateMultiDashboard([{name:'${rawName}', height:${h}}])">Chart Site</button>`);
+                layer.bindPopup(`<strong>${rawName.substring(0,12)}</strong><br><button onclick="updateMultiDashboard([{name:'${rawName}', height:${h}}])">Chart Site</button>`);
             }
         }).addTo(map);
         addLegend();
     });
 
+    /**
+     * MAP INTERACTION logic
+     */
     map.on('boxzoomend', function(e) {
         const bounds = e.boxZoomBounds;
         const selectedSites = [];
@@ -151,6 +171,9 @@
         if (currentSelection.length > 0) updateMultiDashboard(currentSelection);
     }
 
+    /**
+     * CORE DATA FETCHING LOGIC
+     */
     async function updateMultiDashboard(sites) {
         currentSelection = sites;
         const loadingBanner = document.getElementById('loading');
@@ -175,14 +198,20 @@
             const uid = Math.floor(Math.random() * 100000);
             const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}&v=${uid}`;
             
+            // Environment-aware URL
+            const finalUrl = getFinalUrl(targetUrl);
+
             try {
-                <!-- const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`); -->
-                const response = await fetch(targetUrl);
-                const wrapper = await response.json();
-                const apiData = JSON.parse(wrapper.contents);
+                const response = await fetch(finalUrl);
+                const rawResult = await response.json();
+
+                // Logic to handle both Proxy Wrapper (contents) and Direct Response
+                const apiData = rawResult.contents ? JSON.parse(rawResult.contents) : rawResult;
 
                 if (apiData?.data?.length > 0) {
                     const values = apiData.data.map(d => d[dataField]).filter(v => v !== null);
+                    if (values.length === 0) return null;
+
                     return {
                         label: `${cleanName.substring(0, 8)} ${labelSuffix}`,
                         data: apiData.data.map(d => ({ x: d.t, y: d[dataField] })),
@@ -191,7 +220,6 @@
                         borderWidth: 2.5,
                         pointRadius: 0,
                         tension: 0.1,
-                        // Custom property for stats calculation
                         stats: {
                             name: cleanName.substring(0, 8),
                             max: Math.max(...values),
@@ -201,7 +229,9 @@
                         }
                     };
                 }
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error(`Fetch error for ${cleanName}:`, err); 
+            }
             return null;
         });
 
@@ -210,7 +240,7 @@
         loadingBanner.style.display = 'none';
 
         if (datasetsToPlot.length === 0) {
-            alert("No data found.");
+            alert("No data found for this selection.");
             if (waterChart) waterChart.destroy();
         } else {
             renderMultiChart(datasetsToPlot, useDepth ? "Feet (Depth)" : "Feet (Elevation)");
@@ -218,6 +248,9 @@
         }
     }
 
+    /**
+     * UI RENDERING HELPERS
+     */
     function updateStatsTable(datasets) {
         const tbody = document.querySelector('#stats-table tbody');
         tbody.innerHTML = '';
