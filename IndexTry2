@@ -13,11 +13,13 @@
         #map { height: 400px; width: 100%; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border: 1px solid #ddd; z-index: 1; }
         .chart-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
         
+        /* Control Bar */
         .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px; background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         .control-group { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 0.85em; font-weight: bold; color: #555; }
         select, input[type="date"] { padding: 8px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-family: inherit; }
         
+        /* Stats Table */
         .stats-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
@@ -96,6 +98,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 
 <script>
+    /** * ENVIRONMENT & PROXY CONFIG 
+     */
+    // Broadened local check for VS Code Live Preview & local dev
+    const isLocal = window.location.hostname === "localhost" || 
+                    window.location.hostname === "127.0.0.1" || 
+                    window.location.port !== ""; 
+
+    // Using corsproxy.io
+    const PROXY_BASE = "https://corsproxy.io/?url=";
+
+    function getFinalUrl(target) {
+        return isLocal ? (PROXY_BASE + encodeURIComponent(target)) : target;
+    }
+
     /**
      * APP INITIALIZATION
      */
@@ -115,27 +131,26 @@
     
     const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
-    fetch(esriUrl)
-        .then(res => res.json())
-        .then(data => {
-            L.geoJSON(data, {
-                pointToLayer: (feature, latlng) => {
-                    const isSurveyed = (+feature.properties.ORTHO_HEIGHT > 0);
-                    return L.circleMarker(latlng, {
-                        radius: 8,
-                        fillColor: isSurveyed ? "#2ecc71" : "#e74c3c",
-                        color: "#fff", weight: 1.5, fillOpacity: 0.8
-                    });
-                },
-                onEachFeature: (feature, layer) => {
-                    allLayers.push(layer);
-                    const rawName = (feature.properties.SITENAME || "Unknown").trim();
-                    const h = feature.properties.ORTHO_HEIGHT || 0;
-                    layer.bindPopup(`<strong>${rawName}</strong><br><button onclick="updateMultiDashboard([{name:'${rawName}', height:${h}}])">Chart Site</button>`);
-                }
-            }).addTo(map);
-            addLegend();
-        });
+    // Markers fetch
+    fetch(esriUrl).then(res => res.json()).then(data => {
+        L.geoJSON(data, {
+            pointToLayer: (feature, latlng) => {
+                const isSurveyed = (+feature.properties.ORTHO_HEIGHT > 0);
+                return L.circleMarker(latlng, {
+                    radius: 8,
+                    fillColor: isSurveyed ? "#2ecc71" : "#e74c3c",
+                    color: "#fff", weight: 1.5, fillOpacity: 0.8
+                });
+            },
+            onEachFeature: (feature, layer) => {
+                allLayers.push(layer);
+                const rawName = (feature.properties.SITENAME || "Unknown").trim();
+                const h = feature.properties.ORTHO_HEIGHT || 0;
+                layer.bindPopup(`<strong>${rawName.substring(0,15)}</strong><br><button onclick="updateMultiDashboard([{name:'${rawName}', height:${h}}])">Chart Site</button>`);
+            }
+        }).addTo(map);
+        addLegend();
+    });
 
     map.on('boxzoomend', function(e) {
         const bounds = e.boxZoomBounds;
@@ -176,18 +191,27 @@
 
         const requests = sites.map(async (site, index) => {
             const cleanName = site.name.trim();
-            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}`;
+            const uid = Math.floor(Math.random() * 100000);
+            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}&v=${uid}`;
             
+            const finalUrl = getFinalUrl(targetUrl);
+
             try {
-                const response = await fetch(targetUrl);
-                const apiData = await response.json();
+                const response = await fetch(finalUrl);
+                if (!response.ok) throw new Error('Network response not ok');
+                const rawResult = await response.json();
+
+                // Robust Handling for Proxied vs Direct Data
+                const apiData = rawResult.contents ? 
+                    (typeof rawResult.contents === 'string' ? JSON.parse(rawResult.contents) : rawResult.contents) 
+                    : rawResult;
 
                 if (apiData?.data?.length > 0) {
                     const values = apiData.data.map(d => d[dataField]).filter(v => v !== null);
                     if (values.length === 0) return null;
 
                     return {
-                        label: `${cleanName.substring(0, 15)} ${labelSuffix}`,
+                        label: `${cleanName.substring(0, 10)} ${labelSuffix}`,
                         data: apiData.data.map(d => ({ x: d.t, y: d[dataField] })),
                         borderColor: colors[index % colors.length],
                         backgroundColor: 'transparent',
@@ -195,7 +219,7 @@
                         pointRadius: 0,
                         tension: 0.1,
                         stats: {
-                            name: cleanName,
+                            name: cleanName.substring(0, 10),
                             max: Math.max(...values),
                             min: Math.min(...values),
                             latest: values[values.length - 1],
@@ -225,12 +249,10 @@
     function updateStatsTable(datasets) {
         const tbody = document.querySelector('#stats-table tbody');
         tbody.innerHTML = '';
-
         datasets.forEach(ds => {
             const s = ds.stats;
             const netClass = s.net > 0 ? 'val-up' : 'val-down';
             const netSign = s.net > 0 ? '+' : '';
-            
             const row = `<tr>
                 <td><strong>${s.name}</strong></td>
                 <td>${s.max.toFixed(2)}</td>
@@ -245,7 +267,6 @@
     function renderMultiChart(datasets, yAxisTitle) {
         const ctx = document.getElementById('waterChart').getContext('2d');
         if (waterChart) waterChart.destroy();
-        
         waterChart = new Chart(ctx, {
             type: 'line',
             data: { datasets: datasets },
@@ -264,9 +285,7 @@
                         ticks: { precision: 2 }
                     }
                 },
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
+                plugins: { legend: { position: 'bottom' } }
             }
         });
     }
