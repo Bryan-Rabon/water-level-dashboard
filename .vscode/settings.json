@@ -1,0 +1,10 @@
+{
+  "liveServer.settings.proxy": {
+    "enable": true,
+    "baseUri": "/scor-api",
+    "proxyUri": "https://metadata.iriver.cloud/api/",
+    "proxyStrictSSL": false
+  },
+  "liveServer.settings.CustomBrowser": "chrome",
+  "liveServer.settings.NoBrowser": false
+}

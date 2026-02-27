@@ -97,6 +97,14 @@
 
 <script>
     /**
+     * ENVIRONMENT DETECTION
+     * If on localhost/127.0.0.1, we use the Live Server proxy path defined in settings.json.
+     * Otherwise, we use the direct API domain.
+     */
+    const isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+    const API_BASE_URL = isLocal ? "/scor-api" : "https://metadata.iriver.cloud/api";
+
+    /**
      * APP INITIALIZATION
      */
     window.onload = function() {
@@ -176,7 +184,9 @@
 
         const requests = sites.map(async (site, index) => {
             const cleanName = site.name.trim();
-            const targetUrl = `https://metadata.iriver.cloud/api/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}`;
+            
+            // DYNAMIC URL: Uses API_BASE_URL (either local proxy or real cloud domain)
+            const targetUrl = `${API_BASE_URL}/v1/scor/${encodeURIComponent(cleanName)}?start=${encodeURIComponent(startFormatted)}&end=${encodeURIComponent(endFormatted)}`;
             
             try {
                 const response = await fetch(targetUrl);
