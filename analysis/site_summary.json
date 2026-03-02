@@ -1,0 +1,2972 @@
+[
+  {
+    "SITE": "SCOR000144dd1336f7",
+    "Parameter": "depth",
+    "avg_result": 7.8196,
+    "min_result": 0.643,
+    "max_result": 15.0919,
+    "reading_count": 41157,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000144dd1336f7",
+    "Parameter": "distance",
+    "avg_result": 7.2723,
+    "min_result": 0,
+    "max_result": 14.4488,
+    "reading_count": 41157,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000144dd1336f7",
+    "Parameter": "water_elevation",
+    "avg_result": -7.2723,
+    "min_result": -14.4488,
+    "max_result": 0,
+    "reading_count": 41157,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000444ddd006df",
+    "Parameter": "depth",
+    "avg_result": 1.4574,
+    "min_result": -1.4895,
+    "max_result": 12.4672,
+    "reading_count": 50500,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000444ddd006df",
+    "Parameter": "distance",
+    "avg_result": 11.0098,
+    "min_result": 0,
+    "max_result": 13.9567,
+    "reading_count": 50500,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000444ddd006df",
+    "Parameter": "water_elevation",
+    "avg_result": -11.0098,
+    "min_result": -13.9567,
+    "max_result": 0,
+    "reading_count": 50500,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000544ddd4ed1f",
+    "Parameter": "depth",
+    "avg_result": 0.865,
+    "min_result": -1.1778,
+    "max_result": 10.1378,
+    "reading_count": 66370,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000544ddd4ed1f",
+    "Parameter": "distance",
+    "avg_result": 9.2728,
+    "min_result": 0,
+    "max_result": 11.3156,
+    "reading_count": 66370,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000544ddd4ed1f",
+    "Parameter": "water_elevation",
+    "avg_result": -9.2728,
+    "min_result": -11.3156,
+    "max_result": 0,
+    "reading_count": 66370,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000644dd8128a7",
+    "Parameter": "depth",
+    "avg_result": 0.6573,
+    "min_result": 0.0098,
+    "max_result": 1.601,
+    "reading_count": 55322,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000644dd8128a7",
+    "Parameter": "distance",
+    "avg_result": 17.0593,
+    "min_result": 16.1155,
+    "max_result": 17.7067,
+    "reading_count": 55322,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000644dd8128a7",
+    "Parameter": "water_elevation",
+    "avg_result": -17.0593,
+    "min_result": -17.7067,
+    "max_result": -16.1155,
+    "reading_count": 55322,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000844dd89159f",
+    "Parameter": "depth",
+    "avg_result": 5.815,
+    "min_result": -0.0886,
+    "max_result": 7.4344,
+    "reading_count": 56598,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000844dd89159f",
+    "Parameter": "distance",
+    "avg_result": 6.4553,
+    "min_result": 4.836,
+    "max_result": 12.3589,
+    "reading_count": 56598,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR000844dd89159f",
+    "Parameter": "water_elevation",
+    "avg_result": -6.4553,
+    "min_result": -12.3589,
+    "max_result": -4.836,
+    "reading_count": 56598,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001044dd1a0017",
+    "Parameter": "depth",
+    "avg_result": 1.607,
+    "min_result": 0.479,
+    "max_result": 3.1168,
+    "reading_count": 55420,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001044dd1a0017",
+    "Parameter": "distance",
+    "avg_result": 12.3038,
+    "min_result": 10.794,
+    "max_result": 13.4318,
+    "reading_count": 55420,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001044dd1a0017",
+    "Parameter": "water_elevation",
+    "avg_result": -12.3038,
+    "min_result": -13.4318,
+    "max_result": -10.794,
+    "reading_count": 55420,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001244dd890107",
+    "Parameter": "depth",
+    "avg_result": 5.6089,
+    "min_result": 0.4331,
+    "max_result": 6.9029,
+    "reading_count": 42601,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001244dd890107",
+    "Parameter": "distance",
+    "avg_result": 10.4025,
+    "min_result": 0,
+    "max_result": 11.4469,
+    "reading_count": 42601,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001244dd890107",
+    "Parameter": "water_elevation",
+    "avg_result": -10.4025,
+    "min_result": -11.4469,
+    "max_result": 0,
+    "reading_count": 42601,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001344c36ee7af",
+    "Parameter": "depth",
+    "avg_result": 1.1165,
+    "min_result": -0.0951,
+    "max_result": 16.9948,
+    "reading_count": 37445,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001344c36ee7af",
+    "Parameter": "distance",
+    "avg_result": 15.6995,
+    "min_result": 0,
+    "max_result": 17.0899,
+    "reading_count": 37445,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001344c36ee7af",
+    "Parameter": "water_elevation",
+    "avg_result": -15.6995,
+    "min_result": -17.0899,
+    "max_result": 0,
+    "reading_count": 37445,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001444dd890427",
+    "Parameter": "depth",
+    "avg_result": 1.3648,
+    "min_result": 0.4462,
+    "max_result": 5.0525,
+    "reading_count": 40816,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001444dd890427",
+    "Parameter": "distance",
+    "avg_result": 3.6877,
+    "min_result": 0,
+    "max_result": 4.6063,
+    "reading_count": 40816,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001444dd890427",
+    "Parameter": "water_elevation",
+    "avg_result": -3.6877,
+    "min_result": -4.6063,
+    "max_result": 0,
+    "reading_count": 40816,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001544ddd4412f",
+    "Parameter": "depth",
+    "avg_result": 0.0319,
+    "min_result": -0.4462,
+    "max_result": 1.6864,
+    "reading_count": 49968,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001544ddd4412f",
+    "Parameter": "distance",
+    "avg_result": 13.3867,
+    "min_result": 11.7323,
+    "max_result": 13.8648,
+    "reading_count": 49968,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001544ddd4412f",
+    "Parameter": "water_elevation",
+    "avg_result": -13.3867,
+    "min_result": -13.8648,
+    "max_result": -11.7323,
+    "reading_count": 49968,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001644dd1a1c0f",
+    "Parameter": "depth",
+    "avg_result": 0.37,
+    "min_result": 0.0722,
+    "max_result": 1.729,
+    "reading_count": 28834,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001644dd1a1c0f",
+    "Parameter": "distance",
+    "avg_result": 9.899,
+    "min_result": 8.54,
+    "max_result": 10.1969,
+    "reading_count": 28834,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR001644dd1a1c0f",
+    "Parameter": "water_elevation",
+    "avg_result": -9.899,
+    "min_result": -10.1969,
+    "max_result": -8.54,
+    "reading_count": 28834,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002044ddd28ae7",
+    "Parameter": "depth",
+    "avg_result": 0.1337,
+    "min_result": -0.3839,
+    "max_result": 2.3163,
+    "reading_count": 56368,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002044ddd28ae7",
+    "Parameter": "distance",
+    "avg_result": 27.0972,
+    "min_result": 24.9147,
+    "max_result": 27.6148,
+    "reading_count": 56368,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002044ddd28ae7",
+    "Parameter": "water_elevation",
+    "avg_result": -27.0972,
+    "min_result": -27.6148,
+    "max_result": -24.9147,
+    "reading_count": 56368,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002144dd9950c7",
+    "Parameter": "depth",
+    "avg_result": 0.4357,
+    "min_result": -0.164,
+    "max_result": 5.4921,
+    "reading_count": 53666,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002144dd9950c7",
+    "Parameter": "distance",
+    "avg_result": 19.9055,
+    "min_result": 14.8491,
+    "max_result": 20.5053,
+    "reading_count": 53666,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002144dd9950c7",
+    "Parameter": "water_elevation",
+    "avg_result": -19.9055,
+    "min_result": -20.5053,
+    "max_result": -14.8491,
+    "reading_count": 53666,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002244ddd5b037",
+    "Parameter": "depth",
+    "avg_result": 1.9795,
+    "min_result": 0.397,
+    "max_result": 7.9724,
+    "reading_count": 45543,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002244ddd5b037",
+    "Parameter": "distance",
+    "avg_result": 5.993,
+    "min_result": 0,
+    "max_result": 7.5755,
+    "reading_count": 45543,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002244ddd5b037",
+    "Parameter": "water_elevation",
+    "avg_result": -5.993,
+    "min_result": -7.5755,
+    "max_result": 0,
+    "reading_count": 45543,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002344ddc44d77",
+    "Parameter": "depth",
+    "avg_result": 5.3256,
+    "min_result": -1.0761,
+    "max_result": 13.5171,
+    "reading_count": 49219,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002344ddc44d77",
+    "Parameter": "distance",
+    "avg_result": 8.1696,
+    "min_result": 0,
+    "max_result": 14.5932,
+    "reading_count": 49219,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002344ddc44d77",
+    "Parameter": "water_elevation",
+    "avg_result": -8.1696,
+    "min_result": -14.5932,
+    "max_result": 0,
+    "reading_count": 49219,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002644dd16e8cf",
+    "Parameter": "depth",
+    "avg_result": 0.8137,
+    "min_result": 0.5151,
+    "max_result": 1.4928,
+    "reading_count": 56139,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002644dd16e8cf",
+    "Parameter": "distance",
+    "avg_result": 12.4737,
+    "min_result": 11.7946,
+    "max_result": 12.7723,
+    "reading_count": 56139,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002644dd16e8cf",
+    "Parameter": "water_elevation",
+    "avg_result": -12.4737,
+    "min_result": -12.7723,
+    "max_result": -11.7946,
+    "reading_count": 56139,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002744dd0e52ef",
+    "Parameter": "depth",
+    "avg_result": 0.6951,
+    "min_result": 0.4068,
+    "max_result": 2.1588,
+    "reading_count": 55217,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002744dd0e52ef",
+    "Parameter": "distance",
+    "avg_result": 15.3318,
+    "min_result": 13.8681,
+    "max_result": 15.6201,
+    "reading_count": 55217,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002744dd0e52ef",
+    "Parameter": "water_elevation",
+    "avg_result": -15.3318,
+    "min_result": -15.6201,
+    "max_result": -13.8681,
+    "reading_count": 55217,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR002944dd15e4cf",
+    "Parameter": "depth",
+    "avg_result": 32805.1192,
+    "min_result": 32805.1192,
+    "max_result": 32805.1192,
+    "reading_count": 20533,
+    "unit": "feet",
+    "last_sample": "2025-10-16 00:00"
+  },
+  {
+    "SITE": "SCOR002944dd15e4cf",
+    "Parameter": "distance",
+    "avg_result": 0.1968,
+    "min_result": 0,
+    "max_result": 8.0906,
+    "reading_count": 20533,
+    "unit": "feet",
+    "last_sample": "2025-10-16 00:00"
+  },
+  {
+    "SITE": "SCOR002944dd15e4cf",
+    "Parameter": "water_elevation",
+    "avg_result": -0.1968,
+    "min_result": -8.0906,
+    "max_result": 0,
+    "reading_count": 20533,
+    "unit": "feet",
+    "last_sample": "2025-10-16 00:00"
+  },
+  {
+    "SITE": "SCOR003044dd02ccdf",
+    "Parameter": "depth",
+    "avg_result": 0.9765,
+    "min_result": 0.1148,
+    "max_result": 2.3556,
+    "reading_count": 55958,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003044dd02ccdf",
+    "Parameter": "distance",
+    "avg_result": 17.3962,
+    "min_result": 16.0171,
+    "max_result": 18.2579,
+    "reading_count": 55958,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003044dd02ccdf",
+    "Parameter": "water_elevation",
+    "avg_result": -17.3962,
+    "min_result": -18.2579,
+    "max_result": -16.0171,
+    "reading_count": 55958,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003244dd011ccf",
+    "Parameter": "depth",
+    "avg_result": 0.7448,
+    "min_result": 0.2362,
+    "max_result": 14.1732,
+    "reading_count": 44479,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003244dd011ccf",
+    "Parameter": "distance",
+    "avg_result": 13.4284,
+    "min_result": 0,
+    "max_result": 13.937,
+    "reading_count": 44479,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003244dd011ccf",
+    "Parameter": "water_elevation",
+    "avg_result": -13.4284,
+    "min_result": -13.937,
+    "max_result": 0,
+    "reading_count": 44479,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003344dd152397",
+    "Parameter": "depth",
+    "avg_result": 0.9708,
+    "min_result": 0.5741,
+    "max_result": 2.2933,
+    "reading_count": 55575,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003344dd152397",
+    "Parameter": "distance",
+    "avg_result": 8.2156,
+    "min_result": 6.893,
+    "max_result": 8.6122,
+    "reading_count": 55575,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003344dd152397",
+    "Parameter": "water_elevation",
+    "avg_result": -8.2156,
+    "min_result": -8.6122,
+    "max_result": -6.893,
+    "reading_count": 55575,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003444dd021d97",
+    "Parameter": "depth",
+    "avg_result": 0.4413,
+    "min_result": 0.0131,
+    "max_result": 15.1575,
+    "reading_count": 41724,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003444dd021d97",
+    "Parameter": "distance",
+    "avg_result": 14.7162,
+    "min_result": 0,
+    "max_result": 15.1444,
+    "reading_count": 41724,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003444dd021d97",
+    "Parameter": "water_elevation",
+    "avg_result": -14.7162,
+    "min_result": -15.1444,
+    "max_result": 0,
+    "reading_count": 41724,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003544dd188af7",
+    "Parameter": "depth",
+    "avg_result": 1.3717,
+    "min_result": 0.981,
+    "max_result": 4.8163,
+    "reading_count": 52667,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003544dd188af7",
+    "Parameter": "distance",
+    "avg_result": 15.6887,
+    "min_result": 12.2441,
+    "max_result": 16.0794,
+    "reading_count": 52667,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003544dd188af7",
+    "Parameter": "water_elevation",
+    "avg_result": -15.6887,
+    "min_result": -16.0794,
+    "max_result": -12.2441,
+    "reading_count": 52667,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003644dd18c767",
+    "Parameter": "depth",
+    "avg_result": 0.4979,
+    "min_result": 0.1608,
+    "max_result": 3.5269,
+    "reading_count": 56072,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003644dd18c767",
+    "Parameter": "distance",
+    "avg_result": 11.7724,
+    "min_result": 8.7434,
+    "max_result": 12.1096,
+    "reading_count": 56072,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003644dd18c767",
+    "Parameter": "water_elevation",
+    "avg_result": -11.7724,
+    "min_result": -12.1096,
+    "max_result": -8.7434,
+    "reading_count": 56072,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003944dd12d00f",
+    "Parameter": "depth",
+    "avg_result": 0.5482,
+    "min_result": -0.0525,
+    "max_result": 16.9948,
+    "reading_count": 45061,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003944dd12d00f",
+    "Parameter": "distance",
+    "avg_result": 16.4465,
+    "min_result": 0,
+    "max_result": 17.0472,
+    "reading_count": 45061,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR003944dd12d00f",
+    "Parameter": "water_elevation",
+    "avg_result": -16.4465,
+    "min_result": -17.0472,
+    "max_result": 0,
+    "reading_count": 45061,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004044dd128ae7",
+    "Parameter": "depth",
+    "avg_result": 1.2062,
+    "min_result": 0.8301,
+    "max_result": 6.1811,
+    "reading_count": 55990,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004044dd128ae7",
+    "Parameter": "distance",
+    "avg_result": 12.2453,
+    "min_result": 7.2703,
+    "max_result": 12.6214,
+    "reading_count": 55990,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004044dd128ae7",
+    "Parameter": "water_elevation",
+    "avg_result": -12.2453,
+    "min_result": -12.6214,
+    "max_result": -7.2703,
+    "reading_count": 55990,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004244dd1624cf",
+    "Parameter": "depth",
+    "avg_result": 0.3955,
+    "min_result": 0.0427,
+    "max_result": 12.1391,
+    "reading_count": 42593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004244dd1624cf",
+    "Parameter": "distance",
+    "avg_result": 11.7436,
+    "min_result": 0,
+    "max_result": 12.0965,
+    "reading_count": 42593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004244dd1624cf",
+    "Parameter": "water_elevation",
+    "avg_result": -11.7436,
+    "min_result": -12.0965,
+    "max_result": 0,
+    "reading_count": 42593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004344dd171d07",
+    "Parameter": "depth",
+    "avg_result": 1.8491,
+    "min_result": 1.4928,
+    "max_result": 15.4199,
+    "reading_count": 45430,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004344dd171d07",
+    "Parameter": "distance",
+    "avg_result": 13.5709,
+    "min_result": 0,
+    "max_result": 13.9272,
+    "reading_count": 45430,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004344dd171d07",
+    "Parameter": "water_elevation",
+    "avg_result": -13.5709,
+    "min_result": -13.9272,
+    "max_result": 0,
+    "reading_count": 45430,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004444dd11c41f",
+    "Parameter": "depth",
+    "avg_result": 0.6304,
+    "min_result": 0.2133,
+    "max_result": 2.5459,
+    "reading_count": 55218,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004444dd11c41f",
+    "Parameter": "distance",
+    "avg_result": 20.531,
+    "min_result": 18.6155,
+    "max_result": 20.9482,
+    "reading_count": 55218,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004444dd11c41f",
+    "Parameter": "water_elevation",
+    "avg_result": -20.531,
+    "min_result": -20.9482,
+    "max_result": -18.6155,
+    "reading_count": 55218,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004544dd172d1f",
+    "Parameter": "depth",
+    "avg_result": 2.3897,
+    "min_result": 1.8045,
+    "max_result": 6.5814,
+    "reading_count": 53616,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004544dd172d1f",
+    "Parameter": "distance",
+    "avg_result": 12.9646,
+    "min_result": 8.773,
+    "max_result": 13.5499,
+    "reading_count": 53616,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004544dd172d1f",
+    "Parameter": "water_elevation",
+    "avg_result": -12.9646,
+    "min_result": -13.5499,
+    "max_result": -8.773,
+    "reading_count": 53616,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004644dd16a227",
+    "Parameter": "depth",
+    "avg_result": 0.7373,
+    "min_result": 0.4462,
+    "max_result": 1.7421,
+    "reading_count": 4940,
+    "unit": "feet",
+    "last_sample": "2025-08-09 00:00"
+  },
+  {
+    "SITE": "SCOR004644dd16a227",
+    "Parameter": "distance",
+    "avg_result": 16.2443,
+    "min_result": 15.2395,
+    "max_result": 16.5354,
+    "reading_count": 4940,
+    "unit": "feet",
+    "last_sample": "2025-08-09 00:00"
+  },
+  {
+    "SITE": "SCOR004644dd16a227",
+    "Parameter": "water_elevation",
+    "avg_result": 814.405,
+    "min_result": 814.1139,
+    "max_result": 815.4098,
+    "reading_count": 4940,
+    "unit": "feet",
+    "last_sample": "2025-08-09 00:00"
+  },
+  {
+    "SITE": "SCOR004744dd10b4df",
+    "Parameter": "depth",
+    "avg_result": 0.3646,
+    "min_result": 0.105,
+    "max_result": 3.1759,
+    "reading_count": 46539,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004744dd10b4df",
+    "Parameter": "distance",
+    "avg_result": 9.8385,
+    "min_result": 7.0604,
+    "max_result": 10.1115,
+    "reading_count": 46539,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004744dd10b4df",
+    "Parameter": "water_elevation",
+    "avg_result": -9.8385,
+    "min_result": -10.1115,
+    "max_result": -7.0604,
+    "reading_count": 46539,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004844dd021daf",
+    "Parameter": "depth",
+    "avg_result": 0.6582,
+    "min_result": 0.1017,
+    "max_result": 10.4331,
+    "reading_count": 56185,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004844dd021daf",
+    "Parameter": "distance",
+    "avg_result": 9.7749,
+    "min_result": 0,
+    "max_result": 10.3314,
+    "reading_count": 56185,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004844dd021daf",
+    "Parameter": "water_elevation",
+    "avg_result": -9.7749,
+    "min_result": -10.3314,
+    "max_result": 0,
+    "reading_count": 56185,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004944dda3505f",
+    "Parameter": "depth",
+    "avg_result": 8.3156,
+    "min_result": 1.3222,
+    "max_result": 14.5341,
+    "reading_count": 40573,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004944dda3505f",
+    "Parameter": "distance",
+    "avg_result": 6.2185,
+    "min_result": 0,
+    "max_result": 13.2119,
+    "reading_count": 40573,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR004944dda3505f",
+    "Parameter": "water_elevation",
+    "avg_result": 1090.8268,
+    "min_result": 1083.8334,
+    "max_result": 1097.0453,
+    "reading_count": 40573,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005044dda3006f",
+    "Parameter": "depth",
+    "avg_result": 1.8932,
+    "min_result": 0,
+    "max_result": 3.2612,
+    "reading_count": 40810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005044dda3006f",
+    "Parameter": "distance",
+    "avg_result": 12.8702,
+    "min_result": 0,
+    "max_result": 13.1594,
+    "reading_count": 40810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005044dda3006f",
+    "Parameter": "water_elevation",
+    "avg_result": 1067.2643,
+    "min_result": 1066.9751,
+    "max_result": 1080.1345,
+    "reading_count": 40810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005244ce4a28f7",
+    "Parameter": "depth",
+    "avg_result": 12.39,
+    "min_result": 7.0177,
+    "max_result": 20.7021,
+    "reading_count": 40512,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005244ce4a28f7",
+    "Parameter": "distance",
+    "avg_result": 8.3121,
+    "min_result": 0,
+    "max_result": 13.6844,
+    "reading_count": 40512,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005244ce4a28f7",
+    "Parameter": "water_elevation",
+    "avg_result": -8.3121,
+    "min_result": -13.6844,
+    "max_result": 0,
+    "reading_count": 40512,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005644ce49dccf",
+    "Parameter": "depth",
+    "avg_result": 4.4196,
+    "min_result": 4.0748,
+    "max_result": 6.7093,
+    "reading_count": 18847,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005644ce49dccf",
+    "Parameter": "distance",
+    "avg_result": 16.8468,
+    "min_result": 14.5571,
+    "max_result": 17.1916,
+    "reading_count": 18847,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005644ce49dccf",
+    "Parameter": "water_elevation",
+    "avg_result": -16.8468,
+    "min_result": -17.1916,
+    "max_result": -14.5571,
+    "reading_count": 18847,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005844ddb2a647",
+    "Parameter": "depth",
+    "avg_result": 3.12,
+    "min_result": 2.8806,
+    "max_result": 5.899,
+    "reading_count": 44229,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005844ddb2a647",
+    "Parameter": "distance",
+    "avg_result": 9.8558,
+    "min_result": 7.0768,
+    "max_result": 10.0951,
+    "reading_count": 44229,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR005844ddb2a647",
+    "Parameter": "water_elevation",
+    "avg_result": -9.8558,
+    "min_result": -10.0951,
+    "max_result": -7.0768,
+    "reading_count": 44229,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006044ddb1669",
+    "Parameter": "depth",
+    "avg_result": 3.4781,
+    "min_result": 3.1496,
+    "max_result": 4.4652,
+    "reading_count": 43774,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006044ddb1669",
+    "Parameter": "distance",
+    "avg_result": 16.9353,
+    "min_result": 15.9482,
+    "max_result": 17.2638,
+    "reading_count": 43774,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006044ddb1669",
+    "Parameter": "water_elevation",
+    "avg_result": -16.9353,
+    "min_result": -17.2638,
+    "max_result": -15.9482,
+    "reading_count": 43774,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006144dd8644ef",
+    "Parameter": "depth",
+    "avg_result": 4.5909,
+    "min_result": -1.5059,
+    "max_result": 5.5873,
+    "reading_count": 36638,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006144dd8644ef",
+    "Parameter": "distance",
+    "avg_result": 9.5232,
+    "min_result": 8.5269,
+    "max_result": 15.6201,
+    "reading_count": 36638,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006144dd8644ef",
+    "Parameter": "water_elevation",
+    "avg_result": -9.5232,
+    "min_result": -15.6201,
+    "max_result": -8.5269,
+    "reading_count": 36638,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006244ddb35a9f",
+    "Parameter": "depth",
+    "avg_result": 0.2756,
+    "min_result": 0.0131,
+    "max_result": 2.5033,
+    "reading_count": 52208,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006244ddb35a9f",
+    "Parameter": "distance",
+    "avg_result": 10.748,
+    "min_result": 8.5203,
+    "max_result": 11.0105,
+    "reading_count": 52208,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006244ddb35a9f",
+    "Parameter": "water_elevation",
+    "avg_result": -10.748,
+    "min_result": -11.0105,
+    "max_result": -8.5203,
+    "reading_count": 52208,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006344dda3428f",
+    "Parameter": "depth",
+    "avg_result": 2.6268,
+    "min_result": 2.3031,
+    "max_result": 5.2165,
+    "reading_count": 38590,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006344dda3428f",
+    "Parameter": "distance",
+    "avg_result": 20.3391,
+    "min_result": 17.7493,
+    "max_result": 20.6627,
+    "reading_count": 38590,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006344dda3428f",
+    "Parameter": "water_elevation",
+    "avg_result": -20.3391,
+    "min_result": -20.6627,
+    "max_result": -17.7493,
+    "reading_count": 38590,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006444dd97161f",
+    "Parameter": "depth",
+    "avg_result": 0.3047,
+    "min_result": -0.0787,
+    "max_result": 4.8064,
+    "reading_count": 47593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006444dd97161f",
+    "Parameter": "distance",
+    "avg_result": 10.3908,
+    "min_result": 5.8891,
+    "max_result": 10.7743,
+    "reading_count": 47593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006444dd97161f",
+    "Parameter": "water_elevation",
+    "avg_result": -10.3908,
+    "min_result": -10.7743,
+    "max_result": -5.8891,
+    "reading_count": 47593,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006644dd862387",
+    "Parameter": "depth",
+    "avg_result": 1.2385,
+    "min_result": 0.2297,
+    "max_result": 6.857,
+    "reading_count": 55830,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006644dd862387",
+    "Parameter": "distance",
+    "avg_result": 5.6185,
+    "min_result": 0,
+    "max_result": 6.6273,
+    "reading_count": 55830,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006644dd862387",
+    "Parameter": "water_elevation",
+    "avg_result": -5.6185,
+    "min_result": -6.6273,
+    "max_result": 0,
+    "reading_count": 55830,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006744dd0e8c37",
+    "Parameter": "depth",
+    "avg_result": 0.8383,
+    "min_result": -0.1673,
+    "max_result": 3.0709,
+    "reading_count": 48431,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006744dd0e8c37",
+    "Parameter": "distance",
+    "avg_result": 12.0707,
+    "min_result": 8.2743,
+    "max_result": 13.2743,
+    "reading_count": 48431,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006744dd0e8c37",
+    "Parameter": "water_elevation",
+    "avg_result": 1068.4392,
+    "min_result": 1067.2356,
+    "max_result": 1072.2356,
+    "reading_count": 48431,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006844ddcc2067",
+    "Parameter": "depth",
+    "avg_result": 6228.9064,
+    "min_result": 0.1804,
+    "max_result": 32805.1192,
+    "reading_count": 53964,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006844ddcc2067",
+    "Parameter": "distance",
+    "avg_result": 11.479,
+    "min_result": 10.1739,
+    "max_result": 13.8419,
+    "reading_count": 53964,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006844ddcc2067",
+    "Parameter": "water_elevation",
+    "avg_result": 773.7471,
+    "min_result": 771.3842,
+    "max_result": 775.0522,
+    "reading_count": 53964,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006944ddc89007",
+    "Parameter": "depth",
+    "avg_result": 1.9623,
+    "min_result": 1.3714,
+    "max_result": 8.2907,
+    "reading_count": 44127,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006944ddc89007",
+    "Parameter": "distance",
+    "avg_result": 26.0102,
+    "min_result": 19.6818,
+    "max_result": 26.6011,
+    "reading_count": 44127,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR006944ddc89007",
+    "Parameter": "water_elevation",
+    "avg_result": -26.0102,
+    "min_result": -26.6011,
+    "max_result": -19.6818,
+    "reading_count": 44127,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007044ddce128f",
+    "Parameter": "depth",
+    "avg_result": 3.013,
+    "min_result": 0.9088,
+    "max_result": 18.4777,
+    "reading_count": 18632,
+    "unit": "feet",
+    "last_sample": "2025-12-08 00:00"
+  },
+  {
+    "SITE": "SCOR007044ddce128f",
+    "Parameter": "distance",
+    "avg_result": 15.4647,
+    "min_result": 0,
+    "max_result": 17.5689,
+    "reading_count": 18632,
+    "unit": "feet",
+    "last_sample": "2025-12-08 00:00"
+  },
+  {
+    "SITE": "SCOR007044ddce128f",
+    "Parameter": "water_elevation",
+    "avg_result": -15.4647,
+    "min_result": -17.5689,
+    "max_result": 0,
+    "reading_count": 18632,
+    "unit": "feet",
+    "last_sample": "2025-12-08 00:00"
+  },
+  {
+    "SITE": "SCOR007344dd0a0807",
+    "Parameter": "depth",
+    "avg_result": 0.3215,
+    "min_result": -0.2461,
+    "max_result": 1.9193,
+    "reading_count": 30663,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007344dd0a0807",
+    "Parameter": "distance",
+    "avg_result": 7.1168,
+    "min_result": 5.5217,
+    "max_result": 7.6837,
+    "reading_count": 30663,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007344dd0a0807",
+    "Parameter": "water_elevation",
+    "avg_result": -7.1168,
+    "min_result": -7.6837,
+    "max_result": -5.5217,
+    "reading_count": 30663,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007544dd193697",
+    "Parameter": "depth",
+    "avg_result": 2.9351,
+    "min_result": -1.4698,
+    "max_result": 5.7087,
+    "reading_count": 30163,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007544dd193697",
+    "Parameter": "distance",
+    "avg_result": 2.705,
+    "min_result": 0,
+    "max_result": 7.0866,
+    "reading_count": 30163,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007544dd193697",
+    "Parameter": "water_elevation",
+    "avg_result": 903.0828,
+    "min_result": 898.7011,
+    "max_result": 905.7878,
+    "reading_count": 30163,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007644ddccd1a7",
+    "Parameter": "depth",
+    "avg_result": 0.8069,
+    "min_result": 0.2395,
+    "max_result": 2.9659,
+    "reading_count": 44418,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007644ddccd1a7",
+    "Parameter": "distance",
+    "avg_result": 13.1432,
+    "min_result": 10.9843,
+    "max_result": 13.7106,
+    "reading_count": 44418,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007644ddccd1a7",
+    "Parameter": "water_elevation",
+    "avg_result": 793.4736,
+    "min_result": 792.9062,
+    "max_result": 795.6326,
+    "reading_count": 44418,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007844ddcdaa07",
+    "Parameter": "depth",
+    "avg_result": 0.8154,
+    "min_result": 0.4035,
+    "max_result": 2.1391,
+    "reading_count": 44558,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007844ddcdaa07",
+    "Parameter": "distance",
+    "avg_result": 11.5927,
+    "min_result": 10.269,
+    "max_result": 12.0046,
+    "reading_count": 44558,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007844ddcdaa07",
+    "Parameter": "water_elevation",
+    "avg_result": 790.3207,
+    "min_result": 789.9088,
+    "max_result": 791.6444,
+    "reading_count": 44558,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007944dd0d865",
+    "Parameter": "depth",
+    "avg_result": 0.7732,
+    "min_result": 0.4921,
+    "max_result": 3.1332,
+    "reading_count": 36273,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007944dd0d865",
+    "Parameter": "distance",
+    "avg_result": 12.1927,
+    "min_result": 9.8327,
+    "max_result": 12.4738,
+    "reading_count": 36273,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR007944dd0d865",
+    "Parameter": "water_elevation",
+    "avg_result": 1099.8956,
+    "min_result": 1099.6145,
+    "max_result": 1102.2556,
+    "reading_count": 36273,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008044dd70c80",
+    "Parameter": "depth",
+    "avg_result": 0.8893,
+    "min_result": 0.1706,
+    "max_result": 2.4508,
+    "reading_count": 37386,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008044dd70c80",
+    "Parameter": "distance",
+    "avg_result": 8.8384,
+    "min_result": 7.2769,
+    "max_result": 9.5571,
+    "reading_count": 37386,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008044dd70c80",
+    "Parameter": "water_elevation",
+    "avg_result": -8.8384,
+    "min_result": -9.5571,
+    "max_result": -7.2769,
+    "reading_count": 37386,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008144dd72336f",
+    "Parameter": "depth",
+    "avg_result": 0.0636,
+    "min_result": -0.3871,
+    "max_result": 1.1975,
+    "reading_count": 35137,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008144dd72336f",
+    "Parameter": "distance",
+    "avg_result": 10.6452,
+    "min_result": 9.5932,
+    "max_result": 10.958,
+    "reading_count": 35137,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008144dd72336f",
+    "Parameter": "water_elevation",
+    "avg_result": 1025.0671,
+    "min_result": 1024.7543,
+    "max_result": 1026.1191,
+    "reading_count": 35137,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008244dd19a007",
+    "Parameter": "depth",
+    "avg_result": 0.3892,
+    "min_result": -0.0427,
+    "max_result": 2.9724,
+    "reading_count": 44797,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008244dd19a007",
+    "Parameter": "distance",
+    "avg_result": 11.2906,
+    "min_result": 8.7073,
+    "max_result": 11.7224,
+    "reading_count": 44797,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008244dd19a007",
+    "Parameter": "water_elevation",
+    "avg_result": 938.3683,
+    "min_result": 937.9364,
+    "max_result": 940.9515,
+    "reading_count": 44797,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008444dd70122f",
+    "Parameter": "depth",
+    "avg_result": 2.571,
+    "min_result": 1.1877,
+    "max_result": 9.065,
+    "reading_count": 18743,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008444dd70122f",
+    "Parameter": "distance",
+    "avg_result": 9.3451,
+    "min_result": 2.851,
+    "max_result": 10.7283,
+    "reading_count": 18743,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008444dd70122f",
+    "Parameter": "water_elevation",
+    "avg_result": 1056.6346,
+    "min_result": 1055.2513,
+    "max_result": 1063.1286,
+    "reading_count": 18743,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008544dd0b5607",
+    "Parameter": "depth",
+    "avg_result": 0.8116,
+    "min_result": 0.4954,
+    "max_result": 1.8373,
+    "reading_count": 41379,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008544dd0b5607",
+    "Parameter": "distance",
+    "avg_result": 9.5559,
+    "min_result": 8.5302,
+    "max_result": 9.872,
+    "reading_count": 41379,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008544dd0b5607",
+    "Parameter": "water_elevation",
+    "avg_result": -9.5559,
+    "min_result": -9.872,
+    "max_result": -8.5302,
+    "reading_count": 41379,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008644ddcd5107",
+    "Parameter": "depth",
+    "avg_result": 1.6796,
+    "min_result": 1.0171,
+    "max_result": 2.9757,
+    "reading_count": 44926,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008644ddcd5107",
+    "Parameter": "distance",
+    "avg_result": 8.9568,
+    "min_result": 7.6608,
+    "max_result": 9.6194,
+    "reading_count": 44926,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008644ddcd5107",
+    "Parameter": "water_elevation",
+    "avg_result": -8.9568,
+    "min_result": -9.6194,
+    "max_result": -7.6608,
+    "reading_count": 44926,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR008744ddc1026f",
+    "Parameter": "depth",
+    "avg_result": 4.0112,
+    "min_result": 0.479,
+    "max_result": 15.2625,
+    "reading_count": 21250,
+    "unit": "feet",
+    "last_sample": "2025-11-30 00:00"
+  },
+  {
+    "SITE": "SCOR008744ddc1026f",
+    "Parameter": "distance",
+    "avg_result": 11.2513,
+    "min_result": 0,
+    "max_result": 14.7835,
+    "reading_count": 21250,
+    "unit": "feet",
+    "last_sample": "2025-11-30 00:00"
+  },
+  {
+    "SITE": "SCOR008744ddc1026f",
+    "Parameter": "water_elevation",
+    "avg_result": 664.649,
+    "min_result": 661.1168,
+    "max_result": 675.9003,
+    "reading_count": 21250,
+    "unit": "feet",
+    "last_sample": "2025-11-30 00:00"
+  },
+  {
+    "SITE": "SCOR009044dd08082f",
+    "Parameter": "depth",
+    "avg_result": 0.8389,
+    "min_result": 0.5545,
+    "max_result": 5.128,
+    "reading_count": 41916,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009044dd08082f",
+    "Parameter": "distance",
+    "avg_result": 13.7345,
+    "min_result": 9.4455,
+    "max_result": 14.019,
+    "reading_count": 41916,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009044dd08082f",
+    "Parameter": "water_elevation",
+    "avg_result": 979.3295,
+    "min_result": 979.045,
+    "max_result": 983.6185,
+    "reading_count": 41916,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009144dd19894f",
+    "Parameter": "depth",
+    "avg_result": 0.9801,
+    "min_result": 0.6791,
+    "max_result": 7.6181,
+    "reading_count": 43676,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009144dd19894f",
+    "Parameter": "distance",
+    "avg_result": 6.638,
+    "min_result": 0,
+    "max_result": 6.939,
+    "reading_count": 43676,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009144dd19894f",
+    "Parameter": "water_elevation",
+    "avg_result": 869.8827,
+    "min_result": 869.5817,
+    "max_result": 876.5207,
+    "reading_count": 43676,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009244dd088097",
+    "Parameter": "depth",
+    "avg_result": 0.0567,
+    "min_result": -0.2297,
+    "max_result": 0.6463,
+    "reading_count": 35760,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009244dd088097",
+    "Parameter": "distance",
+    "avg_result": 11.4328,
+    "min_result": 10.8432,
+    "max_result": 11.7192,
+    "reading_count": 35760,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009244dd088097",
+    "Parameter": "water_elevation",
+    "avg_result": 989.1316,
+    "min_result": 988.8452,
+    "max_result": 989.7212,
+    "reading_count": 35760,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009644ddcc4587",
+    "Parameter": "depth",
+    "avg_result": 2.5201,
+    "min_result": 1.9816,
+    "max_result": 6.122,
+    "reading_count": 55062,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009644ddcc4587",
+    "Parameter": "distance",
+    "avg_result": 20.7935,
+    "min_result": 17.1916,
+    "max_result": 21.332,
+    "reading_count": 55062,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009644ddcc4587",
+    "Parameter": "water_elevation",
+    "avg_result": 922.9175,
+    "min_result": 922.379,
+    "max_result": 926.5194,
+    "reading_count": 55062,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009744ddc80007",
+    "Parameter": "depth",
+    "avg_result": 3.8473,
+    "min_result": 3.4449,
+    "max_result": 4.1864,
+    "reading_count": 44249,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009744ddc80007",
+    "Parameter": "distance",
+    "avg_result": 13.6462,
+    "min_result": 13.3071,
+    "max_result": 14.0486,
+    "reading_count": 44249,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009744ddc80007",
+    "Parameter": "water_elevation",
+    "avg_result": 777.6967,
+    "min_result": 777.2943,
+    "max_result": 778.0358,
+    "reading_count": 44249,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009844dd524687",
+    "Parameter": "depth",
+    "avg_result": 0.7889,
+    "min_result": 0.6201,
+    "max_result": 1.2139,
+    "reading_count": 25728,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009844dd524687",
+    "Parameter": "distance",
+    "avg_result": 12.9644,
+    "min_result": 12.5394,
+    "max_result": 13.1332,
+    "reading_count": 25728,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009844dd524687",
+    "Parameter": "water_elevation",
+    "avg_result": 603.9933,
+    "min_result": 603.8245,
+    "max_result": 604.4183,
+    "reading_count": 25728,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009944ddcde407",
+    "Parameter": "depth",
+    "avg_result": 1.6613,
+    "min_result": 1.3386,
+    "max_result": 14.3077,
+    "reading_count": 17981,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009944ddcde407",
+    "Parameter": "distance",
+    "avg_result": 13.8636,
+    "min_result": 1.2172,
+    "max_result": 14.1864,
+    "reading_count": 17981,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR009944ddcde407",
+    "Parameter": "water_elevation",
+    "avg_result": 751.7155,
+    "min_result": 751.3927,
+    "max_result": 764.3619,
+    "reading_count": 17981,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010044dd08d087",
+    "Parameter": "depth",
+    "avg_result": 2.4002,
+    "min_result": 2.1424,
+    "max_result": 17.0243,
+    "reading_count": 44449,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010044dd08d087",
+    "Parameter": "distance",
+    "avg_result": 15.3885,
+    "min_result": 0.7644,
+    "max_result": 15.6463,
+    "reading_count": 44449,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010044dd08d087",
+    "Parameter": "water_elevation",
+    "avg_result": 747.0151,
+    "min_result": 746.7572,
+    "max_result": 761.6391,
+    "reading_count": 44449,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010144ddca3247",
+    "Parameter": "depth",
+    "avg_result": 2.2808,
+    "min_result": 2.0702,
+    "max_result": 2.6804,
+    "reading_count": 47390,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010144ddca3247",
+    "Parameter": "distance",
+    "avg_result": 9.6352,
+    "min_result": 9.2356,
+    "max_result": 9.8458,
+    "reading_count": 47390,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010144ddca3247",
+    "Parameter": "water_elevation",
+    "avg_result": 957.2985,
+    "min_result": 957.088,
+    "max_result": 957.6982,
+    "reading_count": 47390,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010344dd0e3087",
+    "Parameter": "depth",
+    "avg_result": 3.1602,
+    "min_result": 2.477,
+    "max_result": 7.149,
+    "reading_count": 49320,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010344dd0e3087",
+    "Parameter": "distance",
+    "avg_result": 28.0635,
+    "min_result": 24.0748,
+    "max_result": 28.7467,
+    "reading_count": 49320,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010344dd0e3087",
+    "Parameter": "water_elevation",
+    "avg_result": -28.0635,
+    "min_result": -28.7467,
+    "max_result": -24.0748,
+    "reading_count": 49320,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010444dd0aac07",
+    "Parameter": "depth",
+    "avg_result": 6.0334,
+    "min_result": -0.7546,
+    "max_result": 7.6378,
+    "reading_count": 41135,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010444dd0aac07",
+    "Parameter": "distance",
+    "avg_result": 12.09,
+    "min_result": 10.4856,
+    "max_result": 18.878,
+    "reading_count": 41135,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010444dd0aac07",
+    "Parameter": "water_elevation",
+    "avg_result": -12.09,
+    "min_result": -18.878,
+    "max_result": -10.4856,
+    "reading_count": 41135,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR010544dd0b6927",
+    "Parameter": "depth",
+    "avg_result": 0.3375,
+    "min_result": -0.1214,
+    "max_result": 4.9278,
+    "reading_count": 12829,
+    "unit": "feet",
+    "last_sample": "2025-10-12 00:00"
+  },
+  {
+    "SITE": "SCOR010544dd0b6927",
+    "Parameter": "distance",
+    "avg_result": 4.5903,
+    "min_result": 0,
+    "max_result": 5.0492,
+    "reading_count": 12829,
+    "unit": "feet",
+    "last_sample": "2025-10-12 00:00"
+  },
+  {
+    "SITE": "SCOR010544dd0b6927",
+    "Parameter": "water_elevation",
+    "avg_result": -4.5903,
+    "min_result": -5.0492,
+    "max_result": 0,
+    "reading_count": 12829,
+    "unit": "feet",
+    "last_sample": "2025-10-12 00:00"
+  },
+  {
+    "SITE": "SCOR012744dd5a5b0f",
+    "Parameter": "depth",
+    "avg_result": 0.8618,
+    "min_result": 0.1378,
+    "max_result": 3.248,
+    "reading_count": 39313,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR012744dd5a5b0f",
+    "Parameter": "distance",
+    "avg_result": 11.7432,
+    "min_result": 9.357,
+    "max_result": 12.4672,
+    "reading_count": 39313,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR012744dd5a5b0f",
+    "Parameter": "water_elevation",
+    "avg_result": 607.6722,
+    "min_result": 606.9482,
+    "max_result": 610.0584,
+    "reading_count": 39313,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013044dc265d77",
+    "Parameter": "depth",
+    "avg_result": 0.2905,
+    "min_result": 0.0558,
+    "max_result": 0.9908,
+    "reading_count": 40155,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013044dc265d77",
+    "Parameter": "distance",
+    "avg_result": 13.2659,
+    "min_result": 12.5656,
+    "max_result": 13.5007,
+    "reading_count": 40155,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013044dc265d77",
+    "Parameter": "water_elevation",
+    "avg_result": 579.8279,
+    "min_result": 579.5932,
+    "max_result": 580.5282,
+    "reading_count": 40155,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013244dcaab45f",
+    "Parameter": "depth",
+    "avg_result": 6.4036,
+    "min_result": 4.9016,
+    "max_result": 10.3904,
+    "reading_count": 39624,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013244dcaab45f",
+    "Parameter": "distance",
+    "avg_result": 19.0918,
+    "min_result": 15.105,
+    "max_result": 20.5938,
+    "reading_count": 39624,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013244dcaab45f",
+    "Parameter": "water_elevation",
+    "avg_result": 487.0699,
+    "min_result": 485.5679,
+    "max_result": 491.0568,
+    "reading_count": 39624,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013544dcaa1d1f",
+    "Parameter": "depth",
+    "avg_result": 0.1935,
+    "min_result": 0.0197,
+    "max_result": 1.168,
+    "reading_count": 40848,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013544dcaa1d1f",
+    "Parameter": "distance",
+    "avg_result": 8.4417,
+    "min_result": 7.4672,
+    "max_result": 8.6155,
+    "reading_count": 40848,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013544dcaa1d1f",
+    "Parameter": "water_elevation",
+    "avg_result": 518.2598,
+    "min_result": 518.086,
+    "max_result": 519.2343,
+    "reading_count": 40848,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013744dcba6c47",
+    "Parameter": "depth",
+    "avg_result": 0.785,
+    "min_result": 0.5709,
+    "max_result": 2.8642,
+    "reading_count": 40578,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013744dcba6c47",
+    "Parameter": "distance",
+    "avg_result": 6.9643,
+    "min_result": 4.8852,
+    "max_result": 7.1785,
+    "reading_count": 40578,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR013744dcba6c47",
+    "Parameter": "water_elevation",
+    "avg_result": 439.8667,
+    "min_result": 439.6526,
+    "max_result": 441.9459,
+    "reading_count": 40578,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR014644dc8ab397",
+    "Parameter": "depth",
+    "avg_result": 0.896,
+    "min_result": 0.5971,
+    "max_result": 1.3976,
+    "reading_count": 13503,
+    "unit": "feet",
+    "last_sample": "2025-11-07 00:00"
+  },
+  {
+    "SITE": "SCOR014644dc8ab397",
+    "Parameter": "distance",
+    "avg_result": 6.1972,
+    "min_result": 5.6955,
+    "max_result": 6.4961,
+    "reading_count": 13503,
+    "unit": "feet",
+    "last_sample": "2025-11-07 00:00"
+  },
+  {
+    "SITE": "SCOR014644dc8ab397",
+    "Parameter": "water_elevation",
+    "avg_result": 402.8612,
+    "min_result": 402.5623,
+    "max_result": 403.3629,
+    "reading_count": 13503,
+    "unit": "feet",
+    "last_sample": "2025-11-07 00:00"
+  },
+  {
+    "SITE": "SCOR014744dc9a42c7",
+    "Parameter": "depth",
+    "avg_result": 0.452,
+    "min_result": 0.1017,
+    "max_result": 1.5092,
+    "reading_count": 39670,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR014744dc9a42c7",
+    "Parameter": "distance",
+    "avg_result": 14.1543,
+    "min_result": 13.0971,
+    "max_result": 14.5046,
+    "reading_count": 39670,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR014744dc9a42c7",
+    "Parameter": "water_elevation",
+    "avg_result": 324.5268,
+    "min_result": 324.1765,
+    "max_result": 325.584,
+    "reading_count": 39670,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015144dc8dd48f",
+    "Parameter": "depth",
+    "avg_result": 9.3384,
+    "min_result": 3.7369,
+    "max_result": 9.4783,
+    "reading_count": 1967,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015144dc8dd48f",
+    "Parameter": "distance",
+    "avg_result": 2.4398,
+    "min_result": 2.2999,
+    "max_result": 8.0413,
+    "reading_count": 1967,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015144dc8dd48f",
+    "Parameter": "water_elevation",
+    "avg_result": 447.0586,
+    "min_result": 441.457,
+    "max_result": 447.1985,
+    "reading_count": 1967,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015544dc4a620f",
+    "Parameter": "depth",
+    "avg_result": 0.1576,
+    "min_result": -0.1509,
+    "max_result": 2.1719,
+    "reading_count": 35359,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015544dc4a620f",
+    "Parameter": "distance",
+    "avg_result": 17.6573,
+    "min_result": 15.643,
+    "max_result": 17.9659,
+    "reading_count": 35359,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015544dc4a620f",
+    "Parameter": "water_elevation",
+    "avg_result": 205.1219,
+    "min_result": 204.8133,
+    "max_result": 207.1362,
+    "reading_count": 35359,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015644de96822f",
+    "Parameter": "depth",
+    "avg_result": 9.9943,
+    "min_result": 9.7507,
+    "max_result": 11.25,
+    "reading_count": 35810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015644de96822f",
+    "Parameter": "distance",
+    "avg_result": 7.8207,
+    "min_result": 6.565,
+    "max_result": 8.0643,
+    "reading_count": 35810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR015644de96822f",
+    "Parameter": "water_elevation",
+    "avg_result": 199.1455,
+    "min_result": 198.9019,
+    "max_result": 200.4013,
+    "reading_count": 35810,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016144dc4a2607",
+    "Parameter": "depth",
+    "avg_result": 0.1635,
+    "min_result": -0.4364,
+    "max_result": 1.3123,
+    "reading_count": 35520,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016144dc4a2607",
+    "Parameter": "distance",
+    "avg_result": 14.2722,
+    "min_result": 13.1234,
+    "max_result": 14.872,
+    "reading_count": 35520,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016144dc4a2607",
+    "Parameter": "water_elevation",
+    "avg_result": 254.027,
+    "min_result": 253.4272,
+    "max_result": 255.1759,
+    "reading_count": 35520,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016344dc4a6a5f",
+    "Parameter": "depth",
+    "avg_result": 89.2822,
+    "min_result": -0.0558,
+    "max_result": 195.0689,
+    "reading_count": 35582,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016344dc4a6a5f",
+    "Parameter": "distance",
+    "avg_result": 8.6425,
+    "min_result": 7.5919,
+    "max_result": 8.8484,
+    "reading_count": 35582,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016344dc4a6a5f",
+    "Parameter": "water_elevation",
+    "avg_result": 205.0206,
+    "min_result": 204.8146,
+    "max_result": 206.0712,
+    "reading_count": 35582,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016544d12dbc4f",
+    "Parameter": "depth",
+    "avg_result": 0.0928,
+    "min_result": -0.5512,
+    "max_result": 0.128,
+    "reading_count": 35837,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016544d12dbc4f",
+    "Parameter": "distance",
+    "avg_result": 9.7497,
+    "min_result": 9.7146,
+    "max_result": 10.3937,
+    "reading_count": 35837,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016544d12dbc4f",
+    "Parameter": "water_elevation",
+    "avg_result": 128.7874,
+    "min_result": 128.1434,
+    "max_result": 128.8225,
+    "reading_count": 35837,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016744d070ab2f",
+    "Parameter": "depth",
+    "avg_result": 0.9959,
+    "min_result": -0.3445,
+    "max_result": 12.6673,
+    "reading_count": 36116,
+    "unit": "feet",
+    "last_sample": "2026-02-13 00:00"
+  },
+  {
+    "SITE": "SCOR016744d070ab2f",
+    "Parameter": "distance",
+    "avg_result": 11.6714,
+    "min_result": 0,
+    "max_result": 13.0118,
+    "reading_count": 36116,
+    "unit": "feet",
+    "last_sample": "2026-02-13 00:00"
+  },
+  {
+    "SITE": "SCOR016744d070ab2f",
+    "Parameter": "water_elevation",
+    "avg_result": -11.6714,
+    "min_result": -13.0118,
+    "max_result": 0,
+    "reading_count": 36116,
+    "unit": "feet",
+    "last_sample": "2026-02-13 00:00"
+  },
+  {
+    "SITE": "SCOR016844d070ab1f",
+    "Parameter": "depth",
+    "avg_result": -0.035,
+    "min_result": -0.1411,
+    "max_result": 6.2992,
+    "reading_count": 26658,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016844d070ab1f",
+    "Parameter": "distance",
+    "avg_result": 14.3201,
+    "min_result": 8.0446,
+    "max_result": 14.4291,
+    "reading_count": 26658,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016844d070ab1f",
+    "Parameter": "water_elevation",
+    "avg_result": -14.3201,
+    "min_result": -14.4291,
+    "max_result": -8.0446,
+    "reading_count": 26658,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016944dd84572f",
+    "Parameter": "depth",
+    "avg_result": 1.1918,
+    "min_result": 1.0433,
+    "max_result": 6.273,
+    "reading_count": 34798,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016944dd84572f",
+    "Parameter": "distance",
+    "avg_result": 5.8554,
+    "min_result": 0.7743,
+    "max_result": 6.0039,
+    "reading_count": 34798,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR016944dd84572f",
+    "Parameter": "water_elevation",
+    "avg_result": 821.2676,
+    "min_result": 821.1191,
+    "max_result": 826.3488,
+    "reading_count": 34798,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017044dd872637",
+    "Parameter": "depth",
+    "avg_result": 0.3661,
+    "min_result": 0.2822,
+    "max_result": 7.874,
+    "reading_count": 18803,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017044dd872637",
+    "Parameter": "distance",
+    "avg_result": 7.5079,
+    "min_result": 0,
+    "max_result": 7.5919,
+    "reading_count": 18803,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017044dd872637",
+    "Parameter": "water_elevation",
+    "avg_result": 815.7802,
+    "min_result": 815.6962,
+    "max_result": 823.2881,
+    "reading_count": 18803,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017344ddc14617",
+    "Parameter": "depth",
+    "avg_result": 0.449,
+    "min_result": -0.1312,
+    "max_result": 0.9711,
+    "reading_count": 28016,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017344ddc14617",
+    "Parameter": "distance",
+    "avg_result": 18.4196,
+    "min_result": 17.8248,
+    "max_result": 18.9993,
+    "reading_count": 28016,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017344ddc14617",
+    "Parameter": "water_elevation",
+    "avg_result": 634.6424,
+    "min_result": 634.0627,
+    "max_result": 635.2372,
+    "reading_count": 28016,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017444dd791157",
+    "Parameter": "depth",
+    "avg_result": 1.4508,
+    "min_result": 0.9219,
+    "max_result": 1.9554,
+    "reading_count": 30931,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017444dd791157",
+    "Parameter": "distance",
+    "avg_result": 10.229,
+    "min_result": 9.7244,
+    "max_result": 10.7579,
+    "reading_count": 30931,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017444dd791157",
+    "Parameter": "water_elevation",
+    "avg_result": 877.1519,
+    "min_result": 876.6231,
+    "max_result": 877.6565,
+    "reading_count": 30931,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017544dd7902d7",
+    "Parameter": "depth",
+    "avg_result": 3.5072,
+    "min_result": 3.0971,
+    "max_result": 5.1247,
+    "reading_count": 27707,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017544dd7902d7",
+    "Parameter": "distance",
+    "avg_result": 11.9783,
+    "min_result": 10.3609,
+    "max_result": 12.3885,
+    "reading_count": 27707,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017544dd7902d7",
+    "Parameter": "water_elevation",
+    "avg_result": 858.0214,
+    "min_result": 857.6112,
+    "max_result": 859.6388,
+    "reading_count": 27707,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017644ddcf2227",
+    "Parameter": "depth",
+    "avg_result": 0.83,
+    "min_result": 0.4265,
+    "max_result": 2.2999,
+    "reading_count": 31134,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017644ddcf2227",
+    "Parameter": "distance",
+    "avg_result": 11.3156,
+    "min_result": 9.8458,
+    "max_result": 11.7192,
+    "reading_count": 31134,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017644ddcf2227",
+    "Parameter": "water_elevation",
+    "avg_result": 683.565,
+    "min_result": 683.1614,
+    "max_result": 685.0348,
+    "reading_count": 31134,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017744dc5ae68f",
+    "Parameter": "depth",
+    "avg_result": 309.9949,
+    "min_result": 309.7441,
+    "max_result": 310.2559,
+    "reading_count": 19292,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017744dc5ae68f",
+    "Parameter": "distance",
+    "avg_result": 9.5619,
+    "min_result": 9.3012,
+    "max_result": 9.813,
+    "reading_count": 19292,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017744dc5ae68f",
+    "Parameter": "water_elevation",
+    "avg_result": 291.8079,
+    "min_result": 291.5568,
+    "max_result": 292.0686,
+    "reading_count": 19292,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017944de828b2f",
+    "Parameter": "depth",
+    "avg_result": 177.0966,
+    "min_result": 174.5079,
+    "max_result": 181.3452,
+    "reading_count": 19486,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017944de828b2f",
+    "Parameter": "distance",
+    "avg_result": 5.3837,
+    "min_result": 1.1352,
+    "max_result": 7.9724,
+    "reading_count": 19486,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR017944de828b2f",
+    "Parameter": "water_elevation",
+    "avg_result": 182.2915,
+    "min_result": 179.7028,
+    "max_result": 186.54,
+    "reading_count": 19486,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019044dd715037",
+    "Parameter": "depth",
+    "avg_result": 0.0767,
+    "min_result": -0.1706,
+    "max_result": 0.2986,
+    "reading_count": 6678,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019044dd715037",
+    "Parameter": "distance",
+    "avg_result": 8.5519,
+    "min_result": 8.3301,
+    "max_result": 8.7992,
+    "reading_count": 6678,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019044dd715037",
+    "Parameter": "water_elevation",
+    "avg_result": 967.7348,
+    "min_result": 967.4876,
+    "max_result": 967.9567,
+    "reading_count": 6678,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019144dd558847",
+    "Parameter": "depth",
+    "avg_result": 32805.1192,
+    "min_result": 32805.1192,
+    "max_result": 32805.1192,
+    "reading_count": 7204,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019144dd558847",
+    "Parameter": "distance",
+    "avg_result": 13.6186,
+    "min_result": 11.3681,
+    "max_result": 13.832,
+    "reading_count": 7204,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR019144dd558847",
+    "Parameter": "water_elevation",
+    "avg_result": 851.101,
+    "min_result": 850.8875,
+    "max_result": 853.3514,
+    "reading_count": 7204,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17144c34a961f",
+    "Parameter": "depth",
+    "avg_result": 3.9796,
+    "min_result": 2.3524,
+    "max_result": 5.0951,
+    "reading_count": 18481,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17144c34a961f",
+    "Parameter": "distance",
+    "avg_result": 25.9745,
+    "min_result": 24.8589,
+    "max_result": 27.6017,
+    "reading_count": 18481,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17144c34a961f",
+    "Parameter": "water_elevation",
+    "avg_result": 335.1761,
+    "min_result": 333.5489,
+    "max_result": 336.2917,
+    "reading_count": 18481,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17244c34a939f",
+    "Parameter": "depth",
+    "avg_result": 7.936,
+    "min_result": 6.2369,
+    "max_result": 9.0551,
+    "reading_count": 19094,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17244c34a939f",
+    "Parameter": "distance",
+    "avg_result": 25.2333,
+    "min_result": 24.1142,
+    "max_result": 26.9324,
+    "reading_count": 19094,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  },
+  {
+    "SITE": "SCOR17244c34a939f",
+    "Parameter": "water_elevation",
+    "avg_result": 335.1833,
+    "min_result": 333.4843,
+    "max_result": 336.3025,
+    "reading_count": 19094,
+    "unit": "feet",
+    "last_sample": "2026-03-02 00:00"
+  }
+]

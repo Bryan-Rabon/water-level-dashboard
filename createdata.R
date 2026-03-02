@@ -24,9 +24,11 @@ if (!DBI::dbExistsTable(con, TABLE_NAME)) {
     CREATE TABLE ", TABLE_NAME, " (
       SITE TEXT,
       DATETIME TEXT,
-      Value REAL,
+      Parameter TEXT,
+      Result REAL,
+      Units Text,
       -- Add more columns here if your API response includes them
-      PRIMARY KEY (SITE, DATETIME) 
+      PRIMARY KEY (SITE, DATETIME, Parameter, Units) 
     );
   ")
   

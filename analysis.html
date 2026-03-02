@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOR Station Monitoring Dashboard</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        :root {
+            --recent-green: #28a745;
+            --old-orange: #fd7e14;
+            --none-red: #dc3545;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            background-color: #f4f7f6;
+        }
+
+        /* Map Section */
+        #map { 
+            height: 55%; 
+            width: 100%; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        /* Dashboard Section */
+        #dashboard { 
+            height: 45%; 
+            overflow-y: auto; 
+            padding: 20px; 
+            box-sizing: border-box;
+        }
+
+        /* Status Cards */
+        .stats-grid { 
+            display: flex; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+        }
+
+        .stat-card { 
+            flex: 1; 
+            padding: 20px; 
+            border-radius: 10px; 
+            color: white; 
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .bg-recent { background-color: var(--recent-green); }
+        .bg-old { background-color: var(--old-orange); }
+        .bg-none { background-color: var(--none-red); }
+
+        .stat-card h2 { margin: 0; font-size: 2em; }
+        .stat-card p { margin: 5px 0 0; font-weight: bold; opacity: 0.9; }
+
+        /* Table Styling */
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        h3 { margin-top: 0; color: #333; }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+
+        th { 
+            text-align: left; 
+            background-color: #f8f9fa; 
+            color: #555; 
+            padding: 12px; 
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td { 
+            padding: 12px; 
+            border-bottom: 1px solid #eee; 
+            font-size: 0.9em; 
+            color: #444;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        /* Popup Table */
+        .popup-table { width: 100%; font-size: 0.85em; border-collapse: collapse; }
+        .popup-table td { padding: 4px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="dashboard">
+        <div class="stats-grid">
+            <div class="stat-card bg-recent">
+                <h2 id="count-recent">0</h2>
+                <p>RECENT (≤ 7 Days)</p>
+            </div>
+            <div class="stat-card bg-old">
+                <h2 id="count-old">0</h2>
+                <p>STALE (> 7 Days)</p>
+            </div>
+            <div class="stat-card bg-none">
+                <h2 id="count-none">0</h2>
+                <p>NO DATA FOUND</p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h3>Station Status Detail</h3>
+            <table id="station-table">
+                <thead>
+                    <tr>
+                        <th>Station ID (SITENAME)</th>
+                        <th>Reporting Status</th>
+                        <th>Last Sample Date</th>
+                        <th>Available Parameters</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Initialize Map
+        const map = L.map('map').setView([33.8361, -81.1637], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 2. Define Data Sources
+        const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
+        const summaryUrl = "analysis/site_summary.json";
+
+        // 3. Fetch and Process Data
+        Promise.all([
+            fetch(esriUrl).then(res => res.json()),
+            fetch(summaryUrl).then(res => res.json())
+        ]).then(([geoData, summaryData]) => {
+            
+            // Date Logic for 7-day cutoff
+            const now = new Date();
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(now.getDate() - 7);
+
+            // Group summary by SITE (ID matching)
+            const statsLookup = {};
+            summaryData.forEach(item => {
+                if (!statsLookup[item.SITE]) statsLookup[item.SITE] = [];
+                statsLookup[item.SITE].push(item);
+            });
+
+            let counts = { recent: 0, old: 0, none: 0 };
+            const tableBody = document.getElementById("table-body");
+
+            // 4. Create the Map Layer and Table Rows
+            L.geoJSON(geoData, {
+                pointToLayer: (feature, latlng) => {
+                    const siteID = feature.properties.SITENAME;
+                    const siteData = statsLookup[siteID];
+                    
+                    let markerColor = "#dc3545"; // Default: No Data
+                    let statusLabel = "No Data";
+                    let lastDateStr = "N/A";
+                    let pillClass = "bg-none";
+
+                    if (siteData && siteData.length > 0) {
+                        const lastDate = new Date(siteData[0].last_sample);
+                        lastDateStr = siteData[0].last_sample;
+
+                        if (lastDate >= sevenDaysAgo) {
+                            markerColor = "#28a745"; 
+                            statusLabel = "Recent";
+                            pillClass = "bg-recent";
+                            counts.recent++;
+                        } else {
+                            markerColor = "#fd7e14"; 
+                            statusLabel = "Stale";
+                            pillClass = "bg-old";
+                            counts.old++;
+                        }
+                    } else {
+                        counts.none++;
+                    }
+
+                    // Append Row to Table
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><strong>${siteID}</strong></td>
+                        <td><span class="status-pill ${pillClass}">${statusLabel}</span></td>
+                        <td>${lastDateStr}</td>
+                        <td>${siteData ? siteData.map(s => s.Parameter).join(", ") : "—"}</td>
+                    `;
+                    tableBody.appendChild(row);
+
+                    // Create the Map Marker
+                    return L.circleMarker(latlng, {
+                        radius: 9,
+                        fillColor: markerColor,
+                        color: "#fff",
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    });
+                },
+                onEachFeature: (feature, layer) => {
+                    const siteID = feature.properties.SITENAME;
+                    const siteData = statsLookup[siteID];
+                    let popupHtml = `<strong>Station: ${siteID}</strong><br><hr>`;
+                    
+                    if (siteData) {
+                        popupHtml += `<table class="popup-table">`;
+                        siteData.forEach(s => {
+                            popupHtml += `<tr><td>${s.Parameter}</td><td><b>${s.avg_result.toFixed(2)}</b> ${s.unit}</td></tr>`;
+                        });
+                        popupHtml += `</table>`;
+                    } else {
+                        popupHtml += "No analysis results found.";
+                    }
+                    layer.bindPopup(popupHtml);
+                }
+            }).addTo(map);
+
+            // 5. Update the Counter Cards
+            document.getElementById("count-recent").innerText = counts.recent;
+            document.getElementById("count-old").innerText = counts.old;
+            document.getElementById("count-none").innerText = counts.none;
+
+        }).catch(err => {
+            console.error("Data Load Error:", err);
+            alert("Error loading data. Ensure 'analysis/site_summary.json' exists.");
+        });
+    </script>
+</body>
+</html>
