@@ -1,0 +1,21 @@
+# --- DATA PRIVACY ---
+# Ignore the specific folder where you store raw API data
+raw_data/
+*.csv
+*.sqlite
+
+# Exceptions: Allow the processed results to be uploaded
+!results.json
+!assets/data/*.json
+
+# --- RSTUDIO SPECIFIC ---
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# --- SYSTEM & OS JUNK ---
+.DS_Store
+Thumbs.db
+node_modules/
