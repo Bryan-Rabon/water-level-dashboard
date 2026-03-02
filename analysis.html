@@ -12,6 +12,7 @@
             --recent-green: #28a745;
             --old-orange: #fd7e14;
             --none-red: #dc3545;
+            --dark-blue: #005a87;
         }
 
         body { 
@@ -23,7 +24,7 @@
             background-color: #f4f7f6;
         }
 
-        /* Map Section */
+        /* Map Section (Top) */
         #map { 
             height: 55%; 
             width: 100%; 
@@ -31,7 +32,7 @@
             z-index: 1;
         }
 
-        /* Dashboard Section */
+        /* Dashboard Section (Bottom) */
         #dashboard { 
             height: 45%; 
             overflow-y: auto; 
@@ -60,50 +61,35 @@
         .bg-none { background-color: var(--none-red); }
 
         .stat-card h2 { margin: 0; font-size: 2em; }
-        .stat-card p { margin: 5px 0 0; font-weight: bold; opacity: 0.9; }
+        .stat-card p { margin: 5px 0 0; font-weight: bold; opacity: 0.9; font-size: 0.8em; }
 
         /* Table Styling */
         .table-container {
             background: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        h3 { margin-top: 0; color: #333; }
+        h3 { margin-top: 0; color: #333; border-left: 5px solid var(--dark-blue); padding-left: 10px; }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
-
-        th { 
-            text-align: left; 
-            background-color: #f8f9fa; 
-            color: #555; 
-            padding: 12px; 
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        td { 
-            padding: 12px; 
-            border-bottom: 1px solid #eee; 
-            font-size: 0.9em; 
-            color: #444;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; background-color: #f8f9fa; color: #555; padding: 12px; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9em; color: #444; }
 
         .status-pill {
             padding: 4px 10px;
             border-radius: 20px;
             color: white;
-            font-size: 0.8em;
+            font-size: 0.75em;
             font-weight: bold;
             display: inline-block;
         }
 
         /* Popup Table */
-        .popup-table { width: 100%; font-size: 0.85em; border-collapse: collapse; }
+        .popup-table { width: 100%; font-size: 0.85em; border-collapse: collapse; margin-top: 5px; }
         .popup-table td { padding: 4px; border-bottom: 1px solid #eee; }
+        .popup-id { font-size: 1.1em; color: var(--dark-blue); margin-bottom: 5px; display: block; }
     </style>
 </head>
 <body>
@@ -114,27 +100,27 @@
         <div class="stats-grid">
             <div class="stat-card bg-recent">
                 <h2 id="count-recent">0</h2>
-                <p>RECENT (≤ 7 Days)</p>
+                <p>RECENT (≤ 7 DAYS)</p>
             </div>
             <div class="stat-card bg-old">
                 <h2 id="count-old">0</h2>
-                <p>STALE (> 7 Days)</p>
+                <p>STALE (> 7 DAYS)</p>
             </div>
             <div class="stat-card bg-none">
                 <h2 id="count-none">0</h2>
-                <p>NO DATA FOUND</p>
+                <p>NO ANALYSIS DATA</p>
             </div>
         </div>
 
         <div class="table-container">
-            <h3>Station Status Detail</h3>
+            <h3>Station Details (8-Character Match)</h3>
             <table id="station-table">
                 <thead>
                     <tr>
-                        <th>Station ID (SITENAME)</th>
-                        <th>Reporting Status</th>
-                        <th>Last Sample Date</th>
-                        <th>Available Parameters</th>
+                        <th>Station ID</th>
+                        <th>Status</th>
+                        <th>Last Sample</th>
+                        <th>Parameters Tracked</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -146,114 +132,94 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        // 1. Initialize Map
         const map = L.map('map').setView([33.8361, -81.1637], 7);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; OSM'
         }).addTo(map);
 
-        // 2. Define Data Sources
         const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
         const summaryUrl = "analysis/site_summary.json";
 
-        // 3. Fetch and Process Data
         Promise.all([
             fetch(esriUrl).then(res => res.json()),
             fetch(summaryUrl).then(res => res.json())
         ]).then(([geoData, summaryData]) => {
             
-            // Date Logic for 7-day cutoff
-            const now = new Date();
             const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(now.getDate() - 7);
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-            // Group summary by SITE (ID matching)
+            // 1. Group JSON summary by first 8 characters
             const statsLookup = {};
             summaryData.forEach(item => {
-                if (!statsLookup[item.SITE]) statsLookup[item.SITE] = [];
-                statsLookup[item.SITE].push(item);
+                const shortID = item.SITE.substring(0, 8);
+                if (!statsLookup[shortID]) statsLookup[shortID] = [];
+                statsLookup[shortID].push(item);
             });
 
             let counts = { recent: 0, old: 0, none: 0 };
             const tableBody = document.getElementById("table-body");
 
-            // 4. Create the Map Layer and Table Rows
+            // 2. Process Map Points
             L.geoJSON(geoData, {
                 pointToLayer: (feature, latlng) => {
-                    const siteID = feature.properties.SITENAME;
-                    const siteData = statsLookup[siteID];
+                    // TRUNCATE ESRI ID TO 8 CHARS
+                    const rawID = feature.properties.SITENAME || "Unknown";
+                    const shortID = rawID.substring(0, 8);
                     
-                    let markerColor = "#dc3545"; // Default: No Data
-                    let statusLabel = "No Data";
-                    let lastDateStr = "N/A";
-                    let pillClass = "bg-none";
+                    const siteData = statsLookup[shortID];
+                    let markerColor = "#dc3545", statusTxt = "None", pillClass = "bg-none", lastDateStr = "N/A";
 
                     if (siteData && siteData.length > 0) {
                         const lastDate = new Date(siteData[0].last_sample);
                         lastDateStr = siteData[0].last_sample;
 
                         if (lastDate >= sevenDaysAgo) {
-                            markerColor = "#28a745"; 
-                            statusLabel = "Recent";
-                            pillClass = "bg-recent";
-                            counts.recent++;
+                            markerColor = "#28a745"; statusTxt = "Recent"; pillClass = "bg-recent"; counts.recent++;
                         } else {
-                            markerColor = "#fd7e14"; 
-                            statusLabel = "Stale";
-                            pillClass = "bg-old";
-                            counts.old++;
+                            markerColor = "#fd7e14"; statusTxt = "Stale"; pillClass = "bg-old"; counts.old++;
                         }
                     } else {
                         counts.none++;
                     }
 
-                    // Append Row to Table
+                    // 3. Create Table Row
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td><strong>${siteID}</strong></td>
-                        <td><span class="status-pill ${pillClass}">${statusLabel}</span></td>
+                        <td><strong>${shortID}</strong></td>
+                        <td><span class="status-pill ${pillClass}">${statusTxt}</span></td>
                         <td>${lastDateStr}</td>
                         <td>${siteData ? siteData.map(s => s.Parameter).join(", ") : "—"}</td>
                     `;
                     tableBody.appendChild(row);
 
-                    // Create the Map Marker
                     return L.circleMarker(latlng, {
-                        radius: 9,
-                        fillColor: markerColor,
-                        color: "#fff",
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.9
+                        radius: 9, fillColor: markerColor, color: "#fff", weight: 2, fillOpacity: 0.9
                     });
                 },
                 onEachFeature: (feature, layer) => {
-                    const siteID = feature.properties.SITENAME;
-                    const siteData = statsLookup[siteID];
-                    let popupHtml = `<strong>Station: ${siteID}</strong><br><hr>`;
-                    
+                    const shortID = (feature.properties.SITENAME || "").substring(0, 8);
+                    const siteData = statsLookup[shortID];
+
+                    let popup = `<b class="popup-id">${shortID}</b><hr>`;
                     if (siteData) {
-                        popupHtml += `<table class="popup-table">`;
+                        popup += `<table class="popup-table">`;
                         siteData.forEach(s => {
-                            popupHtml += `<tr><td>${s.Parameter}</td><td><b>${s.avg_result.toFixed(2)}</b> ${s.unit}</td></tr>`;
+                            popup += `<tr><td>${s.Parameter}</td><td><b>${s.avg_result.toFixed(2)}</b> ${s.unit}</td></tr>`;
                         });
-                        popupHtml += `</table>`;
+                        popup += `</table>`;
                     } else {
-                        popupHtml += "No analysis results found.";
+                        popup += "No analysis match found.";
                     }
-                    layer.bindPopup(popupHtml);
+                    layer.bindPopup(popup);
                 }
             }).addTo(map);
 
-            // 5. Update the Counter Cards
+            // 4. Update Cards
             document.getElementById("count-recent").innerText = counts.recent;
             document.getElementById("count-old").innerText = counts.old;
             document.getElementById("count-none").innerText = counts.none;
 
-        }).catch(err => {
-            console.error("Data Load Error:", err);
-            alert("Error loading data. Ensure 'analysis/site_summary.json' exists.");
-        });
+        }).catch(err => console.error("Error:", err));
     </script>
 </body>
 </html>

@@ -12,6 +12,7 @@ scor_data <- dbReadTable(con, "scor_data")
 
 # 3. Process with Date logic
 summary_results <- scor_data %>%
+  mutate(SITE_SHORT = substr(SITE, 1, 8)) %>%
   # Convert string to Date-Time object so max() works correctly
   mutate(DATETIME = as.POSIXct(DATETIME)) %>% 
   group_by(SITE, Parameter) %>%
