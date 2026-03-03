@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOR Multi-Station Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1220; --surface: #111c2e; --surface2: #162032;
+            --border: rgba(255,255,255,0.07); --accent: #00c8ff; --accent2: #00ffa3;
+            --text: #e8edf5; --text-muted: #6b7fa3; --danger: #ff4757;
+            --warning: #ffd32a; --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 24px 20px; position: relative; z-index: 1; }
+        .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+        .header-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.7em; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px; }
+        h1 { font-size: 1.75rem; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; }
+        h1 span { color: var(--accent); }
+        .header-subtitle { font-size: 0.85em; color: var(--text-muted); margin-top: 4px; }
+        .header-status { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .live-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,255,163,0.1); border: 1px solid rgba(0,255,163,0.25); color: var(--accent2); font-family: 'Space Mono', monospace; font-size: 0.7em; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.1em; }
+        .live-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+        .clock { font-family: 'Space Mono', monospace; font-size: 0.75em; color: var(--text-muted); }
+        #dev-banner { display: none; background: rgba(255,211,42,0.08); border: 1px solid rgba(255,211,42,0.25); color: var(--warning); font-family: 'Space Mono', monospace; font-size: 0.72em; padding: 7px 14px; border-radius: 6px; margin-bottom: 14px; }
+        .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; background: var(--surface); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 0.72em; font-weight: 600; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+        select, input[type="date"] { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9em; cursor: pointer; transition: border-color 0.2s; outline: none; }
+        select:focus, input[type="date"]:focus { border-color: var(--accent); }
+        .quick-range { display: flex; gap: 5px; }
+        .range-btn { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.82em; cursor: pointer; transition: all 0.15s; }
+        .range-btn:hover, .range-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.08); }
+        .controls-divider { width: 1px; height: 40px; background: var(--border); align-self: flex-end; margin: 0 4px; }
+        .selected-display { margin-left: auto; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+        #site-display { color: var(--accent); font-weight: 600; font-size: 0.88em; max-width: 300px; text-align: right; }
+        .instructions { display: flex; align-items: center; gap: 8px; font-size: 0.8em; color: var(--text-muted); background: rgba(0,200,255,0.06); border: 1px solid rgba(0,200,255,0.15); padding: 8px 14px; border-radius: 6px; margin-bottom: 16px; }
+        #loading { display: none; background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); color: var(--accent); padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.85em; font-family: 'Space Mono', monospace; text-align: center; }
+        .loading-bar { height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); border-radius: 2px; margin-top: 8px; animation: sweep 1.2s linear infinite; }
+        @keyframes sweep { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+        .main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } }
+        #map { height: 420px; width: 100%; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 1; }
+        .leaflet-tile { filter: brightness(0.75) saturate(0.6) hue-rotate(180deg); }
+        .leaflet-control-zoom a { background: var(--surface2) !important; color: var(--text) !important; border-color: var(--border) !important; }
+        .sidebar { display: flex; flex-direction: column; gap: 14px; }
+        .sidebar-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+        .sidebar-card h4 { font-size: 0.72em; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88em; }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-label { color: var(--text-muted); }
+        .stat-value { font-family: 'Space Mono', monospace; font-size: 0.9em; color: var(--text); }
+        .trend-up { color: var(--danger); } .trend-down { color: var(--accent2); }
+        .station-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+        .station-item { display: flex; align-items: center; gap: 8px; font-size: 0.85em; padding: 6px 8px; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border); }
+        .station-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .station-name { flex: 1; color: var(--text); }
+        .station-latest { font-family: 'Space Mono', monospace; font-size: 0.85em; color: var(--text-muted); }
+        .chart-card { background: var(--surface); padding: 20px 24px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .chart-title { font-size: 0.88em; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .chart-actions { display: flex; gap: 8px; }
+        .chart-btn { padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 0.78em; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+        .chart-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .chart-wrapper { position: relative; height: 360px; }
+        #no-data-msg { display: flex; position: absolute; inset: 0; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: var(--text-muted); font-size: 0.9em; }
+        #no-data-msg svg { opacity: 0.3; }
+        .stats-container { background: var(--surface); padding: 20px 24px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow-x: auto; }
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .stats-title { font-size: 0.88em; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .export-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); font-size: 0.78em; cursor: pointer; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+        .export-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 14px; font-size: 0.72em; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid var(--border); }
+        td { padding: 12px 14px; font-size: 0.88em; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        tr:last-child td { border-bottom: none; }
+        .station-color-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
+        td .mono { font-family: 'Space Mono', monospace; font-size: 0.9em; }
+        .val-up { color: var(--danger); font-weight: 600; } .val-down { color: var(--accent2); font-weight: 600; } .val-neutral { color: var(--text-muted); }
+        .range-bar-cell { min-width: 120px; }
+        .range-bar-bg { background: var(--surface2); border-radius: 3px; height: 5px; margin-top: 4px; }
+        .range-bar-fill { height: 100%; border-radius: 3px; }
+        .info.legend { padding: 10px 14px; background: var(--surface) !important; border: 1px solid var(--border) !important; border-radius: 8px; line-height: 22px; font-size: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; box-shadow: var(--shadow) !important; }
+        .info.legend i { width: 10px; height: 10px; float: left; margin-right: 8px; border-radius: 50%; margin-top: 6px; }
+        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; font-size: 0.85em; color: var(--text); box-shadow: var(--shadow); z-index: 9999; opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: var(--surface2); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="header-left">
+            <div class="header-eyebrow">South Carolina Ocean &amp; Resources</div>
+            <h1>SCOR <span>Water Level</span> Monitor</h1>
+            <div class="header-subtitle">Multi-station real-time hydrological data</div>
+        </div>
+        <div class="header-status">
+            <div class="live-badge"><div class="live-dot"></div>LIVE DATA</div>
+            <div class="clock" id="clock">--:--:-- UTC</div>
+        </div>
+    </div>
+
+    <div id="dev-banner">⚠ DEV MODE — iriver data API proxied via corsproxy.io for local testing</div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Start Date</label>
+            <input type="date" id="start-date" onchange="refreshCurrentSelection()">
+        </div>
+        <div class="control-group">
+            <label>End Date</label>
+            <input type="date" id="end-date" onchange="refreshCurrentSelection()">
+        </div>
+        <div class="control-group">
+            <label>Quick Range</label>
+            <div class="quick-range">
+                <button class="range-btn" data-days="1">24h</button>
+                <button class="range-btn active" data-days="7">7d</button>
+                <button class="range-btn" data-days="14">14d</button>
+                <button class="range-btn" data-days="30">30d</button>
+            </div>
+        </div>
+        <div class="controls-divider"></div>
+        <div class="control-group">
+            <label>Data Mode</label>
+            <select id="data-mode" onchange="refreshCurrentSelection()">
+                <option value="auto">Auto (Elevation if Surveyed)</option>
+                <option value="depth">Force Depth (All Stations)</option>
+                <option value="elevation">Force Elevation (Surveyed Only)</option>
+            </select>
+        </div>
+        <div class="selected-display">
+            <label>Active Stations</label>
+            <span id="site-display">None selected</span>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Hold <strong>&nbsp;Shift&nbsp;</strong> and <strong>&nbsp;Click-Drag&nbsp;</strong> to box-select multiple stations, or click any marker to chart a single site.
+    </div>
+
+    <div id="loading">
+        <span>⟳ Fetching station data...</span>
+        <div class="loading-bar"></div>
+    </div>
+
+    <div class="main-layout">
+        <div id="map"></div>
+        <div class="sidebar">
+            <div class="sidebar-card">
+                <h4>Selected Stations</h4>
+                <div class="station-list" id="station-list">
+                    <div style="color:var(--text-muted);font-size:0.82em;text-align:center;padding:20px 0;">No stations selected.<br>Click a marker or box-select.</div>
+                </div>
+            </div>
+            <div class="sidebar-card">
+                <h4>Quick Summary</h4>
+                <div class="stat-row"><span class="stat-label">Stations</span><span class="stat-value" id="sum-count">—</span></div>
+                <div class="stat-row"><span class="stat-label">Avg Level</span><span class="stat-value" id="sum-avg">—</span></div>
+                <div class="stat-row"><span class="stat-label">Overall High</span><span class="stat-value trend-up" id="sum-max">—</span></div>
+                <div class="stat-row"><span class="stat-label">Overall Low</span><span class="stat-value trend-down" id="sum-min">—</span></div>
+                <div class="stat-row"><span class="stat-label">Data Points</span><span class="stat-value" id="sum-pts">—</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-header">
+            <span class="chart-title" id="chart-title">Water Level Time Series</span>
+            <div class="chart-actions">
+                <button class="chart-btn" onclick="toggleSmooth()">Smooth</button>
+                <button class="chart-btn" onclick="downloadChartPNG()">⬇ PNG</button>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="waterChart"></canvas>
+            <div id="no-data-msg">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3l18 18M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/></svg>
+                <span>Select stations on the map to visualize data</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stats-header">
+            <span class="stats-title">Station Summary Statistics</span>
+            <button class="export-btn" onclick="exportCSV()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Station</th><th>Latest (ft)</th><th>Max (ft)</th>
+                    <th>Min (ft)</th><th>Range (ft)</th><th>Net Change</th><th>Trend</th>
+                </tr>
+            </thead>
+            <tbody id="stats-tbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">Select stations on the map to see statistics.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
+<script>
+
+// ── CORS PROXY ────────────────────────────────────────────────────────────────
+// Esri has open CORS — always fetched directly.
+// iriver data API only allows github.io — proxied locally, direct on GitHub Pages.
+const IS_LOCAL = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+const CORS_PROXY = 'https://corsproxy.io/?url=';
+function dataApiUrl(url) {
+    return IS_LOCAL ? CORS_PROXY + encodeURIComponent(url) : url;
+}
+if (IS_LOCAL) document.getElementById('dev-banner').style.display = 'block';
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+    document.getElementById('clock').textContent = luxon.DateTime.utc().toFormat('HH:mm:ss') + ' UTC';
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = function() {
+    const today = luxon.DateTime.now();
+    document.getElementById('end-date').value   = today.toISODate();
+    document.getElementById('start-date').value = today.minus({days: 7}).toISODate();
+    setupQuickRange();
+};
+
+function setupQuickRange() {
+    document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const today = luxon.DateTime.now();
+            document.getElementById('end-date').value   = today.toISODate();
+            document.getElementById('start-date').value = today.minus({days: +this.dataset.days}).toISODate();
+            refreshCurrentSelection();
+        });
+    });
+}
+
+// ── MAP ───────────────────────────────────────────────────────────────────────
+const map = L.map('map', { boxZoom: true }).setView([33.8361, -81.1637], 7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+let waterChart, allLayers = [], currentSelection = [], smoothEnabled = false, lastDatasets = [];
+const COLORS = ['#00c8ff','#00ffa3','#ff6b35','#a78bfa','#ffd32a','#f472b6','#34d399','#fb923c','#60a5fa','#e879f9'];
+
+// Esri — CORS open, always direct
+const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
+
+fetch(esriUrl)
+    .then(res => res.json())
+    .then(data => {
+        L.geoJSON(data, {
+            pointToLayer: (feature, latlng) => {
+                const isSurveyed = (+feature.properties.ORTHO_HEIGHT > 0);
+                return L.circleMarker(latlng, {
+                    radius: 7, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35',
+                    color: 'rgba(255,255,255,0.3)', weight: 2, fillOpacity: 0.85
+                });
+            },
+            onEachFeature: (feature, layer) => {
+                allLayers.push(layer);
+                const rawName = (feature.properties.SITENAME || 'Unknown').trim();
+                const h = feature.properties.ORTHO_HEIGHT || 0;
+                const surveyLabel = h > 0 ? '<span style="color:#00ffa3;">✓ Surveyed</span>' : '<span style="color:#ff6b35;">⚠ Not Surveyed</span>';
+                layer.bindPopup(
+                    '<div style="font-family:\'DM Sans\',sans-serif;min-width:160px;color:#e8edf5;">' +
+                    '<strong>' + rawName + '</strong><br><span style="font-size:0.8em;">' + surveyLabel + '</span>' +
+                    (h > 0 ? '<br><span style="font-size:0.78em;color:#6b7fa3;">Height: ' + (+h).toFixed(2) + ' ft</span>' : '') +
+                    '<br><br><button onclick="updateMultiDashboard([{name:\'' + rawName.replace(/'/g,"\\'") + '\',height:' + h + '}])" ' +
+                    'style="padding:6px 12px;background:#00c8ff;color:#0b1220;border:none;border-radius:5px;cursor:pointer;font-size:0.82em;font-weight:700;width:100%;">Chart This Site</button></div>'
+                );
+                layer.on('mouseover', function() { this.setStyle({ radius: 9, fillOpacity: 1 }); });
+                layer.on('mouseout',  function() { this.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: (+feature.properties.ORTHO_HEIGHT > 0) ? '#00ffa3' : '#ff6b35' }); });
+            }
+        }).addTo(map);
+        addLegend();
+    });
+
+map.on('boxzoomend', function(e) {
+    const selected = [];
+    allLayers.forEach(layer => {
+        if (e.boxZoomBounds.contains(layer.getLatLng()))
+            selected.push({ name: layer.feature.properties.SITENAME.trim(), height: +layer.feature.properties.ORTHO_HEIGHT || 0 });
+    });
+    if (selected.length > 0) updateMultiDashboard(selected);
+});
+
+function refreshCurrentSelection() {
+    if (currentSelection.length > 0) updateMultiDashboard(currentSelection);
+}
+
+// ── DATA FETCH ────────────────────────────────────────────────────────────────
+async function updateMultiDashboard(sites) {
+    currentSelection = sites;
+    const mode           = document.getElementById('data-mode').value;
+    const startFormatted = luxon.DateTime.fromISO(document.getElementById('start-date').value).startOf('day').toUTC().toISO();
+    const endFormatted   = luxon.DateTime.fromISO(document.getElementById('end-date').value).endOf('day').toUTC().toISO();
+
+    document.getElementById('loading').style.display    = 'block';
+    document.getElementById('site-display').textContent = sites.map(s => s.name).join(', ');
+
+    const useDepth    = (mode === 'depth') || (mode === 'auto' && sites.some(s => s.height === 0));
+    const dataField   = useDepth ? 'depth_feet' : 'water_elevation_feet';
+    const labelSuffix = useDepth ? 'Depth' : 'Elev';
+
+    const requests = sites.map(async (site, index) => {
+        const cleanName = site.name.trim();
+        const directUrl = 'https://metadata.iriver.cloud/api/v1/scor/' + encodeURIComponent(cleanName) +
+            '?start=' + encodeURIComponent(startFormatted) + '&end=' + encodeURIComponent(endFormatted);
+        try {
+            const res  = await fetch(dataApiUrl(directUrl));  // proxied locally, direct on GH Pages
+            const json = await res.json();
+            if (json && json.data && json.data.length > 0) {
+                const values = json.data.map(d => d[dataField]).filter(v => v !== null);
+                if (!values.length) return null;
+                const tail       = values.slice(-Math.max(1, Math.floor(values.length * 0.2)));
+                const trendSlope = tail.length > 1 ? tail[tail.length-1] - tail[0] : 0;
+                return {
+                    label: cleanName + ' (' + labelSuffix + ')',
+                    data:  json.data.filter(d => d[dataField] !== null).map(d => ({ x: d.t, y: d[dataField] })),
+                    borderColor: COLORS[index % COLORS.length],
+                    backgroundColor: COLORS[index % COLORS.length] + '18',
+                    borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
+                    tension: smoothEnabled ? 0.4 : 0.1, fill: false,
+                    stats: {
+                        name: cleanName, color: COLORS[index % COLORS.length],
+                        max: Math.max(...values), min: Math.min(...values),
+                        latest: values[values.length-1], net: values[values.length-1] - values[0],
+                        count: values.length, trend: trendSlope
+                    }
+                };
+            }
+        } catch(err) { console.error('Fetch error for ' + cleanName + ':', err); }
+        return null;
+    });
+
+    const datasetsToPlot = (await Promise.all(requests)).filter(Boolean);
+    document.getElementById('loading').style.display = 'none';
+    lastDatasets = datasetsToPlot;
+
+    if (!datasetsToPlot.length) {
+        showToast('No data found for this selection and date range.');
+        showNoData(true); clearSidebar();
+    } else {
+        showNoData(false);
+        renderMultiChart(datasetsToPlot, useDepth ? 'Feet (Depth)' : 'Feet (Elevation)');
+        updateStatsTable(datasetsToPlot);
+        updateSidebar(datasetsToPlot);
+        updateSummaryCard(datasetsToPlot);
+        document.getElementById('chart-title').textContent = 'Water Level — ' + (useDepth ? 'Depth' : 'Elevation') + ' (ft)';
+    }
+}
+
+function showNoData(show) { document.getElementById('no-data-msg').style.display = show ? 'flex' : 'none'; }
+
+function clearSidebar() {
+    document.getElementById('station-list').innerHTML = '<div style="color:var(--text-muted);font-size:0.82em;text-align:center;padding:20px 0;">No data available.</div>';
+    ['sum-count','sum-avg','sum-max','sum-min','sum-pts'].forEach(id => document.getElementById(id).textContent = '—');
+}
+
+function updateSidebar(datasets) {
+    document.getElementById('station-list').innerHTML = datasets.map(ds =>
+        '<div class="station-item"><div class="station-dot" style="background:' + ds.stats.color + '"></div>' +
+        '<span class="station-name">' + ds.stats.name + '</span>' +
+        '<span class="station-latest">' + ds.stats.latest.toFixed(2) + ' ft</span></div>').join('');
+}
+
+function updateSummaryCard(datasets) {
+    const allLatest = datasets.map(d => d.stats.latest);
+    document.getElementById('sum-count').textContent = datasets.length;
+    document.getElementById('sum-avg').textContent   = (allLatest.reduce((a,b)=>a+b,0)/allLatest.length).toFixed(2) + ' ft';
+    document.getElementById('sum-max').textContent   = Math.max(...datasets.map(d=>d.stats.max)).toFixed(2) + ' ft';
+    document.getElementById('sum-min').textContent   = Math.min(...datasets.map(d=>d.stats.min)).toFixed(2) + ' ft';
+    document.getElementById('sum-pts').textContent   = datasets.reduce((a,d)=>a+d.stats.count,0).toLocaleString();
+}
+
+function updateStatsTable(datasets) {
+    document.getElementById('stats-tbody').innerHTML = datasets.map(ds => {
+        const s = ds.stats, rangeVal = s.max - s.min;
+        const netClass   = Math.abs(s.net) < 0.01 ? 'val-neutral' : (s.net > 0 ? 'val-up' : 'val-down');
+        const trendIcon  = s.trend > 0.01 ? '↑' : (s.trend < -0.01 ? '↓' : '→');
+        const trendClass = s.trend > 0.01 ? 'val-up' : (s.trend < -0.01 ? 'val-down' : 'val-neutral');
+        const fillPct    = rangeVal > 0 ? ((s.latest - s.min) / rangeVal * 100).toFixed(1) : 50;
+        return '<tr>' +
+            '<td><span class="station-color-dot" style="background:' + s.color + '"></span><strong>' + s.name + '</strong></td>' +
+            '<td><span class="mono">' + s.latest.toFixed(3) + '</span></td>' +
+            '<td><span class="mono" style="color:var(--danger)">' + s.max.toFixed(3) + '</span></td>' +
+            '<td><span class="mono" style="color:var(--accent2)">' + s.min.toFixed(3) + '</span></td>' +
+            '<td class="range-bar-cell"><span class="mono">' + rangeVal.toFixed(3) + '</span>' +
+            '<div class="range-bar-bg"><div class="range-bar-fill" style="width:' + fillPct + '%;background:' + s.color + '"></div></div></td>' +
+            '<td class="' + netClass + ' mono">' + (s.net >= 0 ? '+' : '') + s.net.toFixed(3) + ' ft</td>' +
+            '<td class="' + trendClass + '" style="font-size:1.3em;line-height:1;">' + trendIcon + '</td></tr>';
+    }).join('');
+}
+
+function renderMultiChart(datasets, yAxisTitle) {
+    const ctx = document.getElementById('waterChart').getContext('2d');
+    if (waterChart) waterChart.destroy();
+    waterChart = new Chart(ctx, {
+        type: 'line', data: { datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false }, animation: { duration: 400 },
+            scales: {
+                x: { type: 'time', time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } },
+                     title: { display: true, text: 'Date & Time', color: '#6b7fa3' },
+                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', maxRotation: 0 } },
+                y: { title: { display: true, text: yAxisTitle, color: '#6b7fa3' },
+                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', precision: 2 } }
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#6b7fa3', usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'DM Sans', size: 12 } } },
+                tooltip: { backgroundColor: '#111c2e', borderColor: 'rgba(255,255,255,0.07)', borderWidth: 1,
+                           titleColor: '#e8edf5', bodyColor: '#6b7fa3', padding: 12,
+                           callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toFixed(3) : 'N/A') + ' ft' } }
+            }
+        }
+    });
+}
+
+function toggleSmooth() {
+    smoothEnabled = !smoothEnabled;
+    if (lastDatasets.length) { lastDatasets.forEach(ds => ds.tension = smoothEnabled ? 0.4 : 0.1); if (waterChart) { waterChart.data.datasets = lastDatasets; waterChart.update(); } }
+    showToast(smoothEnabled ? 'Smoothing enabled' : 'Smoothing disabled');
+}
+
+function exportCSV() {
+    if (!lastDatasets || !lastDatasets.length) { showToast('No data to export.'); return; }
+    const rows = [['Station','Timestamp','Value (ft)']];
+    lastDatasets.forEach(ds => ds.data.forEach(pt => rows.push([ds.stats.name, pt.x, pt.y != null ? pt.y.toFixed(3) : ''])));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\n')], {type:'text/csv'}));
+    a.download = 'scor_water_levels_' + luxon.DateTime.now().toISODate() + '.csv';
+    a.click();
+    showToast('CSV exported!');
+}
+
+function downloadChartPNG() {
+    if (!waterChart) { showToast('No chart to download.'); return; }
+    const a = document.createElement('a');
+    a.href = waterChart.toBase64Image();
+    a.download = 'scor_chart_' + luxon.DateTime.now().toISODate() + '.png';
+    a.click();
+    showToast('Chart image saved!');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function addLegend() {
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = () => {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML = '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">STATION STATUS</b><br>' +
+            '<i style="background:#00ffa3"></i> Surveyed (Elevation)<br>' +
+            '<i style="background:#ff6b35"></i> Not Surveyed (Depth)';
+        return div;
+    };
+    legend.addTo(map);
+}
+</script>
+</body>
+</html>
