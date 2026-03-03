@@ -11,8 +11,9 @@
         :root {
             --bg: #0b1220; --surface: #111c2e; --surface2: #162032;
             --border: rgba(255,255,255,0.07); --accent: #00c8ff; --accent2: #00ffa3;
-            --text: #e8edf5; --text-muted: #6b7fa3; --danger: #ff4757;
-            --warning: #ffd32a; --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --accent3: #ff6b35; --text: #e8edf5; --text-muted: #6b7fa3;
+            --danger: #ff4757; --warning: #ffd32a; --radius: 12px;
+            --shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
@@ -28,7 +29,7 @@
         .live-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
         .clock { font-family: 'Space Mono', monospace; font-size: 0.75em; color: var(--text-muted); }
-        #dev-banner { display: none; background: rgba(255,211,42,0.08); border: 1px solid rgba(255,211,42,0.25); color: var(--warning); font-family: 'Space Mono', monospace; font-size: 0.72em; padding: 7px 14px; border-radius: 6px; margin-bottom: 14px; }
+
         .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; background: var(--surface); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
         .control-group { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 0.72em; font-weight: 600; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
@@ -41,7 +42,7 @@
         .selected-display { margin-left: auto; display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
         #site-display { color: var(--accent); font-weight: 600; font-size: 0.88em; max-width: 300px; text-align: right; }
         .instructions { display: flex; align-items: center; gap: 8px; font-size: 0.8em; color: var(--text-muted); background: rgba(0,200,255,0.06); border: 1px solid rgba(0,200,255,0.15); padding: 8px 14px; border-radius: 6px; margin-bottom: 16px; }
-        #loading { display: none; background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); color: var(--accent); padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.85em; font-family: 'Space Mono', monospace; text-align: center; }
+        #loading { display: none; background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); color: var(--accent); padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.85em; font-family: 'Space Mono', monospace; letter-spacing: 0.05em; text-align: center; }
         .loading-bar { height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); border-radius: 2px; margin-top: 8px; animation: sweep 1.2s linear infinite; }
         @keyframes sweep { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
         .main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 20px; margin-bottom: 20px; }
@@ -95,6 +96,29 @@
     </style>
 </head>
 <body>
+<nav style="
+    display:flex; align-items:center; justify-content:space-between;
+    background:#0d1626; border-bottom:1px solid rgba(255,255,255,0.07);
+    padding:0 24px; height:38px; position:relative; z-index:10; flex-shrink:0;
+">
+    <span style="font-family:'Space Mono',monospace;font-size:0.65em;color:#6b7fa3;letter-spacing:0.15em;text-transform:uppercase;">SCOR Dashboard</span>
+    <div style="display:flex;gap:4px;">
+        <a href="index.html" style="
+            font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
+            padding:4px 14px; border-radius:5px; text-decoration:none;
+            background:rgba(0,200,255,0.1); color:#00c8ff;
+            border:1px solid rgba(0,200,255,0.3);
+        ">Water Level</a>
+        <a href="analysis2.html" style="
+            font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
+            padding:4px 14px; border-radius:5px; text-decoration:none;
+            color:#6b7fa3; border:1px solid transparent;
+            transition:all 0.15s;
+        " onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'"
+           onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'"
+        >Station Analysis</a>
+    </div>
+</nav>
 <div class="container">
     <div class="header">
         <div class="header-left">
@@ -108,9 +132,7 @@
         </div>
     </div>
 
-    <div id="dev-banner">⚠ DEV MODE — iriver data API proxied via corsproxy.io for local testing</div>
-
-    <div class="controls">
+<div class="controls">
         <div class="control-group">
             <label>Start Date</label>
             <input type="date" id="start-date" onchange="refreshCurrentSelection()">
@@ -137,21 +159,41 @@
                 <option value="elevation">Force Elevation (Surveyed Only)</option>
             </select>
         </div>
+        <div class="control-group">
+            <label>Selection</label>
+            <button id="multiselect-btn" onclick="toggleMultiSelect()" style="
+                padding:8px 14px; border-radius:6px; border:1px solid var(--border);
+                background:var(--surface2); color:var(--text-muted);
+                font-family:'DM Sans',sans-serif; font-size:0.82em; cursor:pointer;
+                transition:all 0.15s; display:flex; align-items:center; gap:7px;
+            ">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                Multi-Select
+            </button>
+        </div>
         <div class="selected-display">
             <label>Active Stations</label>
             <span id="site-display">None selected</span>
         </div>
     </div>
 
-    <div class="instructions">
+    <div class="instructions" id="instructions-bar">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Hold <strong>&nbsp;Shift&nbsp;</strong> and <strong>&nbsp;Click-Drag&nbsp;</strong> to box-select multiple stations, or click any marker to chart a single site.
+        <span id="instructions-text">Click a marker to chart a single site. Enable <strong>Multi-Select</strong> to tap multiple stations, or <strong>Shift+Drag</strong> to box-select on desktop.</span>
     </div>
 
     <div id="loading">
-        <span>⟳ Fetching station data...</span>
+        <span>&#8635; Fetching station data...</span>
         <div class="loading-bar"></div>
     </div>
+
+    <div id="chart-selected-btn" onclick="chartPendingSelection()" style="
+        display:none; align-items:center; justify-content:center; gap:8px;
+        background:var(--accent); color:#0b1220; font-family:'DM Sans',sans-serif;
+        font-weight:700; font-size:0.88em; padding:10px 20px; border-radius:8px;
+        cursor:pointer; margin-bottom:16px; border:none; width:100%;
+        box-shadow:0 4px 16px rgba(0,200,255,0.3); transition:opacity 0.15s;
+    ">▶ Chart 0 Stations</div>
 
     <div class="main-layout">
         <div id="map"></div>
@@ -164,11 +206,11 @@
             </div>
             <div class="sidebar-card">
                 <h4>Quick Summary</h4>
-                <div class="stat-row"><span class="stat-label">Stations</span><span class="stat-value" id="sum-count">—</span></div>
-                <div class="stat-row"><span class="stat-label">Avg Level</span><span class="stat-value" id="sum-avg">—</span></div>
-                <div class="stat-row"><span class="stat-label">Overall High</span><span class="stat-value trend-up" id="sum-max">—</span></div>
-                <div class="stat-row"><span class="stat-label">Overall Low</span><span class="stat-value trend-down" id="sum-min">—</span></div>
-                <div class="stat-row"><span class="stat-label">Data Points</span><span class="stat-value" id="sum-pts">—</span></div>
+                <div class="stat-row"><span class="stat-label">Stations</span><span class="stat-value" id="sum-count">&#8212;</span></div>
+                <div class="stat-row"><span class="stat-label">Avg Level</span><span class="stat-value" id="sum-avg">&#8212;</span></div>
+                <div class="stat-row"><span class="stat-label">Overall High</span><span class="stat-value trend-up" id="sum-max">&#8212;</span></div>
+                <div class="stat-row"><span class="stat-label">Overall Low</span><span class="stat-value trend-down" id="sum-min">&#8212;</span></div>
+                <div class="stat-row"><span class="stat-label">Data Points</span><span class="stat-value" id="sum-pts">&#8212;</span></div>
             </div>
         </div>
     </div>
@@ -178,7 +220,7 @@
             <span class="chart-title" id="chart-title">Water Level Time Series</span>
             <div class="chart-actions">
                 <button class="chart-btn" onclick="toggleSmooth()">Smooth</button>
-                <button class="chart-btn" onclick="downloadChartPNG()">⬇ PNG</button>
+                <button class="chart-btn" onclick="downloadChartPNG()">&#11015; PNG</button>
             </div>
         </div>
         <div class="chart-wrapper">
@@ -219,25 +261,12 @@
 <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 <script>
-
-// ── CORS PROXY ────────────────────────────────────────────────────────────────
-// Esri has open CORS — always fetched directly.
-// iriver data API only allows github.io — proxied locally, direct on GitHub Pages.
-const IS_LOCAL = ['localhost', '127.0.0.1', ''].includes(location.hostname);
-const CORS_PROXY = 'https://corsproxy.io/?url=';
-function dataApiUrl(url) {
-    return IS_LOCAL ? CORS_PROXY + encodeURIComponent(url) : url;
-}
-if (IS_LOCAL) document.getElementById('dev-banner').style.display = 'block';
-
-// ── CLOCK ─────────────────────────────────────────────────────────────────────
 function updateClock() {
     document.getElementById('clock').textContent = luxon.DateTime.utc().toFormat('HH:mm:ss') + ' UTC';
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
 window.onload = function() {
     const today = luxon.DateTime.now();
     document.getElementById('end-date').value   = today.toISODate();
@@ -258,14 +287,43 @@ function setupQuickRange() {
     });
 }
 
-// ── MAP ───────────────────────────────────────────────────────────────────────
 const map = L.map('map', { boxZoom: true }).setView([33.8361, -81.1637], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
 let waterChart, allLayers = [], currentSelection = [], smoothEnabled = false, lastDatasets = [];
+let multiSelectMode = false;
+let pendingSelection = []; // accumulates stations in multi-select mode
+
+function toggleMultiSelect() {
+    multiSelectMode = !multiSelectMode;
+    const btn = document.getElementById('multiselect-btn');
+    const txt = document.getElementById('instructions-text');
+    if (multiSelectMode) {
+        btn.style.borderColor = 'var(--accent)';
+        btn.style.color       = 'var(--accent)';
+        btn.style.background  = 'rgba(0,200,255,0.08)';
+        txt.innerHTML = '✓ <strong>Multi-Select ON</strong> — tap markers to add/remove them. Tap <strong>Chart Selected</strong> when ready, or toggle off to reset.';
+        // Show chart button
+        document.getElementById('chart-selected-btn').style.display = 'inline-flex';
+        pendingSelection = currentSelection.length ? [...currentSelection] : [];
+    } else {
+        btn.style.borderColor = 'var(--border)';
+        btn.style.color       = 'var(--text-muted)';
+        btn.style.background  = 'var(--surface2)';
+        txt.innerHTML = 'Click a marker to chart a single site. Enable <strong>Multi-Select</strong> to tap multiple stations, or <strong>Shift+Drag</strong> to box-select on desktop.';
+        document.getElementById('chart-selected-btn').style.display = 'none';
+        pendingSelection = [];
+        // Reset marker highlights
+        allLayers.forEach(layer => {
+            const isSurveyed = (+layer.feature.properties.ORTHO_HEIGHT > 0);
+            layer.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35', color: 'rgba(255,255,255,0.3)', weight: 2 });
+        });
+    }
+}
+
 const COLORS = ['#00c8ff','#00ffa3','#ff6b35','#a78bfa','#ffd32a','#f472b6','#34d399','#fb923c','#60a5fa','#e879f9'];
 
-// Esri — CORS open, always direct
+// Esri endpoint has open CORS - always fetch directly, never proxied
 const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
 fetch(esriUrl)
@@ -283,16 +341,31 @@ fetch(esriUrl)
                 allLayers.push(layer);
                 const rawName = (feature.properties.SITENAME || 'Unknown').trim();
                 const h = feature.properties.ORTHO_HEIGHT || 0;
-                const surveyLabel = h > 0 ? '<span style="color:#00ffa3;">✓ Surveyed</span>' : '<span style="color:#ff6b35;">⚠ Not Surveyed</span>';
-                layer.bindPopup(
-                    '<div style="font-family:\'DM Sans\',sans-serif;min-width:160px;color:#e8edf5;">' +
-                    '<strong>' + rawName + '</strong><br><span style="font-size:0.8em;">' + surveyLabel + '</span>' +
-                    (h > 0 ? '<br><span style="font-size:0.78em;color:#6b7fa3;">Height: ' + (+h).toFixed(2) + ' ft</span>' : '') +
-                    '<br><br><button onclick="updateMultiDashboard([{name:\'' + rawName.replace(/'/g,"\\'") + '\',height:' + h + '}])" ' +
-                    'style="padding:6px 12px;background:#00c8ff;color:#0b1220;border:none;border-radius:5px;cursor:pointer;font-size:0.82em;font-weight:700;width:100%;">Chart This Site</button></div>'
-                );
+                const isSurveyed = h > 0;
+                const surveyLabel = isSurveyed ? '<span style="color:#00ffa3;">&#10003; Surveyed</span>' : '<span style="color:#ff6b35;">&#9888; Not Surveyed</span>';
+                layer.bindPopup('<div style="font-family:\'DM Sans\',sans-serif;min-width:160px;color:#e8edf5;"><strong>' + rawName + '</strong><br><span style="font-size:0.8em;">' + surveyLabel + '</span>' + (h > 0 ? '<br><span style="font-size:0.78em;color:#6b7fa3;">Height: ' + (+h).toFixed(2) + ' ft</span>' : '') + '<br><br><button onclick="updateMultiDashboard([{name:\'' + rawName.replace(/'/g, "\\'") + '\',height:' + h + '}])" style="padding:6px 12px;background:#00c8ff;color:#0b1220;border:none;border-radius:5px;cursor:pointer;font-size:0.82em;font-weight:700;width:100%;">Chart This Site</button></div>');
                 layer.on('mouseover', function() { this.setStyle({ radius: 9, fillOpacity: 1 }); });
-                layer.on('mouseout',  function() { this.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: (+feature.properties.ORTHO_HEIGHT > 0) ? '#00ffa3' : '#ff6b35' }); });
+                layer.on('mouseout',  function() {
+                    const sel = pendingSelection.some(s => s.name === rawName);
+                    this.setStyle({ radius: sel ? 9 : 7, fillOpacity: sel ? 1 : 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35' });
+                });
+                layer.on('click', function(e) {
+                    if (!multiSelectMode) return; // normal popup behaviour when off
+                    L.DomEvent.stopPropagation(e);
+                    const idx = pendingSelection.findIndex(s => s.name === rawName);
+                    if (idx === -1) {
+                        // Add to selection
+                        pendingSelection.push({ name: rawName, height: h });
+                        this.setStyle({ radius: 10, fillOpacity: 1, color: '#ffffff', weight: 3 });
+                    } else {
+                        // Remove from selection
+                        pendingSelection.splice(idx, 1);
+                        this.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35', color: 'rgba(255,255,255,0.3)', weight: 2 });
+                    }
+                    // Update counter label
+                    document.getElementById('chart-selected-btn').textContent =
+                        '▶ Chart ' + pendingSelection.length + ' Station' + (pendingSelection.length !== 1 ? 's' : '');
+                });
             }
         }).addTo(map);
         addLegend();
@@ -301,8 +374,9 @@ fetch(esriUrl)
 map.on('boxzoomend', function(e) {
     const selected = [];
     allLayers.forEach(layer => {
-        if (e.boxZoomBounds.contains(layer.getLatLng()))
+        if (e.boxZoomBounds.contains(layer.getLatLng())) {
             selected.push({ name: layer.feature.properties.SITENAME.trim(), height: +layer.feature.properties.ORTHO_HEIGHT || 0 });
+        }
     });
     if (selected.length > 0) updateMultiDashboard(selected);
 });
@@ -311,14 +385,21 @@ function refreshCurrentSelection() {
     if (currentSelection.length > 0) updateMultiDashboard(currentSelection);
 }
 
-// ── DATA FETCH ────────────────────────────────────────────────────────────────
+function chartPendingSelection() {
+    if (pendingSelection.length === 0) { showToast('No stations selected.'); return; }
+    updateMultiDashboard([...pendingSelection]);
+    // Turn off multi-select after charting
+    multiSelectMode = true; // toggleMultiSelect will flip it to false
+    toggleMultiSelect();
+}
+
 async function updateMultiDashboard(sites) {
     currentSelection = sites;
-    const mode           = document.getElementById('data-mode').value;
+    const mode = document.getElementById('data-mode').value;
     const startFormatted = luxon.DateTime.fromISO(document.getElementById('start-date').value).startOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
     const endFormatted   = luxon.DateTime.fromISO(document.getElementById('end-date').value).endOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
 
-    document.getElementById('loading').style.display    = 'block';
+    document.getElementById('loading').style.display = 'block';
     document.getElementById('site-display').textContent = sites.map(s => s.name).join(', ');
 
     const useDepth    = (mode === 'depth') || (mode === 'auto' && sites.some(s => s.height === 0));
@@ -327,19 +408,18 @@ async function updateMultiDashboard(sites) {
 
     const requests = sites.map(async (site, index) => {
         const cleanName = site.name.trim();
-        const directUrl = 'https://metadata.iriver.cloud/api/v1/scor/' + encodeURIComponent(cleanName) +
-            '?start=' + encodeURIComponent(startFormatted) + '&end=' + encodeURIComponent(endFormatted);
+        const directUrl = 'https://metadata.iriver.cloud/api/v1/scor/' + encodeURIComponent(cleanName) + '?start=' + encodeURIComponent(startFormatted) + '&end=' + encodeURIComponent(endFormatted);
         try {
-            const res  = await fetch(dataApiUrl(directUrl));  // proxied locally, direct on GH Pages
+            const res  = await fetch(directUrl);
             const json = await res.json();
             if (json && json.data && json.data.length > 0) {
                 const values = json.data.map(d => d[dataField]).filter(v => v !== null);
                 if (!values.length) return null;
-                const tail       = values.slice(-Math.max(1, Math.floor(values.length * 0.2)));
+                const tail = values.slice(-Math.max(1, Math.floor(values.length * 0.2)));
                 const trendSlope = tail.length > 1 ? tail[tail.length-1] - tail[0] : 0;
                 return {
                     label: cleanName + ' (' + labelSuffix + ')',
-                    data:  json.data.filter(d => d[dataField] !== null).map(d => ({ x: d.t, y: d[dataField] })),
+                    data: json.data.filter(d => d[dataField] !== null).map(d => ({ x: d.t, y: d[dataField] })),
                     borderColor: COLORS[index % COLORS.length],
                     backgroundColor: COLORS[index % COLORS.length] + '18',
                     borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
@@ -369,7 +449,7 @@ async function updateMultiDashboard(sites) {
         updateStatsTable(datasetsToPlot);
         updateSidebar(datasetsToPlot);
         updateSummaryCard(datasetsToPlot);
-        document.getElementById('chart-title').textContent = 'Water Level — ' + (useDepth ? 'Depth' : 'Elevation') + ' (ft)';
+        document.getElementById('chart-title').textContent = 'Water Level \u2014 ' + (useDepth ? 'Depth' : 'Elevation') + ' (ft)';
     }
 }
 
@@ -377,14 +457,13 @@ function showNoData(show) { document.getElementById('no-data-msg').style.display
 
 function clearSidebar() {
     document.getElementById('station-list').innerHTML = '<div style="color:var(--text-muted);font-size:0.82em;text-align:center;padding:20px 0;">No data available.</div>';
-    ['sum-count','sum-avg','sum-max','sum-min','sum-pts'].forEach(id => document.getElementById(id).textContent = '—');
+    ['sum-count','sum-avg','sum-max','sum-min','sum-pts'].forEach(id => document.getElementById(id).textContent = '\u2014');
 }
 
 function updateSidebar(datasets) {
     document.getElementById('station-list').innerHTML = datasets.map(ds =>
-        '<div class="station-item"><div class="station-dot" style="background:' + ds.stats.color + '"></div>' +
-        '<span class="station-name">' + ds.stats.name + '</span>' +
-        '<span class="station-latest">' + ds.stats.latest.toFixed(2) + ' ft</span></div>').join('');
+        '<div class="station-item"><div class="station-dot" style="background:' + ds.stats.color + '"></div><span class="station-name">' + ds.stats.name + '</span><span class="station-latest">' + ds.stats.latest.toFixed(2) + ' ft</span></div>'
+    ).join('');
 }
 
 function updateSummaryCard(datasets) {
@@ -398,20 +477,13 @@ function updateSummaryCard(datasets) {
 
 function updateStatsTable(datasets) {
     document.getElementById('stats-tbody').innerHTML = datasets.map(ds => {
-        const s = ds.stats, rangeVal = s.max - s.min;
+        const s = ds.stats;
         const netClass   = Math.abs(s.net) < 0.01 ? 'val-neutral' : (s.net > 0 ? 'val-up' : 'val-down');
-        const trendIcon  = s.trend > 0.01 ? '↑' : (s.trend < -0.01 ? '↓' : '→');
+        const trendIcon  = s.trend > 0.01 ? '\u2191' : (s.trend < -0.01 ? '\u2193' : '\u2192');
         const trendClass = s.trend > 0.01 ? 'val-up' : (s.trend < -0.01 ? 'val-down' : 'val-neutral');
+        const rangeVal   = s.max - s.min;
         const fillPct    = rangeVal > 0 ? ((s.latest - s.min) / rangeVal * 100).toFixed(1) : 50;
-        return '<tr>' +
-            '<td><span class="station-color-dot" style="background:' + s.color + '"></span><strong>' + s.name + '</strong></td>' +
-            '<td><span class="mono">' + s.latest.toFixed(3) + '</span></td>' +
-            '<td><span class="mono" style="color:var(--danger)">' + s.max.toFixed(3) + '</span></td>' +
-            '<td><span class="mono" style="color:var(--accent2)">' + s.min.toFixed(3) + '</span></td>' +
-            '<td class="range-bar-cell"><span class="mono">' + rangeVal.toFixed(3) + '</span>' +
-            '<div class="range-bar-bg"><div class="range-bar-fill" style="width:' + fillPct + '%;background:' + s.color + '"></div></div></td>' +
-            '<td class="' + netClass + ' mono">' + (s.net >= 0 ? '+' : '') + s.net.toFixed(3) + ' ft</td>' +
-            '<td class="' + trendClass + '" style="font-size:1.3em;line-height:1;">' + trendIcon + '</td></tr>';
+        return '<tr><td><span class="station-color-dot" style="background:' + s.color + '"></span><strong>' + s.name + '</strong></td><td><span class="mono">' + s.latest.toFixed(3) + '</span></td><td><span class="mono" style="color:var(--danger)">' + s.max.toFixed(3) + '</span></td><td><span class="mono" style="color:var(--accent2)">' + s.min.toFixed(3) + '</span></td><td class="range-bar-cell"><span class="mono">' + rangeVal.toFixed(3) + '</span><div class="range-bar-bg"><div class="range-bar-fill" style="width:' + fillPct + '%;background:' + s.color + '"></div></div></td><td class="' + netClass + ' mono">' + (s.net >= 0 ? '+' : '') + s.net.toFixed(3) + ' ft</td><td class="' + trendClass + '" style="font-size:1.3em;line-height:1;">' + trendIcon + '</td></tr>';
     }).join('');
 }
 
@@ -422,19 +494,15 @@ function renderMultiChart(datasets, yAxisTitle) {
         type: 'line', data: { datasets },
         options: {
             responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false }, animation: { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            animation: { duration: 400 },
             scales: {
-                x: { type: 'time', time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } },
-                     title: { display: true, text: 'Date & Time', color: '#6b7fa3' },
-                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', maxRotation: 0 } },
-                y: { title: { display: true, text: yAxisTitle, color: '#6b7fa3' },
-                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', precision: 2 } }
+                x: { type: 'time', time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } }, title: { display: true, text: 'Date & Time', color: '#6b7fa3' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', maxRotation: 0 } },
+                y: { title: { display: true, text: yAxisTitle, color: '#6b7fa3' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', precision: 2 } }
             },
             plugins: {
                 legend: { position: 'bottom', labels: { color: '#6b7fa3', usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'DM Sans', size: 12 } } },
-                tooltip: { backgroundColor: '#111c2e', borderColor: 'rgba(255,255,255,0.07)', borderWidth: 1,
-                           titleColor: '#e8edf5', bodyColor: '#6b7fa3', padding: 12,
-                           callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toFixed(3) : 'N/A') + ' ft' } }
+                tooltip: { backgroundColor: '#111c2e', borderColor: 'rgba(255,255,255,0.07)', borderWidth: 1, titleColor: '#e8edf5', bodyColor: '#6b7fa3', padding: 12, callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(3) + ' ft' } }
             }
         }
     });
@@ -442,7 +510,10 @@ function renderMultiChart(datasets, yAxisTitle) {
 
 function toggleSmooth() {
     smoothEnabled = !smoothEnabled;
-    if (lastDatasets.length) { lastDatasets.forEach(ds => ds.tension = smoothEnabled ? 0.4 : 0.1); if (waterChart) { waterChart.data.datasets = lastDatasets; waterChart.update(); } }
+    if (lastDatasets.length) {
+        lastDatasets.forEach(ds => ds.tension = smoothEnabled ? 0.4 : 0.1);
+        if (waterChart) { waterChart.data.datasets = lastDatasets; waterChart.update(); }
+    }
     showToast(smoothEnabled ? 'Smoothing enabled' : 'Smoothing disabled');
 }
 
@@ -476,9 +547,7 @@ function addLegend() {
     const legend = L.control({ position: 'bottomright' });
     legend.onAdd = () => {
         const div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML = '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">STATION STATUS</b><br>' +
-            '<i style="background:#00ffa3"></i> Surveyed (Elevation)<br>' +
-            '<i style="background:#ff6b35"></i> Not Surveyed (Depth)';
+        div.innerHTML = '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">STATION STATUS</b><br><i style="background:#00ffa3"></i> Surveyed (Elevation)<br><i style="background:#ff6b35"></i> Not Surveyed (Depth)';
         return div;
     };
     legend.addTo(map);

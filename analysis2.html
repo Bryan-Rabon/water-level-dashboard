@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOR Station Monitoring Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1220; --surface: #111c2e; --surface2: #162032;
+            --border: rgba(255,255,255,0.07); --accent: #00c8ff; --accent2: #00ffa3;
+            --text: #e8edf5; --text-muted: #6b7fa3; --danger: #ff4757;
+            --warning: #ffd32a; --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --recent: #00ffa3; --stale: #ffd32a; --none: #ff4757;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,200,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,200,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── LAYOUT ── */
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 38px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            gap: 16px;
+        }
+        .header-left { display: flex; flex-direction: column; gap: 2px; }
+        .header-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65em; color: var(--accent);
+            letter-spacing: 0.2em; text-transform: uppercase;
+        }
+        .header-title {
+            font-size: 1.2rem; font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .header-title span { color: var(--accent); }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(0,255,163,0.1); border: 1px solid rgba(0,255,163,0.25);
+            color: var(--accent2); font-family: 'Space Mono', monospace;
+            font-size: 0.65em; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.1em;
+        }
+        .live-dot {
+            width: 6px; height: 6px; background: var(--accent2);
+            border-radius: 50%; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+        .clock { font-family: 'Space Mono', monospace; font-size: 0.72em; color: var(--text-muted); }
+
+        /* ── STAT PILLS in header ── */
+        .stat-pills { display: flex; gap: 8px; }
+        .stat-pill {
+            display: flex; align-items: center; gap: 7px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; padding: 6px 12px;
+        }
+        .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .pill-count { font-family: 'Space Mono', monospace; font-size: 1em; font-weight: 700; }
+        .pill-label { font-size: 0.7em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+
+        /* ── MAIN CONTENT ── */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            flex: 1;
+            overflow: hidden;
+            gap: 0;
+        }
+
+        /* ── MAP ── */
+        #map {
+            height: 100%;
+            width: 100%;
+            border-right: 1px solid var(--border);
+        }
+        .leaflet-tile { filter: brightness(0.75) saturate(0.6) hue-rotate(180deg); }
+        .leaflet-control-zoom a { background: var(--surface2) !important; color: var(--text) !important; border-color: var(--border) !important; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .sidebar-header {
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .sidebar-header h4 {
+            font-size: 0.7em; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .search-box {
+            margin-top: 10px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 7px 12px 7px 32px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box input:focus { border-color: var(--accent); }
+        .search-box svg {
+            position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); pointer-events: none;
+        }
+
+        .filter-tabs {
+            display: flex; gap: 6px;
+            padding: 10px 18px 0;
+            flex-shrink: 0;
+        }
+        .filter-tab {
+            padding: 5px 12px; border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface2); color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif; font-size: 0.78em;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .filter-tab:hover { border-color: var(--accent); color: var(--accent); }
+        .filter-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.08); }
+
+        /* ── STATION LIST ── */
+        .station-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+        }
+
+        .station-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+        }
+        .station-row:hover { background: var(--surface2); border-color: var(--border); }
+        .station-row.active { background: rgba(0,200,255,0.06); border-color: rgba(0,200,255,0.2); }
+
+        .station-indicator { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .station-info { flex: 1; min-width: 0; }
+        .station-id {
+            font-family: 'Space Mono', monospace; font-size: 0.82em;
+            color: var(--text); font-weight: 700;
+        }
+        .station-meta { font-size: 0.75em; color: var(--text-muted); margin-top: 2px; }
+        .station-badge {
+            font-family: 'Space Mono', monospace; font-size: 0.68em;
+            padding: 3px 8px; border-radius: 12px; font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge-recent { background: rgba(0,255,163,0.12); color: var(--recent); border: 1px solid rgba(0,255,163,0.25); }
+        .badge-stale  { background: rgba(255,211,42,0.12); color: var(--stale);  border: 1px solid rgba(255,211,42,0.25); }
+        .badge-none   { background: rgba(255,71,87,0.12);  color: var(--none);   border: 1px solid rgba(255,71,87,0.25); }
+
+        /* ── DETAIL PANEL (replaces table) ── */
+        .detail-panel {
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .detail-panel.open { max-height: 220px; }
+        .detail-inner { padding: 14px 16px; }
+        .detail-title {
+            font-family: 'Space Mono', monospace; font-size: 0.8em;
+            color: var(--accent); margin-bottom: 10px; font-weight: 700;
+        }
+        .param-grid { display: flex; flex-direction: column; gap: 6px; }
+        .param-row {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.82em; padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .param-row:last-child { border-bottom: none; }
+        .param-name { color: var(--text-muted); }
+        .param-val { font-family: 'Space Mono', monospace; color: var(--text); }
+
+        /* ── MAP LEGEND ── */
+        .info.legend {
+            padding: 10px 14px;
+            background: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 8px;
+            line-height: 22px; font-size: 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: var(--shadow) !important;
+        }
+        .info.legend i {
+            width: 10px; height: 10px; float: left;
+            margin-right: 8px; border-radius: 50%; margin-top: 6px;
+        }
+
+        /* ── POPUP ── */
+        .leaflet-popup-content-wrapper {
+            background: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 10px !important;
+            box-shadow: var(--shadow) !important;
+            color: var(--text) !important;
+        }
+        .leaflet-popup-tip { background: var(--surface) !important; }
+        .popup-id {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9em; color: var(--accent);
+            font-weight: 700; display: block; margin-bottom: 6px;
+        }
+        .popup-table { width: 100%; font-size: 0.82em; border-collapse: collapse; margin-top: 4px; }
+        .popup-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); color: var(--text); }
+        .popup-table td:last-child { text-align: right; font-family: 'Space Mono', monospace; color: var(--accent2); }
+
+        /* scrollbar */
+        ::-webkit-scrollbar { width: 5px; } 
+        ::-webkit-scrollbar-track { background: var(--surface2); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        /* loading */
+        #loading-overlay {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; flex-direction: column; gap: 12px;
+        }
+        .loading-text { font-family: 'Space Mono', monospace; font-size: 0.8em; color: var(--accent); }
+        .loading-bar-wrap { width: 200px; height: 2px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+        .loading-bar-inner { height: 100%; background: var(--accent); animation: loadbar 1.2s ease-in-out infinite; }
+        @keyframes loadbar { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0;margin-left:100%} }
+
+        @media (max-width: 800px) {
+            .main { grid-template-columns: 1fr; grid-template-rows: 50vh 1fr; }
+            #map { border-right: none; border-bottom: 1px solid var(--border); }
+            .stat-pills { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+    <div class="loading-text">⟳ LOADING STATION DATA...</div>
+    <div class="loading-bar-wrap"><div class="loading-bar-inner"></div></div>
+</div>
+
+<div class="app">
+    <!-- NAV -->
+    <nav style="
+        display:flex; align-items:center; justify-content:space-between;
+        background:#0d1626; border-bottom:1px solid rgba(255,255,255,0.07);
+        padding:0 24px; height:38px; flex-shrink:0;
+    ">
+        <span style="font-family:'Space Mono',monospace;font-size:0.65em;color:#6b7fa3;letter-spacing:0.15em;text-transform:uppercase;">SCOR Dashboard</span>
+        <div style="display:flex;gap:4px;">
+            <a href="index2.html" style="
+                font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
+                padding:4px 14px; border-radius:5px; text-decoration:none;
+                color:#6b7fa3; border:1px solid transparent;
+            " onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'"
+               onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'"
+            >Water Level</a>
+            <a href="analysis2.html" style="
+                font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
+                padding:4px 14px; border-radius:5px; text-decoration:none;
+                background:rgba(0,200,255,0.1); color:#00c8ff;
+                border:1px solid rgba(0,200,255,0.3);
+            ">Station Analysis</a>
+        </div>
+    </nav>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <div class="header-eyebrow">South Carolina Ocean &amp; Resources</div>
+            <div class="header-title">SCOR <span>Station</span> Monitoring</div>
+        </div>
+        <div class="header-right">
+            <div class="stat-pills">
+                <div class="stat-pill">
+                    <div class="pill-dot" style="background:var(--recent)"></div>
+                    <span class="pill-count" id="count-recent">—</span>
+                    <span class="pill-label">Recent</span>
+                </div>
+                <div class="stat-pill">
+                    <div class="pill-dot" style="background:var(--stale)"></div>
+                    <span class="pill-count" id="count-old">—</span>
+                    <span class="pill-label">Stale</span>
+                </div>
+                <div class="stat-pill">
+                    <div class="pill-dot" style="background:var(--none)"></div>
+                    <span class="pill-count" id="count-none">—</span>
+                    <span class="pill-label">No Data</span>
+                </div>
+            </div>
+            <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+            <div class="clock" id="clock">--:--:-- UTC</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div id="map"></div>
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h4>Station Status</h4>
+                <div class="search-box">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" id="search-input" placeholder="Search station ID...">
+                </div>
+            </div>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All</button>
+                <button class="filter-tab" data-filter="recent">Recent</button>
+                <button class="filter-tab" data-filter="stale">Stale</button>
+                <button class="filter-tab" data-filter="none">No Data</button>
+            </div>
+
+            <div class="station-list" id="station-list"></div>
+
+            <div class="detail-panel" id="detail-panel">
+                <div class="detail-inner" id="detail-inner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── CLOCK ──────────────────────────────────────────────────────────────────
+function updateClock() {
+    const now = new Date();
+    const hh = String(now.getUTCHours()).padStart(2,'0');
+    const mm = String(now.getUTCMinutes()).padStart(2,'0');
+    const ss = String(now.getUTCSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${hh}:${mm}:${ss} UTC`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── MAP ────────────────────────────────────────────────────────────────────
+const map = L.map('map').setView([33.8361, -81.1637], 7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+const esriUrl    = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
+const summaryUrl = "analysis/site_summary.json";
+
+let allStations  = [];
+let activeFilter = 'all';
+let activeID     = null;
+const layerMap   = {};
+
+Promise.all([
+    fetch(esriUrl).then(r => r.json()),
+    fetch(summaryUrl).then(r => r.json())
+]).then(([geoData, summaryData]) => {
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    // Build lookup by first 8 chars
+    const statsLookup = {};
+    summaryData.forEach(item => {
+        const key = item.SITE.substring(0, 8);
+        if (!statsLookup[key]) statsLookup[key] = [];
+        statsLookup[key].push(item);
+    });
+
+    let counts = { recent: 0, stale: 0, none: 0 };
+
+    L.geoJSON(geoData, {
+        pointToLayer: (feature, latlng) => {
+            const rawID   = feature.properties.SITENAME || 'Unknown';
+            const shortID = rawID.substring(0, 8);
+            const siteData = statsLookup[shortID];
+
+            let color, status, lastDateStr = 'N/A';
+
+            if (siteData && siteData.length > 0) {
+                const lastDate = new Date(siteData[0].last_sample);
+                lastDateStr = siteData[0].last_sample;
+                if (lastDate >= sevenDaysAgo) {
+                    color = '#00ffa3'; status = 'recent'; counts.recent++;
+                } else {
+                    color = '#ffd32a'; status = 'stale'; counts.stale++;
+                }
+            } else {
+                color = '#ff4757'; status = 'none'; counts.none++;
+            }
+
+            allStations.push({ shortID, status, lastDateStr, siteData, latlng, color });
+
+            const marker = L.circleMarker(latlng, {
+                radius: 8, fillColor: color,
+                color: 'rgba(255,255,255,0.25)', weight: 2, fillOpacity: 0.9
+            });
+
+            layerMap[shortID] = marker;
+
+            // Popup
+            let popup = `<span class="popup-id">${shortID}</span><hr style="border-color:rgba(255,255,255,0.08);margin:6px 0;">`;
+            if (siteData) {
+                popup += `<table class="popup-table">`;
+                siteData.forEach(s => {
+                    popup += `<tr><td>${s.Parameter}</td><td><b>${s.avg_result.toFixed(2)}</b> ${s.unit}</td></tr>`;
+                });
+                popup += `</table>`;
+            } else {
+                popup += `<span style="color:var(--text-muted);font-size:0.82em;">No analysis data available.</span>`;
+            }
+            marker.bindPopup(popup, { maxWidth: 220 });
+
+            marker.on('click', () => selectStation(shortID));
+            return marker;
+        }
+    }).addTo(map);
+
+    // Update header counts
+    document.getElementById('count-recent').textContent = counts.recent;
+    document.getElementById('count-old').textContent    = counts.stale;
+    document.getElementById('count-none').textContent   = counts.none;
+
+    renderList();
+    addLegend();
+    document.getElementById('loading-overlay').style.display = 'none';
+
+}).catch(err => {
+    console.error('Error:', err);
+    document.getElementById('loading-overlay').style.display = 'none';
+});
+
+// ── RENDER LIST ────────────────────────────────────────────────────────────
+function renderList() {
+    const searchVal = document.getElementById('search-input').value.toLowerCase();
+    const list      = document.getElementById('station-list');
+    list.innerHTML  = '';
+
+    const filtered = allStations.filter(s => {
+        const matchFilter = activeFilter === 'all' || s.status === activeFilter;
+        const matchSearch = s.shortID.toLowerCase().includes(searchVal);
+        return matchFilter && matchSearch;
+    });
+
+    if (!filtered.length) {
+        list.innerHTML = `<div style="color:var(--text-muted);font-size:0.82em;text-align:center;padding:24px 0;">No stations match.</div>`;
+        return;
+    }
+
+    filtered.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'station-row' + (s.shortID === activeID ? ' active' : '');
+        row.dataset.id = s.shortID;
+
+        const badgeClass = s.status === 'recent' ? 'badge-recent' : s.status === 'stale' ? 'badge-stale' : 'badge-none';
+        const badgeText  = s.status === 'recent' ? 'RECENT' : s.status === 'stale' ? 'STALE' : 'NO DATA';
+        const paramCount = s.siteData ? s.siteData.length : 0;
+        const lastStr    = s.lastDateStr !== 'N/A' ? s.lastDateStr.split('T')[0] : '—';
+
+        row.innerHTML = `
+            <div class="station-indicator" style="background:${s.color}"></div>
+            <div class="station-info">
+                <div class="station-id">${s.shortID}</div>
+                <div class="station-meta">${lastStr} · ${paramCount} param${paramCount !== 1 ? 's' : ''}</div>
+            </div>
+            <span class="station-badge ${badgeClass}">${badgeText}</span>
+        `;
+
+        row.addEventListener('click', () => selectStation(s.shortID));
+        list.appendChild(row);
+    });
+}
+
+// ── SELECT STATION ─────────────────────────────────────────────────────────
+function selectStation(id) {
+    activeID = id;
+    renderList();
+
+    const station = allStations.find(s => s.shortID === id);
+    if (!station) return;
+
+    // Pan map
+    map.setView(station.latlng, Math.max(map.getZoom(), 10));
+    if (layerMap[id]) layerMap[id].openPopup();
+
+    // Detail panel
+    const panel = document.getElementById('detail-panel');
+    const inner = document.getElementById('detail-inner');
+
+    if (station.siteData && station.siteData.length > 0) {
+        let html = `<div class="detail-title">${id} — Parameters</div><div class="param-grid">`;
+        station.siteData.forEach(s => {
+            html += `
+                <div class="param-row">
+                    <span class="param-name">${s.Parameter}</span>
+                    <span class="param-val">${s.avg_result.toFixed(2)} <span style="color:var(--text-muted);font-size:0.85em;">${s.unit}</span></span>
+                </div>`;
+        });
+        html += `</div>`;
+        inner.innerHTML = html;
+        panel.classList.add('open');
+    } else {
+        inner.innerHTML = `<div class="detail-title">${id}</div><div style="color:var(--text-muted);font-size:0.82em;">No analysis data available for this station.</div>`;
+        panel.classList.add('open');
+    }
+}
+
+// ── FILTERS & SEARCH ───────────────────────────────────────────────────────
+document.querySelectorAll('.filter-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        activeFilter = this.dataset.filter;
+        renderList();
+    });
+});
+
+document.getElementById('search-input').addEventListener('input', renderList);
+
+// ── LEGEND ─────────────────────────────────────────────────────────────────
+function addLegend() {
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = () => {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML =
+            '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">DATA STATUS</b><br>' +
+            '<i style="background:#00ffa3"></i> Recent (≤ 7 days)<br>' +
+            '<i style="background:#ffd32a"></i> Stale (> 7 days)<br>' +
+            '<i style="background:#ff4757"></i> No Analysis Data';
+        return div;
+    };
+    legend.addTo(map);
+}
+</script>
+</body>
+</html>
