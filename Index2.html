@@ -315,8 +315,8 @@ function refreshCurrentSelection() {
 async function updateMultiDashboard(sites) {
     currentSelection = sites;
     const mode           = document.getElementById('data-mode').value;
-    const startFormatted = luxon.DateTime.fromISO(document.getElementById('start-date').value).startOf('day').toUTC().toISO();
-    const endFormatted   = luxon.DateTime.fromISO(document.getElementById('end-date').value).endOf('day').toUTC().toISO();
+    const startFormatted = luxon.DateTime.fromISO(document.getElementById('start-date').value).startOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
+    const endFormatted   = luxon.DateTime.fromISO(document.getElementById('end-date').value).endOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
 
     document.getElementById('loading').style.display    = 'block';
     document.getElementById('site-display').textContent = sites.map(s => s.name).join(', ');
