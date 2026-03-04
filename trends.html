@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCOR Network Trends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b1220; --surface: #111c2e; --surface2: #162032;
+            --border: rgba(255,255,255,0.07); --accent: #00c8ff; --accent2: #00ffa3;
+            --text: #e8edf5; --text-muted: #6b7fa3; --danger: #ff4757;
+            --warning: #ffd32a; --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.4);
+            --recent: #00ffa3; --stale: #ffd32a; --none: #ff4757;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,200,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.03) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+
+        /* NAV */
+        nav { display:flex; align-items:center; justify-content:space-between; background:#0d1626; border-bottom:1px solid rgba(255,255,255,0.07); padding:0 24px; height:38px; position:sticky; top:0; z-index:100; }
+        .nav-brand { font-family:'Space Mono',monospace; font-size:0.65em; color:#6b7fa3; letter-spacing:0.15em; text-transform:uppercase; }
+        .nav-links { display:flex; gap:4px; }
+        .nav-link { font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600; padding:4px 14px; border-radius:5px; text-decoration:none; color:#6b7fa3; border:1px solid transparent; transition:all 0.15s; }
+        .nav-link:hover { color:#e8edf5; border-color:rgba(255,255,255,0.1); }
+        .nav-link.active { background:rgba(0,200,255,0.1); color:#00c8ff; border-color:rgba(0,200,255,0.3); }
+
+        /* PAGE */
+        .page { max-width: 1300px; margin: 0 auto; padding: 24px 20px; position: relative; z-index: 1; }
+
+        /* PAGE HEADER */
+        .page-header { margin-bottom: 28px; }
+        .page-eyebrow { font-family:'Space Mono',monospace; font-size:0.65em; color:var(--accent); letter-spacing:0.2em; text-transform:uppercase; margin-bottom:4px; }
+        .page-title { font-size:1.6rem; font-weight:600; letter-spacing:-0.02em; }
+        .page-title span { color:var(--accent); }
+        .page-subtitle { font-size:0.85em; color:var(--text-muted); margin-top:4px; }
+
+        /* FLEET HEALTH OVERVIEW */
+        .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 28px; }
+        .fleet-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; position:relative; overflow:hidden; }
+        .fleet-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+        .fleet-card.recent::before { background:var(--recent); }
+        .fleet-card.stale::before  { background:var(--stale); }
+        .fleet-card.none::before   { background:var(--none); }
+        .fleet-card.total::before  { background:var(--accent); }
+        .fleet-card.quality::before{ background:var(--accent2); }
+        .fleet-label { font-size:0.68em; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+        .fleet-value { font-family:'Space Mono',monospace; font-size:2rem; font-weight:700; line-height:1; }
+        .fleet-value.recent { color:var(--recent); }
+        .fleet-value.stale  { color:var(--stale); }
+        .fleet-value.none   { color:var(--none); }
+        .fleet-value.total  { color:var(--accent); }
+        .fleet-value.quality{ color:var(--accent2); }
+        .fleet-sub { font-size:0.75em; color:var(--text-muted); margin-top:6px; }
+
+        /* FLEET BAR */
+        .fleet-bar-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:28px; }
+        .section-title { font-size:0.75em; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px; }
+        .fleet-bar-wrap { height:20px; border-radius:10px; overflow:hidden; display:flex; }
+        .fleet-bar-seg { height:100%; transition:width 0.6s ease; }
+        .fleet-bar-legend { display:flex; gap:16px; margin-top:10px; flex-wrap:wrap; }
+        .bar-legend-item { display:flex; align-items:center; gap:6px; font-size:0.78em; color:var(--text-muted); }
+        .bar-legend-dot { width:10px; height:10px; border-radius:50%; }
+
+        /* PARAMETER SUMMARY */
+        .param-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:14px; margin-bottom:28px; }
+        .param-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+        .param-card-title { font-family:'Space Mono',monospace; font-size:0.78em; color:var(--accent); font-weight:700; margin-bottom:12px; display:flex; justify-content:space-between; }
+        .param-card-unit { color:var(--text-muted); font-weight:400; }
+        .param-stat-row { display:flex; justify-content:space-between; font-size:0.82em; padding:5px 0; border-bottom:1px solid var(--border); }
+        .param-stat-row:last-child { border-bottom:none; }
+        .param-stat-label { color:var(--text-muted); }
+        .param-stat-val { font-family:'Space Mono',monospace; color:var(--text); }
+        .mini-range-wrap { height:4px; background:var(--surface2); border-radius:2px; margin-top:10px; position:relative; }
+        .mini-range-avg { width:3px; height:12px; border-radius:2px; position:absolute; top:-4px; background:var(--accent); }
+
+        /* SORTABLE TABLE */
+        .table-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:28px; overflow-x:auto; }
+        .table-controls { display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center; }
+        .table-search { padding:7px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85em; outline:none; transition:border-color 0.2s; min-width:200px; }
+        .table-search:focus { border-color:var(--accent); }
+        .param-filter { padding:7px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:0.85em; outline:none; cursor:pointer; }
+        .export-btn { margin-left:auto; padding:6px 14px; border-radius:6px; border:1px solid var(--border); background:var(--surface2); color:var(--text-muted); font-size:0.78em; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:6px; transition:all 0.15s; }
+        .export-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+        table { width:100%; border-collapse:collapse; font-size:0.84em; min-width:700px; }
+        th { text-align:left; padding:10px 12px; font-size:0.7em; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid var(--border); cursor:pointer; user-select:none; white-space:nowrap; }
+        th:hover { color:var(--accent); }
+        th .sort-icon { margin-left:4px; opacity:0.4; font-size:0.85em; }
+        th.sort-asc .sort-icon::after { content:'↑'; opacity:1; color:var(--accent); }
+        th.sort-desc .sort-icon::after { content:'↓'; opacity:1; color:var(--accent); }
+        th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content:'↕'; }
+        td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+        tr:hover td { background:rgba(255,255,255,0.02); }
+        tr:last-child td { border-bottom:none; }
+        .mono { font-family:'Space Mono',monospace; font-size:0.88em; }
+        .trend-up   { color:#ff6b6b; font-weight:700; }
+        .trend-down { color:#00ffa3; font-weight:700; }
+        .trend-flat { color:#6b7fa3; }
+        .status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+        .quality-bar-wrap { width:60px; height:5px; background:var(--surface2); border-radius:3px; display:inline-block; vertical-align:middle; }
+        .quality-bar-fill { height:100%; border-radius:3px; background:var(--accent); }
+        .days-pill { font-family:'Space Mono',monospace; font-size:0.75em; padding:2px 6px; border-radius:4px; background:var(--surface2); border:1px solid var(--border); }
+
+        /* LOADING */
+        #loading-overlay { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:9999; flex-direction:column; gap:12px; }
+        .loading-text { font-family:'Space Mono',monospace; font-size:0.8em; color:var(--accent); }
+        .loading-bar-wrap2 { width:200px; height:2px; background:var(--surface2); border-radius:2px; overflow:hidden; }
+        .loading-bar-inner2 { height:100%; background:var(--accent); animation:loadbar 1.2s ease-in-out infinite; }
+        @keyframes loadbar { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0;margin-left:100%} }
+
+        ::-webkit-scrollbar{width:5px;height:5px} ::-webkit-scrollbar-track{background:var(--surface2)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+        @media(max-width:700px){
+            .fleet-grid{grid-template-columns:repeat(2,1fr)}
+            .param-grid{grid-template-columns:1fr}
+            .page{padding:16px 14px}
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-overlay">
+    <div class="loading-text">⟳ LOADING NETWORK DATA...</div>
+    <div class="loading-bar-wrap2"><div class="loading-bar-inner2"></div></div>
+</div>
+
+<nav>
+    <span class="nav-brand">SCOR Dashboard</span>
+    <div class="nav-links">
+        <a href="index2.html" class="nav-link" onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'">Water Level</a>
+        <a href="analysis2.html" class="nav-link" onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'">Station Analysis</a>
+        <a href="trends.html" class="nav-link active">Network Trends</a>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-header">
+        <div class="page-eyebrow">South Carolina Ocean &amp; Resources</div>
+        <div class="page-title">SCOR <span>Network</span> Trends</div>
+        <div class="page-subtitle">Fleet health, data quality, and cross-site parameter analysis</div>
+    </div>
+
+    <!-- FLEET HEALTH CARDS -->
+    <div class="fleet-grid" id="fleet-grid"></div>
+
+    <!-- FLEET BAR -->
+    <div class="fleet-bar-section">
+        <div class="section-title">Fleet Status Distribution</div>
+        <div class="fleet-bar-wrap" id="fleet-bar"></div>
+        <div class="fleet-bar-legend">
+            <div class="bar-legend-item"><div class="bar-legend-dot" style="background:var(--recent)"></div>Recent (&le;7 days)</div>
+            <div class="bar-legend-item"><div class="bar-legend-dot" style="background:var(--stale)"></div>Stale (&gt;7 days)</div>
+            <div class="bar-legend-item"><div class="bar-legend-dot" style="background:var(--none)"></div>No Data</div>
+        </div>
+    </div>
+
+    <!-- PARAMETER NETWORK STATS -->
+    <div class="section-title" style="margin-bottom:12px;">Parameter Network Averages</div>
+    <div class="param-grid" id="param-grid"></div>
+
+    <!-- SORTABLE TABLE -->
+    <div class="table-section">
+        <div class="section-title">All Stations — Detailed Statistics</div>
+        <div class="table-controls">
+            <input type="text" class="table-search" id="table-search" placeholder="Filter by station ID...">
+            <select class="param-filter" id="param-filter"><option value="all">All Parameters</option></select>
+            <button class="export-btn" onclick="exportCSV()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export CSV
+            </button>
+        </div>
+        <table id="stats-table">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('site_short')" data-col="site_short">Station<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('status')" data-col="status">Status<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('Parameter')" data-col="Parameter">Parameter<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('avg_result')" data-col="avg_result">Avg<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('min_result')" data-col="min_result">Min<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('max_result')" data-col="max_result">Max<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('stddev')" data-col="stddev">Std Dev<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('trend_delta')" data-col="trend_delta">Trend<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('days_active')" data-col="days_active">Days Active<span class="sort-icon"></span></th>
+                    <th onclick="sortTable('reading_count')" data-col="reading_count">Readings<span class="sort-icon"></span></th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function shortID(n){ return (n||'').trim().substring(0,8); }
+
+let allRows=[], filteredRows=[], sortCol='reading_count', sortDir='desc';
+let networkHealth=[], paramStats=[];
+
+Promise.all([
+    fetch('analysis/site_summary.json').then(r=>r.json()),
+    fetch('analysis/network_health.json').then(r=>r.json()),
+    fetch('analysis/parameter_stats.json').then(r=>r.json())
+]).then(([summaryData, healthData, paramData]) => {
+    networkHealth=healthData;
+    paramStats=paramData;
+
+    // Build health status lookup
+    const healthLookup={};
+    healthData.forEach(h=>{ healthLookup[shortID(h.SITE)]=h; });
+
+    // Flatten summary into table rows, joining with health status
+    allRows = summaryData.map(s=>{
+        const sid = shortID(s.SITE);
+        const h   = healthLookup[sid]||{};
+        return {
+            site_short:    sid,
+            SITE:          s.SITE,
+            status:        h.status||'none',
+            Parameter:     s.Parameter,
+            unit:          s.unit,
+            avg_result:    +s.avg_result,
+            min_result:    +s.min_result,
+            max_result:    +s.max_result,
+            stddev:        s.stddev!=null?+s.stddev:null,
+            recent_avg:    s.recent_avg!=null?+s.recent_avg:null,
+            trend_delta:   s.trend_delta!=null?+s.trend_delta:null,
+            reading_count: +s.reading_count,
+            days_active:   s.days_active!=null?+s.days_active:null,
+            first_sample:  s.first_sample,
+            last_sample:   s.last_sample
+        };
+    });
+
+    buildFleetCards(healthData);
+    buildParamCards(paramData);
+    buildParamFilter(summaryData);
+    filteredRows=[...allRows];
+    sortTable('reading_count');
+    document.getElementById('loading-overlay').style.display='none';
+
+}).catch(err=>{
+    console.error(err);
+    document.getElementById('loading-overlay').style.display='none';
+});
+
+// ── FLEET CARDS ──────────────────────────────────────────────────────────────
+function buildFleetCards(health) {
+    const total   = health.length;
+    const recent  = health.filter(h=>h.status==='recent').length;
+    const stale   = health.filter(h=>h.status==='stale').length;
+    const none    = health.filter(h=>h.status==='none').length;
+    const totalRec= health.reduce((a,h)=>a+(+h.total_readings||0),0);
+    const recentRec=health.reduce((a,h)=>a+(+h.recent_readings||0),0);
+    const pctRecent= total>0?Math.round(recent/total*100):0;
+    const avgDays  = health.filter(h=>h.days_active!=null).reduce((a,h,_,arr)=>a+(+h.days_active)/arr.length,0);
+
+    document.getElementById('fleet-grid').innerHTML=`
+        <div class="fleet-card total">
+            <div class="fleet-label">Total Stations</div>
+            <div class="fleet-value total">${total}</div>
+            <div class="fleet-sub">${health.filter(h=>h.parameters>0).length} reporting data</div>
+        </div>
+        <div class="fleet-card recent">
+            <div class="fleet-label">Recent (&le;7d)</div>
+            <div class="fleet-value recent">${recent}</div>
+            <div class="fleet-sub">${pctRecent}% of fleet</div>
+        </div>
+        <div class="fleet-card stale">
+            <div class="fleet-label">Stale (&gt;7d)</div>
+            <div class="fleet-value stale">${stale}</div>
+            <div class="fleet-sub">${total>0?Math.round(stale/total*100):0}% of fleet</div>
+        </div>
+        <div class="fleet-card none">
+            <div class="fleet-label">No Data</div>
+            <div class="fleet-value none">${none}</div>
+            <div class="fleet-sub">${total>0?Math.round(none/total*100):0}% of fleet</div>
+        </div>
+        <div class="fleet-card quality">
+            <div class="fleet-label">Total Readings</div>
+            <div class="fleet-value quality" style="font-size:1.4rem;">${totalRec.toLocaleString()}</div>
+            <div class="fleet-sub">${recentRec.toLocaleString()} in last 7d</div>
+        </div>
+        <div class="fleet-card quality">
+            <div class="fleet-label">Avg Days Active</div>
+            <div class="fleet-value quality" style="font-size:1.6rem;">${Math.round(avgDays)}</div>
+            <div class="fleet-sub">days per station</div>
+        </div>
+    `;
+
+    // Fleet bar
+    if(total>0){
+        const rPct=(recent/total*100).toFixed(1);
+        const sPct=(stale/total*100).toFixed(1);
+        const nPct=(none/total*100).toFixed(1);
+        document.getElementById('fleet-bar').innerHTML=`
+            <div class="fleet-bar-seg" style="width:${rPct}%;background:var(--recent)" title="Recent: ${recent}"></div>
+            <div class="fleet-bar-seg" style="width:${sPct}%;background:var(--stale)" title="Stale: ${stale}"></div>
+            <div class="fleet-bar-seg" style="width:${nPct}%;background:var(--none)" title="No Data: ${none}"></div>
+        `;
+    }
+}
+
+// ── PARAM CARDS ───────────────────────────────────────────────────────────────
+function buildParamCards(params) {
+    const grid=document.getElementById('param-grid');
+    grid.innerHTML=params.map(p=>{
+        const range=(+p.network_max)-(+p.network_min)||1;
+        const avgPct=((+p.network_avg - +p.network_min)/range*100).toFixed(1);
+        return `
+        <div class="param-card">
+            <div class="param-card-title">
+                ${p.Parameter}
+                <span class="param-card-unit">${p.unit||''}</span>
+            </div>
+            <div class="param-stat-row"><span class="param-stat-label">Network Avg</span><span class="param-stat-val mono">${(+p.network_avg).toFixed(3)}</span></div>
+            <div class="param-stat-row"><span class="param-stat-label">Network Min</span><span class="param-stat-val mono" style="color:var(--accent2)">${(+p.network_min).toFixed(3)}</span></div>
+            <div class="param-stat-row"><span class="param-stat-label">Network Max</span><span class="param-stat-val mono" style="color:var(--danger)">${(+p.network_max).toFixed(3)}</span></div>
+            <div class="param-stat-row"><span class="param-stat-label">Site-to-site σ</span><span class="param-stat-val mono">${p.network_stddev!=null?(+p.network_stddev).toFixed(3):'—'}</span></div>
+            <div class="param-stat-row"><span class="param-stat-label">Reporting Sites</span><span class="param-stat-val mono">${p.site_count}</span></div>
+            <div class="mini-range-wrap">
+                <div class="mini-range-avg" style="left:calc(${avgPct}% - 1.5px)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.65em;color:var(--text-muted);margin-top:3px;">
+                <span>${(+p.network_min).toFixed(2)}</span><span style="color:var(--accent)">▲ avg</span><span>${(+p.network_max).toFixed(2)}</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── PARAM FILTER DROPDOWN ─────────────────────────────────────────────────────
+function buildParamFilter(data) {
+    const params=[...new Set(data.map(d=>d.Parameter))].sort();
+    const sel=document.getElementById('param-filter');
+    params.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; sel.appendChild(o); });
+    sel.addEventListener('change', applyFilters);
+}
+
+// ── FILTERS ───────────────────────────────────────────────────────────────────
+document.getElementById('table-search').addEventListener('input', applyFilters);
+
+function applyFilters() {
+    const search=document.getElementById('table-search').value.toLowerCase();
+    const param=document.getElementById('param-filter').value;
+    filteredRows=allRows.filter(r=>{
+        const ms=r.site_short.toLowerCase().includes(search);
+        const mp=param==='all'||r.Parameter===param;
+        return ms&&mp;
+    });
+    renderTable();
+}
+
+// ── SORT ──────────────────────────────────────────────────────────────────────
+function sortTable(col) {
+    if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+    else { sortCol=col; sortDir='asc'; }
+    document.querySelectorAll('th').forEach(th=>{
+        th.classList.remove('sort-asc','sort-desc');
+        if(th.dataset.col===col) th.classList.add(sortDir==='asc'?'sort-asc':'sort-desc');
+    });
+    filteredRows.sort((a,b)=>{
+        let av=a[col], bv=b[col];
+        if(av==null) return 1; if(bv==null) return -1;
+        if(typeof av==='string') return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+        return sortDir==='asc'?av-bv:bv-av;
+    });
+    renderTable();
+}
+
+// ── RENDER TABLE ──────────────────────────────────────────────────────────────
+function renderTable() {
+    const tbody=document.getElementById('table-body');
+    if(!filteredRows.length){ tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:24px;">No stations match filters.</td></tr>`; return; }
+
+    const statusColor={recent:'var(--recent)',stale:'var(--stale)',none:'var(--none)'};
+
+    tbody.innerHTML=filteredRows.map(r=>{
+        const td=r.trend_delta;
+        const trendClass=td==null?'trend-flat':td>0.02?'trend-up':td<-0.02?'trend-down':'trend-flat';
+        const trendLabel=td==null?'—':td>0.02?`↑ +${td.toFixed(3)}`:td<-0.02?`↓ ${td.toFixed(3)}`:'→ stable';
+        const maxReads=Math.max(...allRows.filter(x=>x.Parameter===r.Parameter).map(x=>x.reading_count));
+        const qualityPct=maxReads>0?Math.round(r.reading_count/maxReads*100):0;
+        return `<tr>
+            <td><span class="status-dot" style="background:${statusColor[r.status]||'var(--none)'}"></span><strong class="mono">${r.site_short}</strong></td>
+            <td><span style="font-size:0.78em;color:${statusColor[r.status]||'var(--none)'}">${r.status.toUpperCase()}</span></td>
+            <td style="color:var(--text-muted)">${r.Parameter}</td>
+            <td class="mono">${r.avg_result.toFixed(3)}</td>
+            <td class="mono" style="color:var(--accent2)">${r.min_result.toFixed(3)}</td>
+            <td class="mono" style="color:var(--danger)">${r.max_result.toFixed(3)}</td>
+            <td class="mono">${r.stddev!=null?r.stddev.toFixed(3):'—'}</td>
+            <td class="${trendClass} mono">${trendLabel}</td>
+            <td><span class="days-pill">${r.days_active!=null?Math.round(r.days_active)+'d':'—'}</span></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="mono">${r.reading_count.toLocaleString()}</span>
+                    <div class="quality-bar-wrap"><div class="quality-bar-fill" style="width:${qualityPct}%"></div></div>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────────
+function exportCSV() {
+    const headers=['Station','Status','Parameter','Unit','Avg','Min','Max','StdDev','TrendDelta','RecentAvg','DaysActive','Readings','FirstSample','LastSample'];
+    const rows=filteredRows.map(r=>[
+        r.site_short, r.status, r.Parameter, r.unit,
+        r.avg_result, r.min_result, r.max_result,
+        r.stddev!=null?r.stddev:'',
+        r.trend_delta!=null?r.trend_delta:'',
+        r.recent_avg!=null?r.recent_avg:'',
+        r.days_active!=null?Math.round(r.days_active):'',
+        r.reading_count, r.first_sample||'', r.last_sample||''
+    ]);
+    const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download='scor_network_trends_'+new Date().toISOString().substring(0,10)+'.csv';
+    a.click();
+}
+</script>
+</body>
+</html>

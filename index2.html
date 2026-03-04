@@ -29,7 +29,6 @@
         .live-dot { width: 6px; height: 6px; background: var(--accent2); border-radius: 50%; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
         .clock { font-family: 'Space Mono', monospace; font-size: 0.75em; color: var(--text-muted); }
-
         .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; background: var(--surface); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 16px; }
         .control-group { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 0.72em; font-weight: 600; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
@@ -61,7 +60,7 @@
         .station-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
         .station-item { display: flex; align-items: center; gap: 8px; font-size: 0.85em; padding: 6px 8px; border-radius: 6px; background: var(--surface2); border: 1px solid var(--border); }
         .station-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .station-name { flex: 1; color: var(--text); }
+        .station-name { flex: 1; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.9em; }
         .station-latest { font-family: 'Space Mono', monospace; font-size: 0.85em; color: var(--text-muted); }
         .chart-card { background: var(--surface); padding: 20px 24px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
         .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -113,10 +112,16 @@
             font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
             padding:4px 14px; border-radius:5px; text-decoration:none;
             color:#6b7fa3; border:1px solid transparent;
-            transition:all 0.15s;
         " onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'"
            onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'"
         >Station Analysis</a>
+        <a href="trends.html" style="
+            font-family:'DM Sans',sans-serif; font-size:0.78em; font-weight:600;
+            padding:4px 14px; border-radius:5px; text-decoration:none;
+            color:#6b7fa3; border:1px solid transparent;
+        " onmouseover="this.style.color='#e8edf5';this.style.borderColor='rgba(255,255,255,0.1)'"
+           onmouseout="this.style.color='#6b7fa3';this.style.borderColor='transparent'"
+        >Network Trends</a>
     </div>
 </nav>
 <div class="container">
@@ -132,7 +137,7 @@
         </div>
     </div>
 
-<div class="controls">
+    <div class="controls">
         <div class="control-group">
             <label>Start Date</label>
             <input type="date" id="start-date" onchange="refreshCurrentSelection()">
@@ -193,7 +198,7 @@
         font-weight:700; font-size:0.88em; padding:10px 20px; border-radius:8px;
         cursor:pointer; margin-bottom:16px; border:none; width:100%;
         box-shadow:0 4px 16px rgba(0,200,255,0.3); transition:opacity 0.15s;
-    ">▶ Chart 0 Stations</div>
+    ">&#9658; Chart 0 Stations</div>
 
     <div class="main-layout">
         <div id="map"></div>
@@ -261,12 +266,20 @@
 <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1"></script>
 <script>
+
+// ── HELPER: truncate site name to first 8 characters for display ──────────────
+function shortID(name) {
+    return (name || '').trim().substring(0, 8);
+}
+
+// ── CLOCK ─────────────────────────────────────────────────────────────────────
 function updateClock() {
     document.getElementById('clock').textContent = luxon.DateTime.utc().toFormat('HH:mm:ss') + ' UTC';
 }
 setInterval(updateClock, 1000);
 updateClock();
 
+// ── INIT ──────────────────────────────────────────────────────────────────────
 window.onload = function() {
     const today = luxon.DateTime.now();
     document.getElementById('end-date').value   = today.toISODate();
@@ -287,12 +300,15 @@ function setupQuickRange() {
     });
 }
 
+// ── MAP ───────────────────────────────────────────────────────────────────────
 const map = L.map('map', { boxZoom: true }).setView([33.8361, -81.1637], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
 let waterChart, allLayers = [], currentSelection = [], smoothEnabled = false, lastDatasets = [];
 let multiSelectMode = false;
-let pendingSelection = []; // accumulates stations in multi-select mode
+let pendingSelection = [];
+
+const COLORS = ['#00c8ff','#00ffa3','#ff6b35','#a78bfa','#ffd32a','#f472b6','#34d399','#fb923c','#60a5fa','#e879f9'];
 
 function toggleMultiSelect() {
     multiSelectMode = !multiSelectMode;
@@ -302,8 +318,7 @@ function toggleMultiSelect() {
         btn.style.borderColor = 'var(--accent)';
         btn.style.color       = 'var(--accent)';
         btn.style.background  = 'rgba(0,200,255,0.08)';
-        txt.innerHTML = '✓ <strong>Multi-Select ON</strong> — tap markers to add/remove them. Tap <strong>Chart Selected</strong> when ready, or toggle off to reset.';
-        // Show chart button
+        txt.innerHTML = '&#10003; <strong>Multi-Select ON</strong> &mdash; tap markers to add/remove them. Tap <strong>Chart Selected</strong> when ready, or toggle off to reset.';
         document.getElementById('chart-selected-btn').style.display = 'inline-flex';
         pendingSelection = currentSelection.length ? [...currentSelection] : [];
     } else {
@@ -313,7 +328,6 @@ function toggleMultiSelect() {
         txt.innerHTML = 'Click a marker to chart a single site. Enable <strong>Multi-Select</strong> to tap multiple stations, or <strong>Shift+Drag</strong> to box-select on desktop.';
         document.getElementById('chart-selected-btn').style.display = 'none';
         pendingSelection = [];
-        // Reset marker highlights
         allLayers.forEach(layer => {
             const isSurveyed = (+layer.feature.properties.ORTHO_HEIGHT > 0);
             layer.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35', color: 'rgba(255,255,255,0.3)', weight: 2 });
@@ -321,9 +335,7 @@ function toggleMultiSelect() {
     }
 }
 
-const COLORS = ['#00c8ff','#00ffa3','#ff6b35','#a78bfa','#ffd32a','#f472b6','#34d399','#fb923c','#60a5fa','#e879f9'];
-
-// Esri endpoint has open CORS - always fetch directly, never proxied
+// ── LOAD STATIONS FROM ESRI ───────────────────────────────────────────────────
 const esriUrl = "https://services3.arcgis.com/iQDjAnwEnrAur0g1/ArcGIS/rest/services/scor_sites_Deployed/FeatureServer/0/query?where=1=1&outFields=*&f=geojson";
 
 fetch(esriUrl)
@@ -339,30 +351,40 @@ fetch(esriUrl)
             },
             onEachFeature: (feature, layer) => {
                 allLayers.push(layer);
-                const rawName = (feature.properties.SITENAME || 'Unknown').trim();
-                const h = feature.properties.ORTHO_HEIGHT || 0;
+                const fullName   = (feature.properties.SITENAME || 'Unknown').trim();
+                const displayID  = shortID(fullName);   // 8-char display label
+                const h          = feature.properties.ORTHO_HEIGHT || 0;
                 const isSurveyed = h > 0;
-                const surveyLabel = isSurveyed ? '<span style="color:#00ffa3;">&#10003; Surveyed</span>' : '<span style="color:#ff6b35;">&#9888; Not Surveyed</span>';
-                layer.bindPopup('<div style="font-family:\'DM Sans\',sans-serif;min-width:160px;color:#e8edf5;"><strong>' + rawName + '</strong><br><span style="font-size:0.8em;">' + surveyLabel + '</span>' + (h > 0 ? '<br><span style="font-size:0.78em;color:#6b7fa3;">Height: ' + (+h).toFixed(2) + ' ft</span>' : '') + '<br><br><button onclick="updateMultiDashboard([{name:\'' + rawName.replace(/'/g, "\\'") + '\',height:' + h + '}])" style="padding:6px 12px;background:#00c8ff;color:#0b1220;border:none;border-radius:5px;cursor:pointer;font-size:0.82em;font-weight:700;width:100%;">Chart This Site</button></div>');
+                const surveyLabel = isSurveyed
+                    ? '<span style="color:#00ffa3;">&#10003; Surveyed</span>'
+                    : '<span style="color:#ff6b35;">&#9888; Not Surveyed</span>';
+
+                // Popup uses 8-char ID for display; full name passed to chart function for API call
+                layer.bindPopup(
+                    '<div style="font-family:\'DM Sans\',sans-serif;min-width:160px;color:#e8edf5;">' +
+                    '<strong style="font-family:\'Space Mono\',monospace;">' + displayID + '</strong>' +
+                    '<br><span style="font-size:0.8em;">' + surveyLabel + '</span>' +
+                    (h > 0 ? '<br><span style="font-size:0.78em;color:#6b7fa3;">Height: ' + (+h).toFixed(2) + ' ft</span>' : '') +
+                    '<br><br><button onclick="updateMultiDashboard([{name:\'' + fullName.replace(/'/g, "\\'") + '\',height:' + h + '}])" ' +
+                    'style="padding:6px 12px;background:#00c8ff;color:#0b1220;border:none;border-radius:5px;cursor:pointer;font-size:0.82em;font-weight:700;width:100%;">Chart This Site</button></div>'
+                );
+
                 layer.on('mouseover', function() { this.setStyle({ radius: 9, fillOpacity: 1 }); });
-                layer.on('mouseout',  function() {
-                    const sel = pendingSelection.some(s => s.name === rawName);
+                layer.on('mouseout', function() {
+                    const sel = pendingSelection.some(s => s.name === fullName);
                     this.setStyle({ radius: sel ? 9 : 7, fillOpacity: sel ? 1 : 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35' });
                 });
                 layer.on('click', function(e) {
-                    if (!multiSelectMode) return; // normal popup behaviour when off
+                    if (!multiSelectMode) return;
                     L.DomEvent.stopPropagation(e);
-                    const idx = pendingSelection.findIndex(s => s.name === rawName);
+                    const idx = pendingSelection.findIndex(s => s.name === fullName);
                     if (idx === -1) {
-                        // Add to selection
-                        pendingSelection.push({ name: rawName, height: h });
+                        pendingSelection.push({ name: fullName, height: h });
                         this.setStyle({ radius: 10, fillOpacity: 1, color: '#ffffff', weight: 3 });
                     } else {
-                        // Remove from selection
                         pendingSelection.splice(idx, 1);
                         this.setStyle({ radius: 7, fillOpacity: 0.85, fillColor: isSurveyed ? '#00ffa3' : '#ff6b35', color: 'rgba(255,255,255,0.3)', weight: 2 });
                     }
-                    // Update counter label
                     document.getElementById('chart-selected-btn').textContent =
                         '▶ Chart ' + pendingSelection.length + ' Station' + (pendingSelection.length !== 1 ? 's' : '');
                 });
@@ -375,7 +397,10 @@ map.on('boxzoomend', function(e) {
     const selected = [];
     allLayers.forEach(layer => {
         if (e.boxZoomBounds.contains(layer.getLatLng())) {
-            selected.push({ name: layer.feature.properties.SITENAME.trim(), height: +layer.feature.properties.ORTHO_HEIGHT || 0 });
+            selected.push({
+                name:   layer.feature.properties.SITENAME.trim(),
+                height: +layer.feature.properties.ORTHO_HEIGHT || 0
+            });
         }
     });
     if (selected.length > 0) updateMultiDashboard(selected);
@@ -388,51 +413,61 @@ function refreshCurrentSelection() {
 function chartPendingSelection() {
     if (pendingSelection.length === 0) { showToast('No stations selected.'); return; }
     updateMultiDashboard([...pendingSelection]);
-    // Turn off multi-select after charting
-    multiSelectMode = true; // toggleMultiSelect will flip it to false
+    multiSelectMode = true;
     toggleMultiSelect();
 }
 
+// ── DATA FETCH ────────────────────────────────────────────────────────────────
 async function updateMultiDashboard(sites) {
     currentSelection = sites;
-    const mode = document.getElementById('data-mode').value;
+    const mode           = document.getElementById('data-mode').value;
     const startFormatted = luxon.DateTime.fromISO(document.getElementById('start-date').value).startOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
     const endFormatted   = luxon.DateTime.fromISO(document.getElementById('end-date').value).endOf('day').toFormat('yyyy-MM-dd HH:mm:ss');
 
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('site-display').textContent = sites.map(s => s.name).join(', ');
+    document.getElementById('loading').style.display    = 'block';
+    // Show 8-char IDs in the active stations display
+    document.getElementById('site-display').textContent = sites.map(s => shortID(s.name)).join(', ');
 
     const useDepth    = (mode === 'depth') || (mode === 'auto' && sites.some(s => s.height === 0));
     const dataField   = useDepth ? 'depth_feet' : 'water_elevation_feet';
     const labelSuffix = useDepth ? 'Depth' : 'Elev';
 
     const requests = sites.map(async (site, index) => {
-        const cleanName = site.name.trim();
-        const directUrl = 'https://metadata.iriver.cloud/api/v1/scor/' + encodeURIComponent(cleanName) + '?start=' + encodeURIComponent(startFormatted) + '&end=' + encodeURIComponent(endFormatted);
+        const fullName  = site.name.trim();
+        const display   = shortID(fullName);   // used everywhere the user sees a name
+        const directUrl = 'https://metadata.iriver.cloud/api/v1/scor/' +
+            encodeURIComponent(fullName) +        // full name for the API call
+            '?start=' + encodeURIComponent(startFormatted) +
+            '&end='   + encodeURIComponent(endFormatted);
         try {
             const res  = await fetch(directUrl);
             const json = await res.json();
             if (json && json.data && json.data.length > 0) {
                 const values = json.data.map(d => d[dataField]).filter(v => v !== null);
                 if (!values.length) return null;
-                const tail = values.slice(-Math.max(1, Math.floor(values.length * 0.2)));
-                const trendSlope = tail.length > 1 ? tail[tail.length-1] - tail[0] : 0;
+                const tail       = values.slice(-Math.max(1, Math.floor(values.length * 0.2)));
+                const trendSlope = tail.length > 1 ? tail[tail.length - 1] - tail[0] : 0;
                 return {
-                    label: cleanName + ' (' + labelSuffix + ')',
-                    data: json.data.filter(d => d[dataField] !== null).map(d => ({ x: d.t, y: d[dataField] })),
-                    borderColor: COLORS[index % COLORS.length],
+                    label: display + ' (' + labelSuffix + ')',   // 8-char in chart legend
+                    data:  json.data.filter(d => d[dataField] !== null).map(d => ({ x: d.t, y: d[dataField] })),
+                    borderColor:     COLORS[index % COLORS.length],
                     backgroundColor: COLORS[index % COLORS.length] + '18',
                     borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
                     tension: smoothEnabled ? 0.4 : 0.1, fill: false,
                     stats: {
-                        name: cleanName, color: COLORS[index % COLORS.length],
-                        max: Math.max(...values), min: Math.min(...values),
-                        latest: values[values.length-1], net: values[values.length-1] - values[0],
-                        count: values.length, trend: trendSlope
+                        name:    display,   // 8-char used in sidebar, table, CSV
+                        fullName: fullName, // kept internally for re-fetching
+                        color:   COLORS[index % COLORS.length],
+                        max:     Math.max(...values),
+                        min:     Math.min(...values),
+                        latest:  values[values.length - 1],
+                        net:     values[values.length - 1] - values[0],
+                        count:   values.length,
+                        trend:   trendSlope
                     }
                 };
             }
-        } catch(err) { console.error('Fetch error for ' + cleanName + ':', err); }
+        } catch(err) { console.error('Fetch error for ' + fullName + ':', err); }
         return null;
     });
 
@@ -462,7 +497,11 @@ function clearSidebar() {
 
 function updateSidebar(datasets) {
     document.getElementById('station-list').innerHTML = datasets.map(ds =>
-        '<div class="station-item"><div class="station-dot" style="background:' + ds.stats.color + '"></div><span class="station-name">' + ds.stats.name + '</span><span class="station-latest">' + ds.stats.latest.toFixed(2) + ' ft</span></div>'
+        '<div class="station-item">' +
+        '<div class="station-dot" style="background:' + ds.stats.color + '"></div>' +
+        '<span class="station-name">' + ds.stats.name + '</span>' +   // 8-char
+        '<span class="station-latest">' + ds.stats.latest.toFixed(2) + ' ft</span>' +
+        '</div>'
     ).join('');
 }
 
@@ -477,13 +516,22 @@ function updateSummaryCard(datasets) {
 
 function updateStatsTable(datasets) {
     document.getElementById('stats-tbody').innerHTML = datasets.map(ds => {
-        const s = ds.stats;
+        const s        = ds.stats;
+        const rangeVal = s.max - s.min;
         const netClass   = Math.abs(s.net) < 0.01 ? 'val-neutral' : (s.net > 0 ? 'val-up' : 'val-down');
         const trendIcon  = s.trend > 0.01 ? '\u2191' : (s.trend < -0.01 ? '\u2193' : '\u2192');
         const trendClass = s.trend > 0.01 ? 'val-up' : (s.trend < -0.01 ? 'val-down' : 'val-neutral');
-        const rangeVal   = s.max - s.min;
         const fillPct    = rangeVal > 0 ? ((s.latest - s.min) / rangeVal * 100).toFixed(1) : 50;
-        return '<tr><td><span class="station-color-dot" style="background:' + s.color + '"></span><strong>' + s.name + '</strong></td><td><span class="mono">' + s.latest.toFixed(3) + '</span></td><td><span class="mono" style="color:var(--danger)">' + s.max.toFixed(3) + '</span></td><td><span class="mono" style="color:var(--accent2)">' + s.min.toFixed(3) + '</span></td><td class="range-bar-cell"><span class="mono">' + rangeVal.toFixed(3) + '</span><div class="range-bar-bg"><div class="range-bar-fill" style="width:' + fillPct + '%;background:' + s.color + '"></div></div></td><td class="' + netClass + ' mono">' + (s.net >= 0 ? '+' : '') + s.net.toFixed(3) + ' ft</td><td class="' + trendClass + '" style="font-size:1.3em;line-height:1;">' + trendIcon + '</td></tr>';
+        return '<tr>' +
+            '<td><span class="station-color-dot" style="background:' + s.color + '"></span>' +
+            '<strong style="font-family:\'Space Mono\',monospace;">' + s.name + '</strong></td>' +  // 8-char
+            '<td><span class="mono">' + s.latest.toFixed(3) + '</span></td>' +
+            '<td><span class="mono" style="color:var(--danger)">' + s.max.toFixed(3) + '</span></td>' +
+            '<td><span class="mono" style="color:var(--accent2)">' + s.min.toFixed(3) + '</span></td>' +
+            '<td class="range-bar-cell"><span class="mono">' + rangeVal.toFixed(3) + '</span>' +
+            '<div class="range-bar-bg"><div class="range-bar-fill" style="width:' + fillPct + '%;background:' + s.color + '"></div></div></td>' +
+            '<td class="' + netClass + ' mono">' + (s.net >= 0 ? '+' : '') + s.net.toFixed(3) + ' ft</td>' +
+            '<td class="' + trendClass + '" style="font-size:1.3em;line-height:1;">' + trendIcon + '</td></tr>';
     }).join('');
 }
 
@@ -497,12 +545,17 @@ function renderMultiChart(datasets, yAxisTitle) {
             interaction: { mode: 'index', intersect: false },
             animation: { duration: 400 },
             scales: {
-                x: { type: 'time', time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } }, title: { display: true, text: 'Date & Time', color: '#6b7fa3' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', maxRotation: 0 } },
-                y: { title: { display: true, text: yAxisTitle, color: '#6b7fa3' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', precision: 2 } }
+                x: { type: 'time', time: { displayFormats: { hour: 'MMM d, HH:mm', day: 'MMM d' } },
+                     title: { display: true, text: 'Date & Time', color: '#6b7fa3' },
+                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', maxRotation: 0 } },
+                y: { title: { display: true, text: yAxisTitle, color: '#6b7fa3' },
+                     grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7fa3', precision: 2 } }
             },
             plugins: {
                 legend: { position: 'bottom', labels: { color: '#6b7fa3', usePointStyle: true, pointStyle: 'circle', padding: 20, font: { family: 'DM Sans', size: 12 } } },
-                tooltip: { backgroundColor: '#111c2e', borderColor: 'rgba(255,255,255,0.07)', borderWidth: 1, titleColor: '#e8edf5', bodyColor: '#6b7fa3', padding: 12, callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(3) + ' ft' } }
+                tooltip: { backgroundColor: '#111c2e', borderColor: 'rgba(255,255,255,0.07)', borderWidth: 1,
+                           titleColor: '#e8edf5', bodyColor: '#6b7fa3', padding: 12,
+                           callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toFixed(3) : 'N/A') + ' ft' } }
             }
         }
     });
@@ -547,7 +600,10 @@ function addLegend() {
     const legend = L.control({ position: 'bottomright' });
     legend.onAdd = () => {
         const div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML = '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">STATION STATUS</b><br><i style="background:#00ffa3"></i> Surveyed (Elevation)<br><i style="background:#ff6b35"></i> Not Surveyed (Depth)';
+        div.innerHTML =
+            '<b style="font-family:\'Space Mono\',monospace;font-size:0.75em;letter-spacing:0.05em;">STATION STATUS</b><br>' +
+            '<i style="background:#00ffa3"></i> Surveyed (Elevation)<br>' +
+            '<i style="background:#ff6b35"></i> Not Surveyed (Depth)';
         return div;
     };
     legend.addTo(map);
