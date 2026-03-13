@@ -2,28 +2,28 @@
   {
     "Parameter": "depth",
     "unit": "feet",
-    "network_avg": 720.7728,
+    "network_avg": 719.1451,
     "network_min": -1.5059,
     "network_max": 32805.1192,
-    "network_stddev": 4623.4299,
+    "network_stddev": 4621.4685,
     "site_count": 101
   },
   {
     "Parameter": "distance",
     "unit": "feet",
-    "network_avg": 12.0703,
+    "network_avg": 12.058,
     "network_min": 0,
     "network_max": 28.7467,
-    "network_stddev": 5.2491,
+    "network_stddev": 5.2487,
     "site_count": 101
   },
   {
     "Parameter": "water_elevation",
     "unit": "feet",
-    "network_avg": 305.9757,
+    "network_avg": 299.3033,
     "network_min": -28.7467,
     "network_max": 1102.2556,
-    "network_stddev": 394.9655,
+    "network_stddev": 389.1207,
     "site_count": 101
   }
 ]

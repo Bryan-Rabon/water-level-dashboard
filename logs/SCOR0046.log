@@ -1,0 +1,76 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_775/1360270159.py", line 59, in run_one_station
+    dem_m = py3dep.get_map('DEM', bb, resolution=1, geo_crs='EPSG:4326', crs='EPSG:32617')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/py3dep/py3dep.py", line 177, in get_map
+    r_dict = wms.getmap_bybox(bbox, resolution, box_crs=req_crs, max_px=MAX_PIXELS)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pygeoogc/pygeoogc.py", line 468, in getmap_bybox
+    rbinary = ar.retrieve_binary(
+              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/async_retriever/async_retriever.py", line 449, in retrieve_binary
+    return retrieve(  # pyright: ignore[reportReturnType]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/async_retriever/async_retriever.py", line 233, in retrieve
+    results = utils.run_in_event_loop(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/async_retriever/_utils.py", line 99, in run_in_event_loop
+    return asyncio.run_coroutine_threadsafe(coro, handler.loop).result()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+TimeoutError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "rasterio/_base.pyx", line 320, in rasterio._base.DatasetBase.__init__
+  File "rasterio/_base.pyx", line 232, in rasterio._base.open_dataset
+  File "rasterio/_err.pyx", line 359, in rasterio._err.exc_wrap_pointer
+rasterio._err.CPLE_OpenFailedError: '/vsimem/6556fe60-50fe-4234-ba05-1c149c430ddf/6556fe60-50fe-4234-ba05-1c149c430ddf.tif' not recognized as being in a supported file format.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/py3dep/py3dep.py", line 180, in get_map
+    ds = geoutils.gtiff2xarray(r_dict)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pygeoutils/pygeoutils.py", line 296, in gtiff2xarray
+    attrs = utils.get_gtiff_attrs(r_dict[key1], ds_dims, driver, nodata)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/pygeoutils/_utils.py", line 368, in get_gtiff_attrs
+    with memfile.open(driver=driver) as src:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/rasterio/env.py", line 414, in wrapper
+    return f(*args, **kwds)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/rasterio/io.py", line 140, in open
+    rd = DatasetReader(mempath, driver=driver, sharing=sharing, thread_safe=thread_safe, **kwargs)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "rasterio/_base.pyx", line 329, in rasterio._base.DatasetBase.__init__
+rasterio.errors.RasterioIOError: '/vsimem/6556fe60-50fe-4234-ba05-1c149c430ddf/6556fe60-50fe-4234-ba05-1c149c430ddf.tif' not recognized as being in a supported file format.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmp/ipykernel_775/1360270159.py", line 61, in run_one_station
+    dem_m = py3dep.get_map('DEM', bb, resolution=10, geo_crs='EPSG:4326', crs='EPSG:32617')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/py3dep/py3dep.py", line 182, in get_map
+    raise ServiceUnavailableError(wms_url) from ex
+py3dep.exceptions.ServiceUnavailableError: Service is currently not available, try again later:
+https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/ipykernel_775/1360270159.py", line 280, in <cell line: 0>
+    meta = run_one_station(row)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ipykernel_775/1360270159.py", line 66, in run_one_station
+    raise RuntimeError(f'DEM download failed: {e}')
+RuntimeError: DEM download failed: Service is currently not available, try again later:
+https://elevation.nationalmap.gov/arcgis/services/3DEPElevation/ImageServer/WMSServer
