@@ -374,42 +374,29 @@ RESPONSIVE BREAKPOINTS
 
 /* ── Mobile < 768px ──────────────────────────────────────── */
 @media (max-width:767px) {
-/* Hide desktop chrome */
 #sidebar { display:none; }
 #map-header { display:none !important; }
 #map-meta-strip { display:none; }
-
-/* Show mobile chrome */
 #bottom-nav { display:flex; }
 #mobile-drawer { display:flex; }
 
-/* Root spans full height — DO NOT shrink for bottom nav.
-The map frame itself uses fixed positioning to avoid the nav. */
+/* Root and map-area fill whatever space they get —
+actual pixel height is set by JS via visualViewport */
 #root { bottom:0; }
-
-/* Map area fills root normally */
 #map-area { width:100%; }
 
-/* map-frame-wrap: fixed insets so iframe is never behind topbar, nav, or tray.
-–tray-h is set by JS when a station is selected; default 0. */
+/* map-frame-wrap is sized entirely by JS on mobile.
+position:fixed so it escapes all flex/scroll containers. */
 #map-frame-wrap {
 position: fixed !important;
-top:  calc(var(–topbar-h) + var(–sat)) !important;
-left: 0 !important;
-right: 0 !important;
-bottom: calc(56px + var(–sab) + var(–tray-h, 0px)) !important;
-/* override any flex sizing */
-height: auto !important;
-flex: none !important;
+left: 0; right: 0;
+/* top/height set by JS — see layoutMobile() */
+height: 0; /* overridden by JS */
+overflow: hidden;
 }
 
-/* iframe fills its fixed container */
-#map-frame { position:absolute; inset:0; width:100%; height:100%; }
-
-/* Empty/error/loading states also fill the fixed container */
-#empty-state, #error-msg, #loading-overlay {
-position:absolute; inset:0;
-}
+#map-frame { position:absolute; inset:0; width:100%; height:100%; border:none; }
+#empty-state, #error-msg, #loading-overlay { position:absolute; inset:0; }
 }
 
 /* ── Tablet 768–1023px ───────────────────────────────────── */
@@ -417,12 +404,15 @@ position:absolute; inset:0;
 #sidebar { width:260px; }
 #map-meta-strip { display:none; }
 #bottom-nav, #mobile-drawer, #info-tray, #back-btn { display:none !important; }
+/* Undo any mobile fixed sizing */
+#map-frame-wrap { position:relative !important; height:auto !important; top:auto !important; }
 }
 
 /* ── Desktop ≥ 1024px ────────────────────────────────────── */
 @media (min-width:1024px) {
 #sidebar { width:320px; }
 #bottom-nav, #mobile-drawer, #info-tray, #back-btn { display:none !important; }
+#map-frame-wrap { position:relative !important; height:auto !important; top:auto !important; }
 }
 
 @media (min-width:1400px) { #sidebar { width:360px; } }
@@ -744,10 +734,8 @@ function selectStation(station, cardEl) {
     const tray = document.getElementById('info-tray');
     tray.style.display = 'block';
     document.getElementById('back-btn').style.display = 'flex';
-    // rAF ensures tray is rendered before measuring
-    requestAnimationFrame(() => {
-      document.documentElement.style.setProperty('--tray-h', tray.offsetHeight + 'px');
-    });
+    // Re-layout after tray renders so frame height is recalculated
+    requestAnimationFrame(layoutMobile);
     setMobileTab('map');
   }
 
@@ -830,7 +818,7 @@ document.getElementById('tab-map').addEventListener('click',  () => {
 document.getElementById('back-btn').addEventListener('click', () => {
   document.getElementById('back-btn').style.display  = 'none';
   document.getElementById('info-tray').style.display = 'none';
-  document.documentElement.style.setProperty('--tray-h', '0px');
+  requestAnimationFrame(layoutMobile);
   setMobileTab('list');
 });
 
@@ -853,13 +841,50 @@ window.addEventListener('resize', () => {
     closeDrawer();
     document.getElementById('info-tray').style.display = 'none';
     document.getElementById('back-btn').style.display  = 'none';
-    document.documentElement.style.setProperty('--tray-h', '0px');
   }
 });
 
 /* ── Boot ────────────────────────────────────────────────────────────────── */
 showState('empty');
 loadManifest();
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE LAYOUT ENGINE
+   Uses window.visualViewport so the iframe is sized to the
+   actual visible area — correctly excludes Safari's URL bar,
+   browser toolbar, and home indicator on all iOS devices.
+════════════════════════════════════════════════════════════ */
+function layoutMobile() {
+  if (!isMobile()) return;
+
+  const vvp      = window.visualViewport;
+  const vh       = vvp ? vvp.height : window.innerHeight;
+  const vTop     = vvp ? vvp.offsetTop : 0;
+
+  const topbarEl = document.getElementById('topbar');
+  const navEl    = document.getElementById('bottom-nav');
+  const trayEl   = document.getElementById('info-tray');
+
+  const topbarH  = topbarEl.getBoundingClientRect().height;
+  const navH     = navEl.offsetHeight;
+  const trayH    = (trayEl.style.display !== 'none') ? trayEl.offsetHeight : 0;
+
+  const frameTop = topbarH;                      // px from top of visual viewport
+  const frameH   = vh - topbarH - navH - trayH;  // remaining visible height
+
+  const wrap = document.getElementById('map-frame-wrap');
+  wrap.style.top    = frameTop + 'px';
+  wrap.style.height = Math.max(frameH, 100) + 'px'; // never less than 100px
+}
+
+// Run on every visual viewport change (handles Safari toolbar show/hide)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', layoutMobile);
+  window.visualViewport.addEventListener('scroll', layoutMobile);
+}
+window.addEventListener('resize', layoutMobile);
+// Initial layout after paint
+requestAnimationFrame(layoutMobile);
 </script>
 
 </body>
