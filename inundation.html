@@ -1,442 +1,641 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SCOR Inundation Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0b0f1a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>SCOR Inundation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-/* ── Reset & Variables ──────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   TOKENS & RESET
+════════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg:        #0b0f1a;
-  --bg2:       #111827;
-  --bg3:       #1a2236;
-  --panel:     #141c2e;
-  --border:    rgba(99,155,255,0.12);
-  --border2:   rgba(99,155,255,0.22);
-  --accent:    #3d8bff;
-  --accent2:   #64b3f4;
-  --teal:      #2dd4bf;
-  --warn:      #f59e0b;
-  --err:       #f87171;
-  --ok:        #34d399;
-  --text:      #e2e8f0;
-  --muted:     #94a3b8;
-  --faint:     #3d4f6a;
-  --mono:      'DM Mono', monospace;
-  --head:      'Syne', sans-serif;
-  --body:      'DM Sans', sans-serif;
+  --bg:      #0b0f1a;
+  --bg2:     #111827;
+  --bg3:     #1a2236;
+  --panel:   #141c2e;
+  --border:  rgba(99,155,255,0.12);
+  --border2: rgba(99,155,255,0.22);
+  --accent:  #3d8bff;
+  --accent2: #64b3f4;
+  --teal:    #2dd4bf;
+  --err:     #f87171;
+  --ok:      #34d399;
+  --text:    #e2e8f0;
+  --muted:   #94a3b8;
+  --faint:   #3d4f6a;
+  --mono:    'DM Mono', monospace;
+  --head:    'Syne', sans-serif;
+  --body:    'DM Sans', sans-serif;
+  --sat: env(safe-area-inset-top,    0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left,   0px);
+  --sar: env(safe-area-inset-right,  0px);
+  --topbar-h: 52px;
 }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--text);
+  font-family: var(--body);
+  -webkit-tap-highlight-color: transparent;
+}
+button { touch-action: manipulation; font-family: inherit; }
 
-html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--body); }
+/* ════════════════════════════════════════════════════════════
+ANIMATIONS
+════════════════════════════════════════════════════════════ */
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes fadeUp  { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
 
-/* ── Layout ─────────────────────────────────────────────────────────── */
-#app { display: grid; grid-template-rows: 56px 1fr; height: 100vh; }
-
-/* ── Top bar ─────────────────────────────────────────────────────────── */
-#topbar {
-  display: flex; align-items: center; gap: 16px;
-  padding: 0 24px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  z-index: 100;
-}
-#topbar h1 {
-  font-family: var(--head); font-size: 15px; font-weight: 800;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--accent2);
-}
-#topbar .tagline {
-  font-size: 11px; color: var(--muted); font-family: var(--mono);
-  border-left: 1px solid var(--faint); padding-left: 16px;
-}
-#stats-bar {
-  margin-left: auto; display: flex; gap: 24px;
-}
-.stat-pill {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-}
-.stat-pill strong { color: var(--text); font-size: 13px; }
-.dot { width: 7px; height: 7px; border-radius: 50%; }
-.dot.ok  { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
-.dot.err { background: var(--err); box-shadow: 0 0 6px var(--err); }
-
-/* ── Main grid ───────────────────────────────────────────────────────── */
-#main { display: grid; grid-template-columns: 320px 1fr; overflow: hidden; }
-
-/* ── Sidebar ─────────────────────────────────────────────────────────── */
-#sidebar {
-  background: var(--panel);
-  border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-}
-
-#search-wrap {
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-#search-wrap input {
-  width: 100%; background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: 6px; padding: 8px 12px;
-  color: var(--text); font-family: var(--mono); font-size: 12px;
-  outline: none; transition: border-color .2s;
-}
-#search-wrap input:focus { border-color: var(--accent); }
-#search-wrap input::placeholder { color: var(--faint); }
-
-#filter-row {
-  padding: 8px 16px;
-  display: flex; gap: 6px; flex-wrap: wrap;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
+/* ════════════════════════════════════════════════════════════
+SHARED ATOMS
+════════════════════════════════════════════════════════════ */
+.dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dot.ok  { background:var(–ok);  box-shadow:0 0 6px var(–ok); }
+.dot.err { background:var(–err); box-shadow:0 0 6px var(–err); }
+.spinner {
+width:28px; height:28px; border-radius:50%;
+border:2px solid var(–border2); border-top-color:var(–accent);
+animation:spin .7s linear infinite; flex-shrink:0;
 }
 .filter-btn {
-  font-family: var(--mono); font-size: 10px; padding: 3px 9px;
-  border-radius: 20px; border: 1px solid var(--border2);
-  background: transparent; color: var(--muted); cursor: pointer;
-  transition: all .15s;
+font-family:var(–mono); font-size:10px;
+padding:5px 12px; border-radius:20px;
+border:1px solid var(–border2);
+background:transparent; color:var(–muted);
+cursor:pointer; transition:all .15s;
+min-height:30px; white-space:nowrap;
 }
-.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.filter-btn.active { background:var(–accent); border-color:var(–accent); color:#fff; }
 
-#station-list { overflow-y: auto; flex: 1; padding: 8px; }
-#station-list::-webkit-scrollbar { width: 4px; }
-#station-list::-webkit-scrollbar-track { background: transparent; }
-#station-list::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 2px; }
+/* ════════════════════════════════════════════════════════════
+TOP BAR
+════════════════════════════════════════════════════════════ */
+#topbar {
+position:fixed; top:0; left:0; right:0;
+height:calc(var(–topbar-h) + var(–sat));
+padding-top:var(–sat);
+display:flex; align-items:center; gap:12px;
+padding-left:calc(16px + var(–sal));
+padding-right:calc(16px + var(–sar));
+background:var(–bg2);
+border-bottom:1px solid var(–border);
+z-index:200;
+}
+#topbar h1 {
+font-family:var(–head); font-size:14px; font-weight:800;
+letter-spacing:0.06em; text-transform:uppercase; color:var(–accent2);
+white-space:nowrap;
+}
+.tagline {
+font-size:10px; color:var(–muted); font-family:var(–mono);
+border-left:1px solid var(–faint); padding-left:12px;
+white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#stats-bar {
+margin-left:auto; display:flex; gap:12px; align-items:center; flex-shrink:0;
+}
+.stat-pill {
+display:flex; align-items:center; gap:5px;
+font-family:var(–mono); font-size:10px; color:var(–muted);
+}
+.stat-pill strong { color:var(–text); font-size:12px; }
+@media (max-width:380px) { .tagline { display:none; } }
 
+/* ════════════════════════════════════════════════════════════
+ROOT — everything below topbar
+════════════════════════════════════════════════════════════ */
+#root {
+position:fixed;
+top:calc(var(–topbar-h) + var(–sat));
+bottom:0; left:0; right:0;
+display:flex; overflow:hidden;
+}
+
+/* ════════════════════════════════════════════════════════════
+SIDEBAR (desktop/tablet)
+════════════════════════════════════════════════════════════ */
+#sidebar {
+width:320px; flex-shrink:0;
+background:var(–panel);
+border-right:1px solid var(–border);
+display:flex; flex-direction:column;
+overflow:hidden;
+}
+#sidebar-search-wrap {
+padding:12px 14px 8px;
+border-bottom:1px solid var(–border); flex-shrink:0;
+}
+#sidebar-search-wrap input, #drawer-search-wrap input {
+width:100%; background:var(–bg3); border:1px solid var(–border2);
+border-radius:7px; padding:9px 12px;
+color:var(–text); font-family:var(–mono); font-size:12px;
+outline:none; transition:border-color .2s; min-height:40px;
+}
+#sidebar-search-wrap input:focus,
+#drawer-search-wrap input:focus { border-color:var(–accent); }
+#sidebar-search-wrap input::placeholder,
+#drawer-search-wrap input::placeholder { color:var(–faint); }
+
+#sidebar-filter-row, #drawer-filter-row {
+padding:8px 14px; display:flex; gap:6px; flex-wrap:wrap;
+border-bottom:1px solid var(–border); flex-shrink:0;
+}
+#station-list, #drawer-list {
+overflow-y:auto; flex:1; padding:8px;
+overscroll-behavior:contain;
+-webkit-overflow-scrolling:touch;
+}
+#station-list::-webkit-scrollbar,
+#drawer-list::-webkit-scrollbar { width:4px; }
+#station-list::-webkit-scrollbar-thumb,
+#drawer-list::-webkit-scrollbar-thumb { background:var(–faint); border-radius:2px; }
+
+/* ── Station cards ────────────────────────────────────────── */
 .station-card {
-  padding: 12px 14px; border-radius: 8px; margin-bottom: 4px;
-  border: 1px solid transparent;
-  cursor: pointer; transition: all .15s;
-  position: relative; overflow: hidden;
+padding:12px 14px; border-radius:8px; margin-bottom:4px;
+border:1px solid transparent; cursor:pointer;
+transition:background .12s, border-color .12s;
+position:relative; overflow:hidden;
+animation:fadeUp .2s both;
 }
 .station-card::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 3px; border-radius: 3px 0 0 3px;
-  background: var(--accent); opacity: 0; transition: opacity .15s;
+content:’’; position:absolute; left:0; top:0; bottom:0;
+width:3px; background:var(–accent); opacity:0; transition:opacity .15s;
 }
-.station-card:hover { background: var(--bg3); border-color: var(--border2); }
-.station-card:hover::before { opacity: 0.6; }
-.station-card.active { background: rgba(61,139,255,0.1); border-color: var(--accent); }
-.station-card.active::before { opacity: 1; }
-.station-card.error { opacity: 0.55; }
+.station-card:hover  { background:var(–bg3); border-color:var(–border2); }
+.station-card:hover::before { opacity:0.6; }
+.station-card.active { background:rgba(61,139,255,0.1); border-color:var(–accent); }
+.station-card.active::before { opacity:1; }
+.station-card.error  { opacity:0.5; cursor:default; }
+.card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.card-name { font-family:var(–head); font-size:14px; font-weight:700; letter-spacing:0.04em; }
+.card-badge { font-family:var(–mono); font-size:9px; padding:2px 7px; border-radius:10px; font-weight:500; }
+.card-badge.ok  { background:rgba(52,211,153,0.15); color:var(–ok);  border:1px solid rgba(52,211,153,0.3); }
+.card-badge.err { background:rgba(248,113,113,0.15); color:var(–err); border:1px solid rgba(248,113,113,0.3); }
+.card-meta { display:grid; grid-template-columns:1fr 1fr; gap:2px 10px; }
+.card-meta-item { font-family:var(–mono); font-size:10px; color:var(–muted); }
+.card-meta-item span { color:var(–text); }
+.flood-bar-wrap { margin-top:8px; }
+.flood-bar-label { display:flex; justify-content:space-between; font-family:var(–mono); font-size:9px; color:var(–faint); margin-bottom:3px; }
+.flood-bar-track { height:4px; background:var(–bg); border-radius:2px; overflow:hidden; }
+.flood-bar-fill  { height:100%; border-radius:2px; background:linear-gradient(90deg,var(–accent),var(–teal)); transition:width .4s; }
+.no-results { padding:28px 12px; text-align:center; font-family:var(–mono); font-size:11px; color:var(–faint); display:none; }
 
-.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-.card-name { font-family: var(--head); font-size: 14px; font-weight: 700; letter-spacing: 0.04em; }
-.card-status { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }
-.card-status.ok  { background: rgba(52,211,153,0.15); color: var(--ok); border: 1px solid rgba(52,211,153,0.3); }
-.card-status.err { background: rgba(248,113,113,0.15); color: var(--err); border: 1px solid rgba(248,113,113,0.3); }
-
-.card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; }
-.card-meta-item { font-family: var(--mono); font-size: 10px; color: var(--muted); }
-.card-meta-item span { color: var(--text); }
-
-.flood-bar-wrap { margin-top: 8px; }
-.flood-bar-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--faint); margin-bottom: 3px; }
-.flood-bar-track { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
-.flood-bar-fill  { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--teal)); transition: width .4s; }
-
-/* ── Map frame area ──────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+MAP AREA
+════════════════════════════════════════════════════════════ */
 #map-area {
-  display: flex; flex-direction: column; overflow: hidden;
-  background: var(--bg);
+flex:1; display:flex; flex-direction:column; overflow:hidden;
+background:var(–bg); min-width:0;
 }
 
+/* desktop station header bar */
 #map-header {
-  padding: 12px 24px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 20px;
-  flex-shrink: 0;
+padding:10px 20px;
+background:var(–bg2); border-bottom:1px solid var(–border);
+display:none; flex-shrink:0;
+gap:16px; align-items:flex-start; flex-wrap:wrap;
 }
-#map-title { font-family: var(--head); font-size: 18px; font-weight: 800; }
-#map-subtitle { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+#map-header-left { min-width:0; }
+#map-title { font-family:var(–head); font-size:17px; font-weight:800; }
+#map-subtitle { font-family:var(–mono); font-size:10px; color:var(–muted); margin-top:2px; }
+#map-meta-strip { display:flex; flex-wrap:wrap; gap:10px 18px; margin-left:auto; }
+.meta-chip { display:flex; flex-direction:column; align-items:flex-end; font-family:var(–mono); }
+.meta-chip .lbl { font-size:9px; color:var(–faint); text-transform:uppercase; letter-spacing:0.08em; }
+.meta-chip .val { font-size:12px; color:var(–text); font-weight:500; }
+.meta-chip .val.hi { color:var(–teal); }
 
-#map-meta-strip {
-  display: flex; gap: 20px; margin-left: auto;
-}
-.meta-chip {
-  display: flex; flex-direction: column; align-items: flex-end;
-  font-family: var(--mono);
-}
-.meta-chip .label { font-size: 9px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em; }
-.meta-chip .value { font-size: 13px; color: var(--text); font-weight: 500; }
-.meta-chip .value.highlight { color: var(--teal); }
+/* frame wrapper */
+#map-frame-wrap { flex:1; position:relative; overflow:hidden; }
+#map-frame { width:100%; height:100%; border:none; display:none; }
 
-#map-frame-wrap { flex: 1; position: relative; }
-iframe#map-frame {
-  width: 100%; height: 100%; border: none; display: block;
-  transition: opacity .3s;
-}
-
-/* ── Empty / loading states ──────────────────────────────────────────── */
-#empty-state {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 100%; gap: 16px; text-align: center; padding: 40px;
-}
-#empty-state .icon { font-size: 56px; opacity: 0.25; }
-#empty-state h2 { font-family: var(--head); font-size: 22px; font-weight: 700; color: var(--muted); }
-#empty-state p { font-family: var(--mono); font-size: 12px; color: var(--faint); max-width: 380px; line-height: 1.7; }
-#empty-state .setup-block {
-  background: var(--bg3); border: 1px solid var(--border2);
-  border-radius: 8px; padding: 16px 20px; text-align: left;
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-  line-height: 2; max-width: 420px; width: 100%;
-}
-#empty-state .setup-block code { color: var(--accent2); }
-
+/* loading overlay */
 #loading-overlay {
-  position: absolute; inset: 0;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  flex-direction: column; gap: 12px; font-family: var(--mono);
-  transition: opacity .3s; z-index: 10;
+position:absolute; inset:0; background:var(–bg);
+display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+gap:12px; font-family:var(–mono); font-size:11px;
+color:var(–muted); transition:opacity .25s; z-index:10;
 }
-#loading-overlay.hidden { opacity: 0; pointer-events: none; }
-.spinner {
-  width: 32px; height: 32px; border-radius: 50%;
-  border: 2px solid var(--border2);
-  border-top-color: var(--accent);
-  animation: spin .7s linear infinite;
+#loading-overlay.hidden { opacity:0; pointer-events:none; }
+
+/* empty state */
+#empty-state {
+position:absolute; inset:0;
+display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+gap:16px; padding:32px; text-align:center;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── No stations message ─────────────────────────────────────────────── */
-#no-results {
-  padding: 32px 16px; text-align: center;
-  font-family: var(--mono); font-size: 11px; color: var(--faint);
-  display: none;
+#empty-state .es-icon { font-size:48px; opacity:0.2; }
+#empty-state h2 { font-family:var(–head); font-size:20px; font-weight:700; color:var(–muted); }
+#empty-state p  { font-family:var(–mono); font-size:11px; color:var(–faint); max-width:360px; line-height:1.8; }
+.setup-block {
+background:var(–bg3); border:1px solid var(–border2);
+border-radius:8px; padding:14px 18px; text-align:left;
+font-family:var(–mono); font-size:11px; color:var(–muted);
+line-height:2; max-width:400px; width:100%;
 }
+.setup-block code { color:var(–accent2); }
 
-/* ── Scrollbar (sidebar list) ────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--faint); border-radius: 3px; }
-
-/* ── Animations ──────────────────────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.station-card { animation: fadeUp .2s both; }
-
-/* ── Error message ───────────────────────────────────────────────────── */
+/* error state */
 #error-msg {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 100%; gap: 12px; font-family: var(--mono); color: var(--err);
+position:absolute; inset:0;
+display:none; flex-direction:column;
+align-items:center; justify-content:center;
+gap:12px; font-family:var(–mono); color:var(–err);
 }
-#error-msg .icon { font-size: 40px; }
-#error-msg p { font-size: 12px; color: var(--muted); max-width: 340px; text-align: center; }
+#error-msg .icon { font-size:36px; }
+#error-msg p { font-size:11px; color:var(–muted); max-width:320px; text-align:center; line-height:1.7; }
+
+/* ════════════════════════════════════════════════════════════
+MOBILE — bottom nav
+════════════════════════════════════════════════════════════ */
+#bottom-nav {
+display:none;
+position:fixed; bottom:0; left:0; right:0;
+height:calc(56px + var(–sab));
+padding-bottom:var(–sab);
+background:var(–bg2); border-top:1px solid var(–border);
+z-index:300; align-items:stretch;
+}
+.nav-tab {
+flex:1; display:flex; flex-direction:column;
+align-items:center; justify-content:center;
+gap:3px; cursor:pointer;
+font-family:var(–mono); font-size:9px; color:var(–muted);
+transition:color .15s; padding:8px 4px 0;
+border:none; background:none;
+}
+.nav-tab svg { width:22px; height:22px; }
+.nav-tab.active { color:var(–accent2); }
+.nav-tab.active svg { filter:drop-shadow(0 0 4px rgba(100,179,244,0.5)); }
+
+/* ════════════════════════════════════════════════════════════
+MOBILE — slide-up drawer
+════════════════════════════════════════════════════════════ */
+#mobile-drawer {
+display:none;
+position:fixed; inset:0; z-index:250;
+flex-direction:column;
+pointer-events:none;
+}
+#mobile-drawer.open { pointer-events:all; }
+#drawer-backdrop {
+position:absolute; inset:0; background:rgba(0,0,0,0.55);
+opacity:0; transition:opacity .2s;
+}
+#mobile-drawer.open #drawer-backdrop { opacity:1; }
+#drawer-sheet {
+position:absolute; bottom:calc(56px + var(–sab));
+left:0; right:0; max-height:82vh;
+background:var(–panel);
+border-radius:16px 16px 0 0;
+border-top:1px solid var(–border2);
+display:flex; flex-direction:column;
+transform:translateY(100%);
+transition:transform .28s cubic-bezier(0.32,0.72,0,1);
+overflow:hidden;
+}
+#mobile-drawer.open #drawer-sheet { transform:translateY(0); }
+#drawer-handle {
+width:36px; height:4px; border-radius:2px;
+background:var(–faint); margin:10px auto 0; flex-shrink:0;
+}
+#drawer-search-wrap { padding:12px 16px 8px; border-bottom:1px solid var(–border); flex-shrink:0; }
+#drawer-search-wrap input { font-size:14px; min-height:44px; border-radius:8px; }
+#drawer-filter-row {
+padding:8px 16px; display:flex; gap:7px;
+border-bottom:1px solid var(–border); flex-shrink:0;
+overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+#drawer-filter-row::-webkit-scrollbar { display:none; }
+
+/* ════════════════════════════════════════════════════════════
+MOBILE — scrollable info tray (above bottom nav, below map)
+════════════════════════════════════════════════════════════ */
+#info-tray {
+display:none;
+position:fixed;
+bottom:calc(56px + var(–sab));
+left:0; right:0;
+background:rgba(17,24,39,0.96);
+backdrop-filter:blur(8px);
+border-top:1px solid var(–border2);
+z-index:220;
+padding:10px 16px;
+overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+#info-tray::-webkit-scrollbar { display:none; }
+#info-tray-inner {
+display:flex; gap:16px; align-items:center; min-width:min-content;
+}
+#info-tray-name {
+font-family:var(–head); font-size:15px; font-weight:800;
+white-space:nowrap; color:var(–accent2); padding-right:4px;
+}
+.tray-chip { display:flex; flex-direction:column; align-items:flex-start; font-family:var(–mono); flex-shrink:0; }
+.tray-chip .lbl { font-size:8px; color:var(–faint); text-transform:uppercase; letter-spacing:0.1em; }
+.tray-chip .val { font-size:12px; color:var(–text); font-weight:500; margin-top:1px; }
+.tray-chip .val.hi { color:var(–teal); }
+
+/* ════════════════════════════════════════════════════════════
+MOBILE — back button overlay
+════════════════════════════════════════════════════════════ */
+#back-btn {
+display:none;
+position:fixed;
+top:calc(var(–topbar-h) + var(–sat) + 10px);
+left:calc(12px + var(–sal));
+z-index:210;
+background:rgba(17,24,39,0.92);
+backdrop-filter:blur(6px);
+border:1px solid var(–border2);
+border-radius:8px;
+padding:7px 12px 7px 8px;
+color:var(–text); font-family:var(–mono); font-size:11px;
+cursor:pointer; align-items:center; gap:6px;
+box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+#back-btn svg { width:14px; height:14px; }
+
+/* ════════════════════════════════════════════════════════════
+RESPONSIVE BREAKPOINTS
+════════════════════════════════════════════════════════════ */
+
+/* ── Mobile < 768px ──────────────────────────────────────── */
+@media (max-width:767px) {
+#sidebar { display:none; }
+#map-header { display:none !important; }
+#map-meta-strip { display:none; }
+#bottom-nav { display:flex; }
+#mobile-drawer { display:flex; }
+
+/* Root and map-area fill whatever space they get —
+actual pixel height is set by JS via visualViewport */
+#root { bottom:0; }
+#map-area { width:100%; }
+
+/* map-frame-wrap is sized entirely by JS on mobile.
+position:fixed so it escapes all flex/scroll containers. */
+#map-frame-wrap {
+position: fixed !important;
+left: 0; right: 0;
+/* top/height set by JS — see layoutMobile() */
+height: 0; /* overridden by JS */
+overflow: hidden;
+}
+
+#map-frame { position:absolute; inset:0; width:100%; height:100%; border:none; }
+#empty-state, #error-msg, #loading-overlay { position:absolute; inset:0; }
+}
+
+/* ── Tablet 768–1023px ───────────────────────────────────── */
+@media (min-width:768px) and (max-width:1023px) {
+#sidebar { width:260px; }
+#map-meta-strip { display:none; }
+#bottom-nav, #mobile-drawer, #info-tray, #back-btn { display:none !important; }
+/* Undo any mobile fixed sizing */
+#map-frame-wrap { position:relative !important; height:auto !important; top:auto !important; }
+}
+
+/* ── Desktop ≥ 1024px ────────────────────────────────────── */
+@media (min-width:1024px) {
+#sidebar { width:320px; }
+#bottom-nav, #mobile-drawer, #info-tray, #back-btn { display:none !important; }
+#map-frame-wrap { position:relative !important; height:auto !important; top:auto !important; }
+}
+
+@media (min-width:1400px) { #sidebar { width:360px; } }
 </style>
+
 </head>
 <body>
-<div id="app">
 
-  <!-- Top bar -->
-  <div id="topbar">
-    <h1>🌊 SCOR Inundation</h1>
-    <div class="tagline">Slope-Aware HAND Flood Model · South Carolina Coastal</div>
-    <div id="stats-bar">
-      <div class="stat-pill"><div class="dot ok"></div><strong id="stat-ok">—</strong> modelled</div>
-      <div class="stat-pill"><div class="dot err"></div><strong id="stat-err">—</strong> errors</div>
-      <div class="stat-pill">🕐 <strong id="stat-last">—</strong></div>
-    </div>
-  </div>
+<!-- ── TOP BAR ─────────────────────────────────────────────── -->
 
-  <!-- Main split -->
-  <div id="main">
-
-    <!-- Sidebar -->
-    <div id="sidebar">
-      <div id="search-wrap">
-        <input id="search" type="text" placeholder="Search stations…" autocomplete="off" />
-      </div>
-      <div id="filter-row">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="ok">Modelled</button>
-        <button class="filter-btn" data-filter="error">Errors</button>
-        <button class="filter-btn" data-filter="overbank">Over-bank</button>
-      </div>
-      <div id="station-list">
-        <div id="no-results">No stations match.</div>
-      </div>
-    </div>
-
-    <!-- Map area -->
-    <div id="map-area">
-
-      <!-- Header bar (hidden until station selected) -->
-      <div id="map-header" style="display:none">
-        <div>
-          <div id="map-title">—</div>
-          <div id="map-subtitle">—</div>
-        </div>
-        <div id="map-meta-strip"></div>
-      </div>
-
-      <!-- Map frame wrapper -->
-      <div id="map-frame-wrap">
-        <div id="loading-overlay" class="hidden">
-          <div class="spinner"></div>
-          <div style="font-size:11px;color:var(--muted)">Loading map…</div>
-        </div>
-
-        <!-- Empty state (default) -->
-        <div id="empty-state">
-          <div class="icon">🗺️</div>
-          <h2>Select a station</h2>
-          <p>Choose any modelled station from the list on the left to load its interactive inundation map.</p>
-          <div class="setup-block">
-            <div><strong style="color:var(--text)">Expected file layout</strong></div>
-            <div><code>manifest.json</code> — batch run metadata</div>
-            <div><code>maps/SITENAME.html</code> — per-station Folium maps</div>
-            <div style="margin-top:8px;color:var(--faint)">Place this file alongside <code>manifest.json</code> in the same folder as your batch output.</div>
-          </div>
-        </div>
-
-        <!-- Error state (shown when manifest fails) -->
-        <div id="error-msg" style="display:none">
-          <div class="icon">⚠️</div>
-          <p id="error-text">Could not load manifest.json. Make sure this file is in the same folder as the batch output.</p>
-        </div>
-
-        <iframe id="map-frame" style="display:none"></iframe>
-      </div>
+<div id="topbar">
+  <h1>🌊 SCOR Inundation</h1>
+  <span class="tagline">Slope-Aware HAND Flood Model · South Carolina</span>
+  <div id="stats-bar">
+    <div class="stat-pill"><div class="dot ok"></div><strong id="stat-ok">—</strong></div>
+    <div class="stat-pill"><div class="dot err"></div><strong id="stat-err">—</strong></div>
+    <div class="stat-pill" id="stat-date-pill" style="display:none">
+      🕐 <strong id="stat-last">—</strong>
     </div>
   </div>
 </div>
 
-<script>
-// ── State ──────────────────────────────────────────────────────────────────
-let manifest   = [];
-let activeCard = null;
-let filterMode = 'all';
-let searchTerm = '';
+<!-- ── ROOT ────────────────────────────────────────────────── -->
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-function fmt(n, dec=1) {
-  if (n == null || isNaN(n)) return '—';
-  return Number(n).toFixed(dec);
-}
+<div id="root">
+
+  <!-- DESKTOP/TABLET SIDEBAR -->
+
+  <div id="sidebar">
+    <div id="sidebar-search-wrap">
+      <input id="sidebar-search" type="search" placeholder="Search stations…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+    <div id="sidebar-filter-row">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="ok">Modelled</button>
+      <button class="filter-btn" data-filter="error">Errors</button>
+      <button class="filter-btn" data-filter="overbank">Over-bank</button>
+    </div>
+    <div id="station-list">
+      <div class="no-results" id="sidebar-no-results">No stations match.</div>
+    </div>
+  </div>
+
+  <!-- MAP AREA -->
+
+  <div id="map-area">
+    <div id="map-header">
+      <div id="map-header-left">
+        <div id="map-title">—</div>
+        <div id="map-subtitle">—</div>
+      </div>
+      <div id="map-meta-strip"></div>
+    </div>
+    <div id="map-frame-wrap">
+      <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <span>Loading map…</span>
+      </div>
+      <div id="empty-state">
+        <div class="es-icon">🗺️</div>
+        <h2>Select a station</h2>
+        <p>Choose a modelled station from the list to load its interactive inundation map.</p>
+        <div class="setup-block">
+          <strong style="color:var(--text)">Expected file layout</strong><br>
+          <code>manifest.json</code> — batch run metadata<br>
+          <code>maps/SITENAME.html</code> — Folium maps<br>
+          <br>
+          <span style="color:var(--faint)">Serve this file from the same folder as your batch output.</span>
+        </div>
+      </div>
+      <div id="error-msg">
+        <div class="icon">⚠️</div>
+        <p id="error-text">Could not load manifest.json.</p>
+      </div>
+      <iframe id="map-frame" title="Station flood map" allowfullscreen></iframe>
+    </div>
+  </div>
+
+</div><!-- #root -->
+
+<!-- ── MOBILE: BACK BUTTON ─────────────────────────────────── -->
+
+<button id="back-btn" aria-label="Back to stations">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+  Stations
+</button>
+
+<!-- ── MOBILE: INFO TRAY ────────────────────────────────────── -->
+
+<div id="info-tray"><div id="info-tray-inner"></div></div>
+
+<!-- ── MOBILE: BOTTOM NAV ───────────────────────────────────── -->
+
+<div id="bottom-nav" role="navigation">
+  <button class="nav-tab active" id="tab-list" aria-label="Station list">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="8" y1="6"  x2="21" y2="6"/><line x1="8"  y1="12" x2="21" y2="12"/>
+      <line x1="8" y1="18" x2="21" y2="18"/>
+      <circle cx="3" cy="6" r=".5" fill="currentColor"/><circle cx="3" cy="12" r=".5" fill="currentColor"/><circle cx="3" cy="18" r=".5" fill="currentColor"/>
+    </svg>
+    Stations
+  </button>
+  <button class="nav-tab" id="tab-map" aria-label="Map view">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+      <line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/>
+    </svg>
+    Map
+  </button>
+</div>
+
+<!-- ── MOBILE: SLIDE-UP DRAWER ──────────────────────────────── -->
+
+<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Station selector">
+  <div id="drawer-backdrop"></div>
+  <div id="drawer-sheet">
+    <div id="drawer-handle"></div>
+    <div id="drawer-search-wrap">
+      <input id="drawer-search" type="search" placeholder="Search stations…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    </div>
+    <div id="drawer-filter-row">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="ok">Modelled</button>
+      <button class="filter-btn" data-filter="error">Errors</button>
+      <button class="filter-btn" data-filter="overbank">Over-bank</button>
+    </div>
+    <div id="drawer-list">
+      <div class="no-results" id="drawer-no-results">No stations match.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+
+<script>
+/* ── State ──────────────────────────────────────────────────────────────── */
+let manifest      = [];
+let activeStation = null;
+let filterMode    = 'all';
+let searchTerm    = '';
+
+const isMobile = () => window.innerWidth < 768;
+
+/* ── Formatters ─────────────────────────────────────────────────────────── */
+const fmt  = (n, d=1) => (n == null || isNaN(+n)) ? '—' : (+n).toFixed(d);
+const fmtC = v => v != null ? (+v).toFixed(4) : '—';
 function fmtDate(iso) {
   if (!iso) return '—';
-  try {
-    const d = new Date(iso);
-    return d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-  } catch { return iso.slice(0,10); }
-}
-function fmtCoord(v) {
-  return v != null ? Number(v).toFixed(4) : '—';
+  try { return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  catch { return iso.slice(0,10); }
 }
 
-// ── Load manifest ──────────────────────────────────────────────────────────
+/* ── Manifest ────────────────────────────────────────────────────────────── */
 async function loadManifest() {
   try {
     const r = await fetch('manifest.json?' + Date.now());
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     manifest = await r.json();
     renderAll();
-  } catch (e) {
-    document.getElementById('empty-state').style.display  = 'none';
-    document.getElementById('error-msg').style.display    = 'flex';
-    document.getElementById('error-text').textContent     =
-      `Could not load manifest.json (${e.message}). Make sure this page is served from the same folder as your batch output.`;
+  } catch(e) {
+    showState('error');
+    document.getElementById('error-text').textContent =
+      `Could not load manifest.json (${e.message}). Make sure this page is served from the same directory as the batch output.`;
   }
 }
 
-// ── Render sidebar stats ───────────────────────────────────────────────────
+/* ── Stats bar ───────────────────────────────────────────────────────────── */
 function renderStats() {
   const ok  = manifest.filter(s => s.status === 'ok').length;
   const err = manifest.filter(s => s.status === 'error').length;
-  const last = manifest
-    .filter(s => s.run_at)
-    .map(s => s.run_at)
-    .sort()
-    .pop();
+  const last = manifest.filter(s=>s.run_at).map(s=>s.run_at).sort().pop();
   document.getElementById('stat-ok').textContent  = ok;
   document.getElementById('stat-err').textContent = err;
-  document.getElementById('stat-last').textContent = fmtDate(last);
+  if (last) {
+    document.getElementById('stat-last').textContent = fmtDate(last);
+    document.getElementById('stat-date-pill').style.display = 'flex';
+  }
 }
 
-// ── Filter + search ────────────────────────────────────────────────────────
+/* ── Filter logic ────────────────────────────────────────────────────────── */
 function filteredStations() {
   let list = [...manifest];
-
-  // Status filter
-  if (filterMode === 'ok')    list = list.filter(s => s.status === 'ok');
-  if (filterMode === 'error') list = list.filter(s => s.status === 'error');
-  if (filterMode === 'overbank') {
-    list = list.filter(s => s.status === 'ok' &&
-      s.bankfull_wse_ft != null &&
-      s.flood_top_ft != null &&
-      s.flood_top_ft >= s.bankfull_wse_ft);
-  }
-
-  // Search
+  if (filterMode === 'ok')      list = list.filter(s => s.status === 'ok');
+  if (filterMode === 'error')   list = list.filter(s => s.status === 'error');
+  if (filterMode === 'overbank') list = list.filter(s =>
+    s.status === 'ok' && s.bankfull_wse_ft != null && s.flood_top_ft != null &&
+    s.flood_top_ft >= s.bankfull_wse_ft);
   if (searchTerm) {
     const q = searchTerm.toLowerCase();
     list = list.filter(s =>
-      (s.name || '').toLowerCase().includes(q) ||
-      fmtCoord(s.lat).includes(q) ||
-      fmtCoord(s.lon).includes(q)
-    );
+      (s.name||'').toLowerCase().includes(q) ||
+      fmtC(s.lat).includes(q) || fmtC(s.lon).includes(q));
   }
-
-  // Sort: ok first, then by name
-  list.sort((a,b) => {
-    if (a.status !== b.status) return a.status === 'ok' ? -1 : 1;
-    return (a.name || '').localeCompare(b.name || '');
+  return list.sort((a,b) => {
+    if (a.status !== b.status) return a.status==='ok' ? -1 : 1;
+    return (a.name||'').localeCompare(b.name||'');
   });
-
-  return list;
 }
 
-// ── Render station cards ───────────────────────────────────────────────────
-function renderCards() {
-  const list = filteredStations();
-  const container = document.getElementById('station-list');
-  const noRes     = document.getElementById('no-results');
-
-  // Remove old cards (keep no-results div)
-  [...container.querySelectorAll('.station-card')].forEach(el => el.remove());
-
-  if (list.length === 0) {
-    noRes.style.display = 'block';
-    return;
-  }
-  noRes.style.display = 'none';
-
-  list.forEach((station, i) => {
-    const card = document.createElement('div');
-    card.className = 'station-card' + (station.status === 'error' ? ' error' : '');
-    card.dataset.name = station.name;
-    card.style.animationDelay = `${i * 25}ms`;
-
-    const isOk = station.status === 'ok';
-
-    // flood range bar fill %
-    const rangeTotal = isOk ? (station.flood_top_ft - station.flood_start_ft) : 0;
-    const overBankPct = (isOk && station.bankfull_wse_ft && rangeTotal > 0)
-      ? Math.min(100, Math.max(0, ((station.flood_top_ft - station.bankfull_wse_ft) / rangeTotal) * 100))
-      : 0;
-
-    card.innerHTML = `
-      <div class="card-top">
-        <div class="card-name">${station.name || '?'}</div>
-        <div class="card-status ${station.status === 'ok' ? 'ok' : 'err'}">
-          ${station.status === 'ok' ? 'OK' : 'ERR'}
-        </div>
-      </div>
-      ${isOk ? `
+/* ── Build card element ──────────────────────────────────────────────────── */
+function buildCard(station, i, clickFn) {
+  const isOk = station.status === 'ok';
+  const range = isOk ? station.flood_top_ft - station.flood_start_ft : 0;
+  const pct   = (isOk && station.bankfull_wse_ft && range > 0)
+    ? Math.min(100, Math.max(8, ((station.flood_top_ft - station.bankfull_wse_ft)/range)*100)) : 8;
+  const el = document.createElement('div');
+  el.className = 'station-card' + (isOk ? '' : ' error');
+  el.dataset.name = station.name;
+  el.style.animationDelay = `${i*18}ms`;
+  el.innerHTML = `
+    <div class="card-top">
+      <div class="card-name">${station.name||'?'}</div>
+      <div class="card-badge ${isOk?'ok':'err'}">${isOk?'OK':'ERR'}</div>
+    </div>
+    ${isOk ? `
       <div class="card-meta">
-        <div class="card-meta-item">scenarios <span>${station.n_scenarios ?? '—'}</span></div>
+        <div class="card-meta-item">scenarios <span>${station.n_scenarios??'—'}</span></div>
         <div class="card-meta-item">max ac <span>${fmt(station.max_inundated_acres)}</span></div>
-        <div class="card-meta-item">DEM <span>${station.dem_resolution_m ?? '—'} m</span></div>
+        <div class="card-meta-item">DEM <span>${station.dem_resolution_m??'—'} m</span></div>
         <div class="card-meta-item">BF WSE <span>${fmt(station.bankfull_wse_ft)} ft</span></div>
       </div>
       <div class="flood-bar-wrap">
@@ -446,109 +645,247 @@ function renderCards() {
           <span>${fmt(station.flood_top_ft)} ft</span>
         </div>
         <div class="flood-bar-track">
-          <div class="flood-bar-fill" style="width:${Math.max(10, overBankPct)}%"></div>
+          <div class="flood-bar-fill" style="width:${pct}%"></div>
         </div>
       </div>` : `
       <div style="font-family:var(--mono);font-size:10px;color:var(--err);margin-top:4px">
-        ${station.error ? station.error.slice(0,80) + '…' : 'Processing failed'}
+        ${(station.error||'Processing failed').slice(0,80)}…
       </div>`}
-    `;
-
-    if (isOk) {
-      card.addEventListener('click', () => selectStation(station, card));
-    }
-    container.appendChild(card);
-  });
+  `;
+  if (isOk) el.addEventListener('click', () => clickFn(station, el));
+  return el;
 }
 
-// ── Select a station ───────────────────────────────────────────────────────
-function selectStation(station, cardEl) {
-  if (activeCard) activeCard.classList.remove('active');
-  activeCard = cardEl;
-  cardEl.classList.add('active');
+/* ── Render cards into a container ──────────────────────────────────────── */
+function populateList(listEl, noResultsEl, clickFn) {
+  [...listEl.querySelectorAll('.station-card')].forEach(e=>e.remove());
+  const list = filteredStations();
+  noResultsEl.style.display = list.length ? 'none' : 'block';
+  list.forEach((s,i) => listEl.appendChild(buildCard(s, i, clickFn)));
+}
 
-  // Update header
-  document.getElementById('map-header').style.display = 'flex';
+/* ── Render both sidebar + drawer ────────────────────────────────────────── */
+function renderCards() {
+  populateList(
+    document.getElementById('station-list'),
+    document.getElementById('sidebar-no-results'),
+    (s, el) => selectStation(s, el)
+  );
+  populateList(
+    document.getElementById('drawer-list'),
+    document.getElementById('drawer-no-results'),
+    (s, el) => { closeDrawer(); selectStation(s, el); }
+  );
+}
+
+/* ── View states ─────────────────────────────────────────────────────────── */
+function showState(state) {
+  document.getElementById('empty-state').style.display    = state==='empty'   ? 'flex'  : 'none';
+  document.getElementById('error-msg').style.display      = state==='error'   ? 'flex'  : 'none';
+  document.getElementById('map-frame').style.display      = state==='map'     ? 'block' : 'none';
+  document.getElementById('loading-overlay').classList.toggle('hidden', state!=='loading');
+}
+
+/* ── Select station ──────────────────────────────────────────────────────── */
+function selectStation(station, cardEl) {
+  // Mark active in all card lists
+  document.querySelectorAll('.station-card.active').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll(`.station-card[data-name="${CSS.escape(station.name)}"]`)
+    .forEach(c=>c.classList.add('active'));
+
+  activeStation = station;
+
+  // ── Desktop header ────────────────────────────────────────
+  const header = document.getElementById('map-header');
+  header.style.display = 'flex';
   document.getElementById('map-title').textContent    = station.name;
   document.getElementById('map-subtitle').textContent =
-    `${fmtCoord(station.lat)}°N  ${fmtCoord(station.lon)}°W  ·  run ${fmtDate(station.run_at)}`;
+    `${fmtC(station.lat)}°N  ${fmtC(station.lon)}°W  ·  run ${fmtDate(station.run_at)}`;
+  document.getElementById('map-meta-strip').innerHTML = [
+    ['ORTHO HT',   fmt(station.ortho_height_ft)  +' ft', false],
+    ['Min WSE',    fmt(station.water_elev_min_ft) +' ft', false],
+    ['Bankfull',   fmt(station.bankfull_wse_ft)   +' ft', true],
+    ['Max Inund.', fmt(station.max_inundated_acres)+' ac', false],
+    ['DEM',        (station.dem_resolution_m??'—')+' m',  false],
+    ['Scenarios',  station.n_scenarios??'—',               false],
+  ].map(([l,v,hi])=>`
+    <div class="meta-chip">
+      <div class="lbl">${l}</div>
+      <div class="val${hi?' hi':''}">${v}</div>
+    </div>`).join('');
 
-  // Meta chips
-  const strip = document.getElementById('map-meta-strip');
-  strip.innerHTML = `
-    <div class="meta-chip">
-      <div class="label">ORTHO HT</div>
-      <div class="value">${fmt(station.ortho_height_ft)} ft</div>
-    </div>
-    <div class="meta-chip">
-      <div class="label">Min WSE</div>
-      <div class="value">${fmt(station.water_elev_min_ft)} ft</div>
-    </div>
-    <div class="meta-chip">
-      <div class="label">Bankfull WSE</div>
-      <div class="value highlight">${fmt(station.bankfull_wse_ft)} ft</div>
-    </div>
-    <div class="meta-chip">
-      <div class="label">Max Inundation</div>
-      <div class="value">${fmt(station.max_inundated_acres)} ac</div>
-    </div>
-    <div class="meta-chip">
-      <div class="label">DEM</div>
-      <div class="value">${station.dem_resolution_m ?? '—'} m</div>
-    </div>
-    <div class="meta-chip">
-      <div class="label">Scenarios</div>
-      <div class="value">${station.n_scenarios ?? '—'}</div>
-    </div>
+  // ── Mobile info tray ──────────────────────────────────────
+  document.getElementById('info-tray-inner').innerHTML = `
+    <div id="info-tray-name">${station.name}</div>
+    ${[
+      ['Bankfull', fmt(station.bankfull_wse_ft)+' ft', true],
+      ['Min WSE',  fmt(station.water_elev_min_ft)+' ft', false],
+      ['Max Ac',   fmt(station.max_inundated_acres), false],
+      ['DEM',      (station.dem_resolution_m??'—')+' m', false],
+      ['Scenarios',station.n_scenarios??'—', false],
+    ].map(([l,v,hi])=>`
+      <div class="tray-chip">
+        <div class="lbl">${l}</div>
+        <div class="val${hi?' hi':''}">${v}</div>
+      </div>`).join('')}
   `;
 
-  // Load map
-  const frame   = document.getElementById('map-frame');
-  const overlay = document.getElementById('loading-overlay');
-  const empty   = document.getElementById('empty-state');
-  const errMsg  = document.getElementById('error-msg');
+  if (isMobile()) {
+    const tray = document.getElementById('info-tray');
+    tray.style.display = 'block';
+    document.getElementById('back-btn').style.display = 'flex';
+    // Re-layout after tray renders so frame height is recalculated
+    requestAnimationFrame(layoutMobile);
+    setMobileTab('map');
+  }
 
-  empty.style.display  = 'none';
-  errMsg.style.display = 'none';
-  overlay.classList.remove('hidden');
-  frame.style.display  = 'none';
-
-  frame.onload = () => {
-    overlay.classList.add('hidden');
-    frame.style.display = 'block';
-  };
+  // ── Load iframe ───────────────────────────────────────────
+  showState('loading');
+  const frame = document.getElementById('map-frame');
+  frame.onload  = () => showState('map');
   frame.onerror = () => {
-    overlay.classList.add('hidden');
-    errMsg.style.display = 'flex';
-    document.getElementById('error-text').textContent =
-      `Could not load map file: ${station.map_file}`;
+    showState('error');
+    document.getElementById('error-text').textContent = `Could not load: ${station.map_file}`;
   };
   frame.src = station.map_file;
 }
 
-// ── Render all ─────────────────────────────────────────────────────────────
+/* ── Mobile tab switching ────────────────────────────────────────────────── */
+function setMobileTab(tab) {
+  document.getElementById('tab-list').classList.toggle('active', tab==='list');
+  document.getElementById('tab-map').classList.toggle('active',  tab==='map');
+  if (tab === 'list') openDrawer();
+  else closeDrawer();
+}
+
+/* ── Drawer ──────────────────────────────────────────────────────────────── */
+function openDrawer() {
+  const d = document.getElementById('mobile-drawer');
+  d.classList.add('open');
+  setTimeout(() => document.getElementById('drawer-search').focus(), 300);
+}
+function closeDrawer() {
+  document.getElementById('mobile-drawer').classList.remove('open');
+}
+
+/* ── Full render ─────────────────────────────────────────────────────────── */
 function renderAll() {
   renderStats();
   renderCards();
+  if (isMobile() && !activeStation) {
+    openDrawer();
+    setMobileTab('list');
+  }
 }
 
-// ── Event listeners ────────────────────────────────────────────────────────
-document.getElementById('search').addEventListener('input', e => {
+/* ════════════════════════════════════════════════════════════
+   EVENT WIRING
+════════════════════════════════════════════════════════════ */
+
+// Sidebar search
+document.getElementById('sidebar-search').addEventListener('input', e => {
   searchTerm = e.target.value.trim();
+  document.getElementById('drawer-search').value = searchTerm;
   renderCards();
 });
 
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    filterMode = btn.dataset.filter;
-    renderCards();
-  });
+// Drawer search
+document.getElementById('drawer-search').addEventListener('input', e => {
+  searchTerm = e.target.value.trim();
+  document.getElementById('sidebar-search').value = searchTerm;
+  renderCards();
 });
 
-// ── Boot ───────────────────────────────────────────────────────────────────
+// All filter buttons (sync both sets together)
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn[data-filter]');
+  if (!btn) return;
+  filterMode = btn.dataset.filter;
+  document.querySelectorAll('.filter-btn[data-filter]').forEach(b =>
+    b.classList.toggle('active', b.dataset.filter === filterMode));
+  renderCards();
+});
+
+// Bottom nav
+document.getElementById('tab-list').addEventListener('click', () => setMobileTab('list'));
+document.getElementById('tab-map').addEventListener('click',  () => {
+  closeDrawer();
+  document.getElementById('tab-map').classList.add('active');
+  document.getElementById('tab-list').classList.remove('active');
+});
+
+// Back button
+document.getElementById('back-btn').addEventListener('click', () => {
+  document.getElementById('back-btn').style.display  = 'none';
+  document.getElementById('info-tray').style.display = 'none';
+  requestAnimationFrame(layoutMobile);
+  setMobileTab('list');
+});
+
+// Backdrop
+document.getElementById('drawer-backdrop').addEventListener('click', () => {
+  closeDrawer();
+  document.getElementById('tab-list').classList.remove('active');
+  if (activeStation) document.getElementById('tab-map').classList.add('active');
+});
+
+// Swipe down to close drawer
+let _ty0 = 0;
+const sheet = document.getElementById('drawer-sheet');
+sheet.addEventListener('touchstart', e => { _ty0 = e.touches[0].clientY; }, {passive:true});
+sheet.addEventListener('touchmove',  e => { if (e.touches[0].clientY - _ty0 > 64) closeDrawer(); }, {passive:true});
+
+// Resize: clean up mobile state when switching to desktop
+window.addEventListener('resize', () => {
+  if (!isMobile()) {
+    closeDrawer();
+    document.getElementById('info-tray').style.display = 'none';
+    document.getElementById('back-btn').style.display  = 'none';
+  }
+});
+
+/* ── Boot ────────────────────────────────────────────────────────────────── */
+showState('empty');
 loadManifest();
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE LAYOUT ENGINE
+   Uses window.visualViewport so the iframe is sized to the
+   actual visible area — correctly excludes Safari's URL bar,
+   browser toolbar, and home indicator on all iOS devices.
+════════════════════════════════════════════════════════════ */
+function layoutMobile() {
+  if (!isMobile()) return;
+
+  const vvp      = window.visualViewport;
+  const vh       = vvp ? vvp.height : window.innerHeight;
+  const vTop     = vvp ? vvp.offsetTop : 0;
+
+  const topbarEl = document.getElementById('topbar');
+  const navEl    = document.getElementById('bottom-nav');
+  const trayEl   = document.getElementById('info-tray');
+
+  const topbarH  = topbarEl.getBoundingClientRect().height;
+  const navH     = navEl.offsetHeight;
+  const trayH    = (trayEl.style.display !== 'none') ? trayEl.offsetHeight : 0;
+
+  const frameTop = topbarH;                      // px from top of visual viewport
+  const frameH   = vh - topbarH - navH - trayH;  // remaining visible height
+
+  const wrap = document.getElementById('map-frame-wrap');
+  wrap.style.top    = frameTop + 'px';
+  wrap.style.height = Math.max(frameH, 100) + 'px'; // never less than 100px
+}
+
+// Run on every visual viewport change (handles Safari toolbar show/hide)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', layoutMobile);
+  window.visualViewport.addEventListener('scroll', layoutMobile);
+}
+window.addEventListener('resize', layoutMobile);
+// Initial layout after paint
+requestAnimationFrame(layoutMobile);
 </script>
+
 </body>
 </html>
