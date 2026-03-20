@@ -3,171 +3,171 @@
     "site_short": "SCOR0001",
     "SITE": "SCOR000144dd1336f7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 130998,
-    "recent_readings": 4887,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 135669,
+    "recent_readings": 4725,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0004",
     "SITE": "SCOR000444ddd006df",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 158973,
-    "recent_readings": 4845,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 163836,
+    "recent_readings": 4893,
     "parameters": 3,
-    "days_active": 258
+    "days_active": 265
   },
   {
     "site_short": "SCOR0005",
     "SITE": "SCOR000544ddd4ed1f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 213771,
-    "recent_readings": 9444,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 222939,
+    "recent_readings": 9243,
     "parameters": 3,
-    "days_active": 257
+    "days_active": 264
   },
   {
     "site_short": "SCOR0006",
     "SITE": "SCOR000644dd8128a7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 173394,
-    "recent_readings": 4785,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 178122,
+    "recent_readings": 4764,
     "parameters": 3,
-    "days_active": 254
+    "days_active": 261
   },
   {
     "site_short": "SCOR0008",
     "SITE": "SCOR000844dd89159f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 177381,
-    "recent_readings": 4914,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 182307,
+    "recent_readings": 4962,
     "parameters": 3,
-    "days_active": 257
+    "days_active": 264
   },
   {
     "site_short": "SCOR0010",
     "SITE": "SCOR001044dd1a0017",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 173715,
-    "recent_readings": 4839,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 178545,
+    "recent_readings": 4860,
     "parameters": 3,
-    "days_active": 254
+    "days_active": 261
   },
   {
     "site_short": "SCOR0012",
     "SITE": "SCOR001244dd890107",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 134985,
-    "recent_readings": 4596,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 138384,
+    "recent_readings": 3429,
     "parameters": 3,
-    "days_active": 258
+    "days_active": 265
   },
   {
     "site_short": "SCOR0013",
     "SITE": "SCOR001344c36ee7af",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 118287,
-    "recent_readings": 3636,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 122460,
+    "recent_readings": 4200,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0014",
     "SITE": "SCOR001444dd890427",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 129543,
-    "recent_readings": 4470,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 134352,
+    "recent_readings": 4854,
     "parameters": 3,
-    "days_active": 191
+    "days_active": 198
   },
   {
     "site_short": "SCOR0015",
     "SITE": "SCOR001544ddd4412f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 157302,
-    "recent_readings": 4776,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 161379,
+    "recent_readings": 4113,
     "parameters": 3,
-    "days_active": 258
+    "days_active": 265
   },
   {
     "site_short": "SCOR0016",
     "SITE": "SCOR001644dd1a1c0f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 93945,
-    "recent_readings": 4839,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 98805,
+    "recent_readings": 4890,
     "parameters": 3,
-    "days_active": 241
+    "days_active": 248
   },
   {
     "site_short": "SCOR0020",
     "SITE": "SCOR002044ddd28ae7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 176565,
-    "recent_readings": 4836,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 181365,
+    "recent_readings": 4848,
     "parameters": 3,
-    "days_active": 258
+    "days_active": 265
   },
   {
     "site_short": "SCOR0021",
     "SITE": "SCOR002144dd9950c7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 168210,
-    "recent_readings": 4641,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 172368,
+    "recent_readings": 4206,
     "parameters": 3,
-    "days_active": 255
+    "days_active": 262
   },
   {
     "site_short": "SCOR0022",
     "SITE": "SCOR002244ddd5b037",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 143904,
-    "recent_readings": 4626,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 147513,
+    "recent_readings": 3642,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0023",
     "SITE": "SCOR002344ddc44d77",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 155082,
-    "recent_readings": 4842,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 159888,
+    "recent_readings": 4860,
     "parameters": 3,
-    "days_active": 258
+    "days_active": 265
   },
   {
     "site_short": "SCOR0026",
     "SITE": "SCOR002644dd16e8cf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 176001,
-    "recent_readings": 4923,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 180894,
+    "recent_readings": 4944,
     "parameters": 3,
-    "days_active": 257
+    "days_active": 264
   },
   {
     "site_short": "SCOR0027",
     "SITE": "SCOR002744dd0e52ef",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 173130,
-    "recent_readings": 4851,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 177855,
+    "recent_readings": 4782,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0029",
@@ -182,121 +182,121 @@
     "site_short": "SCOR0030",
     "SITE": "SCOR003044dd02ccdf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 175449,
-    "recent_readings": 4926,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 180369,
+    "recent_readings": 4965,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0032",
     "SITE": "SCOR003244dd011ccf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 140889,
-    "recent_readings": 4839,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 145671,
+    "recent_readings": 4833,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0033",
     "SITE": "SCOR003344dd152397",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 174144,
-    "recent_readings": 4818,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 178977,
+    "recent_readings": 4863,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0034",
     "SITE": "SCOR003444dd021d97",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 132327,
-    "recent_readings": 4542,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 135738,
+    "recent_readings": 3441,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0035",
     "SITE": "SCOR003544dd188af7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 165426,
-    "recent_readings": 4821,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 170157,
+    "recent_readings": 4770,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0036",
     "SITE": "SCOR003644dd18c767",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 175746,
-    "recent_readings": 4872,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 180576,
+    "recent_readings": 4881,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0039",
     "SITE": "SCOR003944dd12d00f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 142590,
-    "recent_readings": 4803,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 147420,
+    "recent_readings": 4860,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0040",
     "SITE": "SCOR004044dd128ae7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 175566,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 180459,
     "recent_readings": 4947,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0042",
     "SITE": "SCOR004244dd1624cf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 134844,
-    "recent_readings": 4548,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 137859,
+    "recent_readings": 3060,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0043",
     "SITE": "SCOR004344dd171d07",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 143052,
-    "recent_readings": 4461,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 145536,
+    "recent_readings": 2514,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0044",
     "SITE": "SCOR004444dd11c41f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 173088,
-    "recent_readings": 4839,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 177909,
+    "recent_readings": 4857,
     "parameters": 3,
-    "days_active": 254
+    "days_active": 261
   },
   {
     "site_short": "SCOR0045",
     "SITE": "SCOR004544dd172d1f",
     "status": "recent",
-    "last_sample": "2026-03-09 00:00",
-    "total_readings": 165261,
-    "recent_readings": 1749,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 172053,
+    "recent_readings": 4959,
     "parameters": 3,
-    "days_active": 252
+    "days_active": 263
   },
   {
     "site_short": "SCOR0046",
@@ -311,29 +311,28 @@
     "site_short": "SCOR0047",
     "SITE": "SCOR004744dd10b4df",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 147099,
-    "recent_readings": 4869,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 151935,
+    "recent_readings": 4890,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0048",
     "SITE": "SCOR004844dd021daf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 176109,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 180939,
     "recent_readings": 4872,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0049",
     "SITE": "SCOR004944dda3505f",
-    "status": "recent",
+    "status": "stale",
     "last_sample": "2026-03-08 00:00",
     "total_readings": 124359,
-    "recent_readings": 789,
     "parameters": 3,
     "days_active": 202
   },
@@ -341,131 +340,131 @@
     "site_short": "SCOR0050",
     "SITE": "SCOR005044dda3006f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 129513,
-    "recent_readings": 4521,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 132852,
+    "recent_readings": 3384,
     "parameters": 3,
-    "days_active": 241
+    "days_active": 248
   },
   {
     "site_short": "SCOR0052",
     "SITE": "SCOR005244ce4a28f7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 129039,
-    "recent_readings": 4860,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 133905,
+    "recent_readings": 4896,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0056",
     "SITE": "SCOR005644ce49dccf",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 63420,
-    "recent_readings": 4476,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 66156,
+    "recent_readings": 2793,
     "parameters": 3,
-    "days_active": 241
+    "days_active": 248
   },
   {
     "site_short": "SCOR0058",
     "SITE": "SCOR005844ddb2a647",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 140136,
-    "recent_readings": 4833,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 144957,
+    "recent_readings": 4854,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0060",
     "SITE": "SCOR006044ddb1669",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 138579,
-    "recent_readings": 4656,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 142317,
+    "recent_readings": 3780,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0061",
     "SITE": "SCOR006144dd8644ef",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 117087,
-    "recent_readings": 4554,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 120609,
+    "recent_readings": 3564,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0062",
     "SITE": "SCOR006244ddb35a9f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 164121,
-    "recent_readings": 4881,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 168867,
+    "recent_readings": 4797,
     "parameters": 3,
-    "days_active": 241
+    "days_active": 248
   },
   {
     "site_short": "SCOR0063",
     "SITE": "SCOR006344dda3428f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 122151,
-    "recent_readings": 4401,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 126600,
+    "recent_readings": 4485,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0064",
     "SITE": "SCOR006444dd97161f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 149934,
-    "recent_readings": 4545,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 153249,
+    "recent_readings": 3369,
     "parameters": 3,
-    "days_active": 259
+    "days_active": 266
   },
   {
     "site_short": "SCOR0066",
     "SITE": "SCOR006644dd862387",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 174981,
-    "recent_readings": 4875,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 179802,
+    "recent_readings": 4866,
     "parameters": 3,
-    "days_active": 259
+    "days_active": 266
   },
   {
     "site_short": "SCOR0067",
     "SITE": "SCOR006744dd0e8c37",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 152706,
-    "recent_readings": 4809,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 157545,
+    "recent_readings": 4869,
     "parameters": 3,
-    "days_active": 329
+    "days_active": 336
   },
   {
     "site_short": "SCOR0068",
     "SITE": "SCOR006844ddcc2067",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 169347,
-    "recent_readings": 4845,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 174189,
+    "recent_readings": 4881,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0069",
     "SITE": "SCOR006944ddc89007",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 139740,
-    "recent_readings": 4779,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 144513,
+    "recent_readings": 4815,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0070",
@@ -480,111 +479,111 @@
     "site_short": "SCOR0073",
     "SITE": "SCOR007344dd0a0807",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 99357,
-    "recent_readings": 4692,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 102864,
+    "recent_readings": 3561,
     "parameters": 3,
-    "days_active": 191
+    "days_active": 198
   },
   {
     "site_short": "SCOR0075",
     "SITE": "SCOR007544dd193697",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 97062,
-    "recent_readings": 4275,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 101352,
+    "recent_readings": 4320,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0076",
     "SITE": "SCOR007644ddccd1a7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 140658,
-    "recent_readings": 4830,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 145488,
+    "recent_readings": 4863,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0078",
     "SITE": "SCOR007844ddcdaa07",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 141153,
-    "recent_readings": 4851,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 145986,
+    "recent_readings": 4881,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0079",
     "SITE": "SCOR007944dd0d865",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 116223,
-    "recent_readings": 4821,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 121053,
+    "recent_readings": 4866,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0080",
     "SITE": "SCOR008044dd70c80",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 119679,
-    "recent_readings": 4863,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 124518,
+    "recent_readings": 4875,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0081",
     "SITE": "SCOR008144dd72336f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 112896,
-    "recent_readings": 4869,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 117729,
+    "recent_readings": 4890,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0082",
     "SITE": "SCOR008244dd19a007",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 141888,
-    "recent_readings": 4872,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 146718,
+    "recent_readings": 4884,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0084",
     "SITE": "SCOR008444dd70122f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 72939,
-    "recent_readings": 10911,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 83733,
+    "recent_readings": 10905,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0085",
     "SITE": "SCOR008544dd0b5607",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 131661,
-    "recent_readings": 4890,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 136581,
+    "recent_readings": 4959,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0086",
     "SITE": "SCOR008644ddcd5107",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 142320,
-    "recent_readings": 4863,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 147186,
+    "recent_readings": 4896,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0087",
@@ -599,111 +598,111 @@
     "site_short": "SCOR0090",
     "SITE": "SCOR009044dd08082f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 132789,
-    "recent_readings": 4527,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 135813,
+    "recent_readings": 3072,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0091",
     "SITE": "SCOR009144dd19894f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 137604,
-    "recent_readings": 4269,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 141891,
+    "recent_readings": 4335,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0092",
     "SITE": "SCOR009244dd088097",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 114726,
-    "recent_readings": 4836,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 119589,
+    "recent_readings": 4896,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0096",
     "SITE": "SCOR009644ddcc4587",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 172671,
-    "recent_readings": 4833,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 177474,
+    "recent_readings": 4839,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0097",
     "SITE": "SCOR009744ddc80007",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 140160,
-    "recent_readings": 4830,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 144651,
+    "recent_readings": 4542,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0098",
     "SITE": "SCOR009844dd524687",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 83403,
-    "recent_readings": 4524,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 85755,
+    "recent_readings": 2388,
     "parameters": 3,
-    "days_active": 318
+    "days_active": 325
   },
   {
     "site_short": "SCOR0099",
     "SITE": "SCOR009944ddcde407",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 59937,
-    "recent_readings": 3903,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 64026,
+    "recent_readings": 4134,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0100",
     "SITE": "SCOR010044dd08d087",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 140781,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 145578,
     "recent_readings": 4833,
     "parameters": 3,
-    "days_active": 207
+    "days_active": 214
   },
   {
     "site_short": "SCOR0101",
     "SITE": "SCOR010144ddca3247",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 149634,
-    "recent_readings": 4857,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 154476,
+    "recent_readings": 4890,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0103",
     "SITE": "SCOR010344dd0e3087",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 155262,
-    "recent_readings": 4698,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 159405,
+    "recent_readings": 4200,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0104",
     "SITE": "SCOR010444dd0aac07",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 130566,
-    "recent_readings": 4536,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 134841,
+    "recent_readings": 4305,
     "parameters": 3,
-    "days_active": 256
+    "days_active": 263
   },
   {
     "site_short": "SCOR0105",
@@ -718,39 +717,39 @@
     "site_short": "SCOR0127",
     "SITE": "SCOR012744dd5a5b0f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 125367,
-    "recent_readings": 4830,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 130116,
+    "recent_readings": 4800,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0130",
     "SITE": "SCOR013044dc265d77",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 127836,
-    "recent_readings": 4728,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 132189,
+    "recent_readings": 4407,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0132",
     "SITE": "SCOR013244dcaab45f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 126327,
-    "recent_readings": 4836,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 131109,
+    "recent_readings": 4839,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0135",
     "SITE": "SCOR013544dcaa1d1f",
-    "status": "recent",
+    "status": "stale",
     "last_sample": "2026-03-13 00:00",
-    "total_readings": 129984,
-    "recent_readings": 4827,
+    "total_readings": 130074,
+    "recent_readings": 126,
     "parameters": 3,
     "days_active": 192
   },
@@ -758,11 +757,11 @@
     "site_short": "SCOR0137",
     "SITE": "SCOR013744dcba6c47",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 129105,
-    "recent_readings": 4815,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 133953,
+    "recent_readings": 4896,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0146",
@@ -777,31 +776,31 @@
     "site_short": "SCOR0147",
     "SITE": "SCOR014744dc9a42c7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 126450,
-    "recent_readings": 4842,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 131220,
+    "recent_readings": 4806,
     "parameters": 3,
-    "days_active": 192
+    "days_active": 199
   },
   {
     "site_short": "SCOR0151",
     "SITE": "SCOR015144dc8dd48f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 13368,
-    "recent_readings": 4845,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 18228,
+    "recent_readings": 4893,
     "parameters": 3,
-    "days_active": 19
+    "days_active": 26
   },
   {
     "site_short": "SCOR0152",
     "SITE": "SCOR015244dc88ab8f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 7203,
-    "recent_readings": 4629,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 11235,
+    "recent_readings": 4077,
     "parameters": 3,
-    "days_active": 11
+    "days_active": 18
   },
   {
     "site_short": "SCOR0155",
@@ -816,19 +815,18 @@
     "site_short": "SCOR0156",
     "SITE": "SCOR015644de96822f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 114906,
-    "recent_readings": 4860,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 119739,
+    "recent_readings": 4884,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0161",
     "SITE": "SCOR016144dc4a2607",
-    "status": "recent",
+    "status": "stale",
     "last_sample": "2026-03-12 00:00",
     "total_readings": 112935,
-    "recent_readings": 3759,
     "parameters": 3,
     "days_active": 167
   },
@@ -836,21 +834,21 @@
     "site_short": "SCOR0163",
     "SITE": "SCOR016344dc4a6a5f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 114204,
-    "recent_readings": 4842,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 119037,
+    "recent_readings": 4872,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0165",
     "SITE": "SCOR016544d12dbc4f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 114960,
-    "recent_readings": 4839,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 119820,
+    "recent_readings": 4890,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0167",
@@ -865,140 +863,140 @@
     "site_short": "SCOR0168",
     "SITE": "SCOR016844d070ab1f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 87390,
-    "recent_readings": 4806,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 92235,
+    "recent_readings": 4878,
     "parameters": 3,
-    "days_active": 196
+    "days_active": 203
   },
   {
     "site_short": "SCOR0169",
     "SITE": "SCOR016944dd84572f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 111834,
-    "recent_readings": 4812,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 116253,
+    "recent_readings": 4455,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0170",
     "SITE": "SCOR017044dd872637",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 63909,
-    "recent_readings": 4872,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 68847,
+    "recent_readings": 4974,
     "parameters": 3,
-    "days_active": 168
+    "days_active": 175
   },
   {
     "site_short": "SCOR0173",
     "SITE": "SCOR017344ddc14617",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 91497,
-    "recent_readings": 4803,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 96312,
+    "recent_readings": 4845,
     "parameters": 3,
-    "days_active": 150
+    "days_active": 157
   },
   {
     "site_short": "SCOR0174",
     "SITE": "SCOR017444dd791157",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 100164,
-    "recent_readings": 4797,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 104964,
+    "recent_readings": 4845,
     "parameters": 3,
-    "days_active": 150
+    "days_active": 157
   },
   {
     "site_short": "SCOR0175",
     "SITE": "SCOR017544dd7902d7",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 90555,
-    "recent_readings": 4812,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 95334,
+    "recent_readings": 4827,
     "parameters": 3,
-    "days_active": 150
+    "days_active": 157
   },
   {
     "site_short": "SCOR0176",
     "SITE": "SCOR017644ddcf2227",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 100881,
-    "recent_readings": 4869,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 105711,
+    "recent_readings": 4884,
     "parameters": 3,
-    "days_active": 150
+    "days_active": 157
   },
   {
     "site_short": "SCOR0177",
     "SITE": "SCOR017744dc5ae68f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 65358,
-    "recent_readings": 4872,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 70188,
+    "recent_readings": 4887,
     "parameters": 3,
-    "days_active": 95
+    "days_active": 102
   },
   {
     "site_short": "SCOR0178",
     "SITE": "SCOR017844dc58192f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 65754,
-    "recent_readings": 4869,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 70587,
+    "recent_readings": 4887,
     "parameters": 3,
-    "days_active": 95
+    "days_active": 102
   },
   {
     "site_short": "SCOR0179",
     "SITE": "SCOR017944de828b2f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 65964,
-    "recent_readings": 4878,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 70836,
+    "recent_readings": 4914,
     "parameters": 3,
-    "days_active": 95
+    "days_active": 102
   },
   {
     "site_short": "SCOR0190",
     "SITE": "SCOR019044dd715037",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 27612,
-    "recent_readings": 4908,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 32418,
+    "recent_readings": 4860,
     "parameters": 3,
-    "days_active": 43
+    "days_active": 50
   },
   {
     "site_short": "SCOR0191",
     "SITE": "SCOR019144dd558847",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 29058,
-    "recent_readings": 4830,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 33888,
+    "recent_readings": 4878,
     "parameters": 3,
-    "days_active": 43
+    "days_active": 50
   },
   {
     "site_short": "SCOR1714",
     "SITE": "SCOR17144c34a961f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 62796,
-    "recent_readings": 4764,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 67200,
+    "recent_readings": 4443,
     "parameters": 3,
-    "days_active": 95
+    "days_active": 102
   },
   {
     "site_short": "SCOR1724",
     "SITE": "SCOR17244c34a939f",
     "status": "recent",
-    "last_sample": "2026-03-13 00:00",
-    "total_readings": 64758,
-    "recent_readings": 4824,
+    "last_sample": "2026-03-20 00:00",
+    "total_readings": 69588,
+    "recent_readings": 4860,
     "parameters": 3,
-    "days_active": 95
+    "days_active": 102
   }
 ]
