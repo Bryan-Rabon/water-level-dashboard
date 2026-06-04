@@ -149,12 +149,12 @@ run_git <- function(args) {
   }
   invisible(result)
 }
-
-# Stage all three files
-run_git(c("add", file.path(OUTPUT_DIR, "site_summary.json")))
-run_git(c("add", file.path(OUTPUT_DIR, "network_health.json")))
-run_git(c("add", file.path(OUTPUT_DIR, "parameter_stats.json")))
-run_git(c("commit", "-m", GIT_MSG))
-run_git(c("push"))
-
-message("--- Done. All analysis files committed and pushed to GitHub. ---")
+# 
+# # Stage all three files
+# run_git(c("add", file.path(OUTPUT_DIR, "site_summary.json")))
+# run_git(c("add", file.path(OUTPUT_DIR, "network_health.json")))
+# run_git(c("add", file.path(OUTPUT_DIR, "parameter_stats.json")))
+# run_git(c("commit", "-m", GIT_MSG))
+# run_git(c("push"))
+# 
+# message("--- Done. All analysis files committed and pushed to GitHub. ---")
